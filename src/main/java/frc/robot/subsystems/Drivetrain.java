@@ -4,18 +4,18 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.DriveMap;
-import frc.robot.sensors.navx.AHRS;
 import frc.robot.utilities.EventLogger;
 
 public class Drivetrain extends SubsystemBase {
@@ -26,7 +26,7 @@ public class Drivetrain extends SubsystemBase {
   private SwerveModule mRearRightModule;
 
   // Build a gyro and a kinematics class for our drive
-  final AHRS mGyro = new AHRS(Port.kUSB);
+  final WPI_Pigeon2 mPigeon2 = new WPI_Pigeon2(40, "Team31PigeonBus");
   final SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
     DriveMap.frontLeftLocation, 
     DriveMap.frontRightLocation, 
@@ -34,7 +34,7 @@ public class Drivetrain extends SubsystemBase {
     DriveMap.rearRightLocation);
 
   SwerveDriveOdometry mOdometry = new SwerveDriveOdometry(mKinematics, 
-    mGyro.getRotation2d(), 
+    mPigeon2.getRotation2d(), 
     new SwerveModulePosition[]{
       mFrontLeftModule.getPosition(),
       mFrontRightModule.getPosition(),
@@ -57,7 +57,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    var gyroAngle = mGyro.getRotation2d();
+    var gyroAngle = mPigeon2.getRotation2d();
     SmartDashboard.putNumber("Drivetrain gyro angle", gyroAngle.getDegrees());
 
     var robotPose = mOdometry.update(gyroAngle, new SwerveModulePosition[] {
@@ -69,13 +69,13 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetGyro() {
-    mGyro.reset();
+    mPigeon2.reset();
     EventLogger.Information(getName(), "Reset gyro");
   }
 
   public void drive(double strafe, double forward, double rotation, boolean fieldRelative) {
     var desiredChassisSpeeds = fieldRelative
-      ? ChassisSpeeds.fromFieldRelativeSpeeds(strafe, forward, rotation, mGyro.getRotation2d())
+      ? ChassisSpeeds.fromFieldRelativeSpeeds(strafe, forward, rotation, mPigeon2.getRotation2d())
       : new ChassisSpeeds(strafe, forward, rotation);
 
     var swerveModuleStates = mKinematics.toSwerveModuleStates(desiredChassisSpeeds);
