@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,12 +16,9 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.DriveMap;
-import prime.models.PidConstants;
 
 public class Drivetrain extends SubsystemBase {
     // Default PID values for steering each module and driving each module
-    public static final PidConstants kDrivePidConstants = new PidConstants(0.01);
-    public static final PidConstants kSteeringPidConstants = new PidConstants(0.75);
     private final Field2d mField = new Field2d();
 
     // Initialize "locations" of each wheel in terms of x, y translation in meters
