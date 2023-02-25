@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.sensors.WPI_CANCoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -12,14 +13,13 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.config.DriveMap;
 import prime.utilities.CTREConverter;
-import frc.robot.sensors.MA3Encoder;
 import prime.movers.LazyWPITalonFX;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
 public class SwerveModule extends PIDSubsystem {
    private LazyWPITalonFX mSteeringMotor;
    private LazyWPITalonFX mDriveMotor;
-   public MA3Encoder mEncoder;
+   public WPI_CANCoder mEncoder;
 
    public SwerveModule(
          int driveMotorId,
@@ -43,13 +43,14 @@ public class SwerveModule extends PIDSubsystem {
       mDriveMotor.configFactoryDefault();
       mDriveMotor.clearStickyFaults();
       mDriveMotor.setNeutralMode(NeutralMode.Brake);
-      mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the Falcon
-                                                                                 // is the falcon's encoder
+      mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the Falcon is the falcon's encoder
       mDriveMotor.configOpenloopRamp(0.2);
       mDriveMotor.setInverted(TalonFXInvertType.Clockwise);
 
       // Set up our encoder
-      mEncoder = new MA3Encoder(encoderAioChannel, encoderBasePositionOffset, true);
+      mEncoder = new WPI_CANCoder(encoderAioChannel);
+      mEncoder.clearStickyFaults();
+      mEncoder.configFactoryDefault();
 
       // Create a PID controller to calculate steering motor output
       TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
@@ -67,7 +68,7 @@ public class SwerveModule extends PIDSubsystem {
                   mDriveMotor.getSelectedSensorPosition(),
                   DriveMap.kDriveWheelCircumference,
                   DriveMap.kDriveGearRatio),
-            mEncoder.getRotation2d());
+            Rotation2d.fromDegrees(mEncoder.getAbsolutePosition()));
    }
 
    /**
@@ -78,28 +79,19 @@ public class SwerveModule extends PIDSubsystem {
     */
    public void setDesiredState(SwerveModuleState desiredState) {
       // Optimize the state to avoid turning wheels further than 90 degrees
-      var encoderRotation = mEncoder.getRotation2d().rotateBy(Rotation2d.fromDegrees(-90));
+      var encoderRotation = getAbsoluteRotation2d().rotateBy(Rotation2d.fromDegrees(-90));
       desiredState = SwerveModuleState.optimize(desiredState, encoderRotation);
 
       // Drive motor logic
-
       var desiredVelocity20ms = (desiredState.speedMetersPerSecond / 50) * DriveMap.falconTotalSensorUnits;
       var desiredRotationsPer20ms = desiredVelocity20ms / DriveMap.kDriveWheelCircumference;
       var desiredVelocity = (desiredRotationsPer20ms * DriveMap.falconTotalSensorUnits * 5);
-
       mDriveMotor.set(ControlMode.Velocity, desiredVelocity);
+
       // Steering motor logic
       var desiredPositionRadians = desiredState.angle.getRadians();
 
       getController().setSetpoint(desiredPositionRadians);
-   }
-
-   /**
-    * Used for testing
-    */
-   public void driveSimple(double fwd, double rot) {
-      mDriveMotor.set(fwd);
-      mSteeringMotor.set(rot);
    }
 
    @Override
@@ -109,10 +101,12 @@ public class SwerveModule extends PIDSubsystem {
 
    @Override
    protected double getMeasurement() {
-      // TODO Auto-generated method stub
-      var encoderRotation = mEncoder.getRotation2d().rotateBy(Rotation2d.fromDegrees(-90));
+      var encoderRotation = getAbsoluteRotation2d().rotateBy(Rotation2d.fromDegrees(-90));
       var currentPositionRadians = encoderRotation.getRadians();
       return currentPositionRadians;
+   }
 
+   private Rotation2d getAbsoluteRotation2d() {
+      return Rotation2d.fromDegrees(mEncoder.getAbsolutePosition());
    }
 }
