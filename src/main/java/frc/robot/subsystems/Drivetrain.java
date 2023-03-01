@@ -8,6 +8,7 @@ import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -17,10 +18,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.DriveMap;
 
-// 25.5 wheelbase 0.6477
-// 17.5 tw          0.4445
-
 public class Drivetrain extends SubsystemBase {
+    // Default PID values for steering each module and driving each module
+    private final Field2d mField = new Field2d();
+
+    // Initialize "locations" of each wheel in terms of x, y translation in meters
+    // from the origin (middle of the robot)
+    double halfWheelBase = DriveMap.kRobotWheelBaseMeters / 2;
+    double halfTrackWidth = DriveMap.kRobotTrackWidthMeters / 2;
+    final Translation2d frontLeftLocation = new Translation2d(-halfTrackWidth, halfWheelBase);
+    final Translation2d frontRightLocation = new Translation2d(halfTrackWidth, halfWheelBase);
+    final Translation2d rearLeftLocation = new Translation2d(-halfTrackWidth, -halfWheelBase);
+    final Translation2d rearRightLocation = new Translation2d(halfTrackWidth, -halfWheelBase);
+
+    // Build serve drive modules with encoder channel & offset, and CAN IDs for
+    // drive and steering motors
     // Default PID values for steering each module and driving each module
     private final Field2d mField = new Field2d();
 

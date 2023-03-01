@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
       mAutoCommand.cancel();
     }
 
-    DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain);
+    DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
   }
 
   /** This function is called periodically during operator control. */

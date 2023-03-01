@@ -16,6 +16,8 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import frc.robot.config.DriveMap;
 import prime.utilities.CTREConverter;
 import prime.movers.LazyWPITalonFX;
+import prime.utilities.CTREConverter;
+import prime.movers.LazyWPITalonFX;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
 public class SwerveModule extends PIDSubsystem {
@@ -59,6 +61,10 @@ public class SwerveModule extends PIDSubsystem {
       mEncoder.configFactoryDefault();
       mEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
+      // Create a PID controller to calculate steering motor output
+      TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
+      driveMotorConfig.slot0.kP = DriveMap.kDrivePidConstants.kP;
+      mDriveMotor.configAllSettings(driveMotorConfig);
       // Create a PID controller to calculate steering motor output
       TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
       driveMotorConfig.slot0.kP = DriveMap.kDrivePidConstants.kP;

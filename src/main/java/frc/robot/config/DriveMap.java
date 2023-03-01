@@ -1,6 +1,7 @@
 package frc.robot.config;
 
 import prime.models.PidConstants;
+import prime.models.PidConstants;
 
 public class DriveMap {
   // Physical measurements
@@ -9,11 +10,17 @@ public class DriveMap {
   public static final double kRobotWheelBaseCircumferenceMeters = 2.46788;
 
   public static final double kDriveWheelDiameterMeters = 0.102;
+  public static final double kDriveWheelDiameterMeters = 0.102;
   public static final byte kDriveMotorOutputTeeth = 13;
   public static final byte kDriveMotorDrivenGearTeeth = 42;
 
   // Calculated values
+
+  // Calculated values
   public static final double kDriveGearRatio = kDriveMotorDrivenGearTeeth / kDriveMotorOutputTeeth;
+  public static final double kDriveWheelCircumference = Math.PI * kDriveWheelDiameterMeters;
+  
+  // Measured SysId values
   public static final double kDriveWheelCircumference = Math.PI * kDriveWheelDiameterMeters;
   
   // Measured SysId values
@@ -59,7 +66,10 @@ public class DriveMap {
   public static byte driveMotorOutputTeeth = 13;
   public static byte driveMotorDriveGearTeeth = 42;
   public static int falconTotalSensorUnits = 2048;
+  public static int falconTotalSensorUnits = 2048;
   public static final double kDriveMaxSpeedMetersPerSecond = 4.938; // 16.2ft per second in meters per second
+  public static final double kDriveMaxAngularSpeed = DriveMap.kRobotWheelBaseCircumferenceMeters
+      / kDriveMaxSpeedMetersPerSecond;
   public static final double kDriveMaxAngularSpeed = DriveMap.kRobotWheelBaseCircumferenceMeters
       / kDriveMaxSpeedMetersPerSecond;
 }
