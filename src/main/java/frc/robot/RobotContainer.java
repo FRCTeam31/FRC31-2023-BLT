@@ -1,10 +1,12 @@
 package frc.robot;
 
 import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.commands.DriveCommands;
 import frc.robot.config.DriveMap;
 
 public class RobotContainer {
@@ -19,47 +21,52 @@ public class RobotContainer {
         mFrontLeftSwerve = new SwerveModule(
             DriveMap.kFrontLeftDrivingMotorId, 
             DriveMap.kFrontLeftSteeringMotorId, 
-            DriveMap.kFrontLeftEncoderAIOChannel,
-            DriveMap.kFrontLeftEncoderOffset);
+            DriveMap.kFrontLeftEncoderId,
+            DriveMap.kFrontLeftEncoderOffset,
+            DriveMap.kFrontLeftInverted);
+        SmartDashboard.putData("Front Left Module", mFrontLeftSwerve);
 
         mFrontRightSwerve = new SwerveModule(
             DriveMap.kFrontRightDrivingMotorId, 
             DriveMap.kFrontRightSteeringMotorId, 
-            DriveMap.kFrontRightEncoderAIOChannel, 
-            DriveMap.kFrontRightEncoderOffset);
+            DriveMap.kFrontRightEncoderId, 
+            DriveMap.kFrontRightEncoderOffset,
+            DriveMap.kFrontRightInverted);
+        SmartDashboard.putData("Front Right Module", mFrontRightSwerve);
 
         mRearLeftSwerve = new SwerveModule(
             DriveMap.kRearLeftDrivingMotorId, 
             DriveMap.kRearLeftSteeringMotorId, 
-            DriveMap.kRearLeftEncoderAIOChannel, 
-            DriveMap.kRearLeftEncoderOffset);
+            DriveMap.kRearLeftEncoderId, 
+            DriveMap.kRearLeftEncoderOffset,
+            DriveMap.kRearLeftInverted);
+        SmartDashboard.putData("Rear Left Module", mRearLeftSwerve);
 
         mRearRightSwerve = new SwerveModule(
             DriveMap.kRearRightDrivingMotorId, 
             DriveMap.kRearRightSteeringMotorId, 
-            DriveMap.kRearRightEncoderAIOChannel, 
-            DriveMap.kRearRightEncoderOffset);
+            DriveMap.kRearRightEncoderId, 
+            DriveMap.kRearRightEncoderOffset,
+            DriveMap.kRearRightInverted);
+        SmartDashboard.putData("Rear Right Module", mRearRightSwerve);
         
         mDrivetrain = new Drivetrain(mFrontLeftSwerve, mFrontRightSwerve, mRearLeftSwerve, mRearRightSwerve);
+        SmartDashboard.putData(mDrivetrain);
 
         configureBindings();
     }
 
     private void configureBindings() {
         mController = new CommandJoystick(0);
+        SwerveModule[] modules = new SwerveModule[]{
+            mFrontLeftSwerve,
+            mFrontRightSwerve,
+            mRearLeftSwerve,
+            mRearRightSwerve
+        };
 
         // Default commands
-        mDrivetrain.setDefaultCommand(Commands.run(() -> {
-            // Grab the X and Y axis from the left joystick on the controller
-            var strafeX = mController.getRawAxis(0);
-            var forwardY = -mController.getRawAxis(1);
-
-            // Right trigger should rotate the robot clockwise, left counterclockwise
-            // Add the two [0,1] trigger axes together for a combined period of [-1, 1]
-            var rotation = mController.getRawAxis(2) + -mController.getRawAxis(3);
-
-            mDrivetrain.drive(strafeX, forwardY, rotation, true);
-        }, mDrivetrain, mFrontLeftSwerve, mFrontRightSwerve, mRearLeftSwerve, mRearRightSwerve));
+        mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mController, mDrivetrain, modules, true));
 
         // Button bindings
         mController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));

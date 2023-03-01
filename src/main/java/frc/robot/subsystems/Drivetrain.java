@@ -8,6 +8,7 @@ import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -30,9 +31,6 @@ public class Drivetrain extends SubsystemBase {
     final Translation2d rearLeftLocation = new Translation2d(-halfTrackWidth, -halfWheelBase);
     final Translation2d rearRightLocation = new Translation2d(halfTrackWidth, -halfWheelBase);
 
-    // Build serve drive modules with encoder channel & offset, and CAN IDs for
-    // drive and steering motors
-
     // Build a gyro and a kinematics class for our drive
     final WPI_Pigeon2 mGyro = new WPI_Pigeon2(DriveMap.kPigeonId, DriveMap.kCANivoreBusName);
     public final SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
@@ -53,7 +51,9 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain(SwerveModule FrontLeftSwerveModule, SwerveModule FrontRightSwerveModule,
             SwerveModule RearLeftSwerveModule, SwerveModule RearRightSwerveModule) {
         SmartDashboard.putData("Field", mField);
-        SwerveDriveOdometry mOdometry = new SwerveDriveOdometry(mKinematics,
+        mGyro.reset();
+
+        this.mOdometry = new SwerveDriveOdometry(mKinematics,
                 mGyro.getRotation2d(),
                 new SwerveModulePosition[] {
                         FrontLeftSwerveModule.getPosition(),
@@ -61,14 +61,12 @@ public class Drivetrain extends SubsystemBase {
                         RearLeftSwerveModule.getPosition(),
                         RearRightSwerveModule.getPosition(),
                 },
-                new Pose2d(0, 0, Rotation2d.fromDegrees(90)));
-        this.mOdometry = mOdometry;
+                new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+
         this.FrontLeftSwerveModule = FrontLeftSwerveModule;
         this.FrontRightSwerveModule = FrontRightSwerveModule;
         this.RearLeftSwerveModule = RearLeftSwerveModule;
         this.RearRightSwerveModule = RearRightSwerveModule;
-
-        // setDefaultCommand(new DriveCommand(false, null, null));
     }
 
     @Override
