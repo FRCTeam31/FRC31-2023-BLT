@@ -31,23 +31,6 @@ public class Drivetrain extends SubsystemBase {
     final Translation2d rearLeftLocation = new Translation2d(-halfTrackWidth, -halfWheelBase);
     final Translation2d rearRightLocation = new Translation2d(halfTrackWidth, -halfWheelBase);
 
-    // Build serve drive modules with encoder channel & offset, and CAN IDs for
-    // drive and steering motors
-    // Default PID values for steering each module and driving each module
-    private final Field2d mField = new Field2d();
-
-    // Initialize "locations" of each wheel in terms of x, y translation in meters
-    // from the origin (middle of the robot)
-    double halfWheelBase = DriveMap.kRobotWheelBaseMeters / 2;
-    double halfTrackWidth = DriveMap.kRobotTrackWidthMeters / 2;
-    final Translation2d frontLeftLocation = new Translation2d(-halfTrackWidth, halfWheelBase);
-    final Translation2d frontRightLocation = new Translation2d(halfTrackWidth, halfWheelBase);
-    final Translation2d rearLeftLocation = new Translation2d(-halfTrackWidth, -halfWheelBase);
-    final Translation2d rearRightLocation = new Translation2d(halfTrackWidth, -halfWheelBase);
-
-    // Build serve drive modules with encoder channel & offset, and CAN IDs for
-    // drive and steering motors
-
     // Build a gyro and a kinematics class for our drive
     final WPI_Pigeon2 mGyro = new WPI_Pigeon2(DriveMap.kPigeonId, DriveMap.kCANivoreBusName);
     public final SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
