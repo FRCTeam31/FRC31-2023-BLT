@@ -23,6 +23,7 @@ public class Shoulder extends PIDSubsystem {
         shoulder1 = new LazyCANSparkMax(ShoulderMap.kShoulder1Id, MotorType.kBrushless);
         shoulder1.restoreFactoryDefaults();
         shoulder1.setIdleMode(IdleMode.kBrake);
+        // shoulde.
 
         shoulder2 = new LazyCANSparkMax(ShoulderMap.kShoulder2Id, MotorType.kBrushless);
         shoulder1.restoreFactoryDefaults();
