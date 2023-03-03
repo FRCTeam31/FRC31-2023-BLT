@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import frc.robot.config.ShoulderMap;
 import prime.movers.LazyCANSparkMax;
@@ -13,6 +14,7 @@ public class Shoulder extends PIDSubsystem {
     private LazyCANSparkMax shoulder1;
     private LazyCANSparkMax shoulder2;
     private WPI_CANCoder mEncoder;
+
 
     public Shoulder() {
         super(new PIDController(
@@ -23,7 +25,7 @@ public class Shoulder extends PIDSubsystem {
         shoulder1 = new LazyCANSparkMax(ShoulderMap.kShoulder1Id, MotorType.kBrushless);
         shoulder1.restoreFactoryDefaults();
         shoulder1.setIdleMode(IdleMode.kBrake);
-        // shoulde.
+        shoulder1.setOpenLoopRampRate(ShoulderMap.kOpenLoopRampRate);
 
         shoulder2 = new LazyCANSparkMax(ShoulderMap.kShoulder2Id, MotorType.kBrushless);
         shoulder1.restoreFactoryDefaults();
@@ -49,4 +51,11 @@ public class Shoulder extends PIDSubsystem {
     protected void useOutput(double output, double setpoint) {
         
     }
+
+
+    @Override
+    public void initSendable(SendableBuilder builder){
+      builder.addDoubleProperty("Shoulder Position", this::getMeasurement, null);
+    }
+
 }

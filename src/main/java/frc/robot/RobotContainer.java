@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ShoulderCommands;
 import frc.robot.config.DriveMap;
 
 public class RobotContainer {
@@ -16,6 +17,7 @@ public class RobotContainer {
     public SwerveModule mRearLeftSwerve;
     public SwerveModule mRearRightSwerve;
     public Drivetrain mDrivetrain;
+    public Shoulder mShoulder;
 
     public RobotContainer() {
         mFrontLeftSwerve = new SwerveModule(
@@ -53,7 +55,11 @@ public class RobotContainer {
         mDrivetrain = new Drivetrain(mFrontLeftSwerve, mFrontRightSwerve, mRearLeftSwerve, mRearRightSwerve);
         SmartDashboard.putData(mDrivetrain);
 
+        mShoulder = new Shoulder();
+        SmartDashboard.putData(mShoulder);
+
         configureBindings();
+
     }
 
     private void configureBindings() {
@@ -67,9 +73,13 @@ public class RobotContainer {
 
         // Default commands
         mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mController, mDrivetrain, modules, true));
+        mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder, mController));
+        mShoulder.disable();
 
         // Button bindings
         mController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+
+
     }
 
     public Command getAutonomousCommand() {
