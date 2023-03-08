@@ -112,4 +112,7 @@ public class Drivetrain extends SubsystemBase {
     public void resetOdometry(Pose2d pose) {
         mOdometry.resetPosition(null, null, pose);
     }
+
+    public void getRotation2d(){}
+
 }

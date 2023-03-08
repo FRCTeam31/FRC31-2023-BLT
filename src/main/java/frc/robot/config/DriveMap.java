@@ -64,4 +64,17 @@ public class DriveMap {
   public static final double kDriveMaxSpeedMetersPerSecond = 4.938; // 16.2ft per second in meters per second
   public static final double kDriveMaxAngularSpeed = DriveMap.kRobotWheelBaseCircumferenceMeters
       / kDriveMaxSpeedMetersPerSecond;
+
+      // Drive Auton PID values
+      public static final byte kAutonDriveXKp = 1;
+      public static final byte kAutonDriveXKi = 0;
+      public static final byte kAutonDriveXKd = 0;
+  
+      public static final byte kAutonDriveYKp = 1;
+      public static final byte kAutonDriveYKi = 0;
+      public static final byte kAutonDriveYKd = 0;
+  
+      public static final byte kAutonRotationKp = 1;
+      public static final byte kAutonRotationKi = 0;
+      public static final byte kAutonRotationKd = 0;
 }

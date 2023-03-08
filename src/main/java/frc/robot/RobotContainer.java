@@ -1,6 +1,11 @@
 package frc.robot;
 
 import frc.robot.subsystems.*;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -73,6 +78,9 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return new InstantCommand();
+        PathPlannerTrajectory driveForwardOneMeter = PathPlanner.loadPath("DriveForwardOneMeter",
+        new PathConstraints(0.1, 0.01));
+        return DriveCommands.followTrajectoryWithEventCommand(mDrivetrain, driveForwardOneMeter, true);
+        
     }
 }
