@@ -49,7 +49,7 @@ public class SwerveModule extends PIDSubsystem {
       mDriveMotor.clearStickyFaults();
       mDriveMotor.setNeutralMode(NeutralMode.Brake);
       mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the Falcon is the falcon's encoder
-      mDriveMotor.configOpenloopRamp(0.2);
+      mDriveMotor.configClosedloopRamp(1);
       mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
          : TalonFXInvertType.Clockwise);
 

@@ -59,7 +59,6 @@ public class RobotContainer {
         SmartDashboard.putData(mShoulder);
 
         configureBindings();
-
     }
 
     private void configureBindings() {
@@ -73,13 +72,16 @@ public class RobotContainer {
 
         // Default commands
         mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mController, mDrivetrain, modules, true));
-        mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder, mController));
-        mShoulder.disable();
+
+        // Shoulder
+        // mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder, mController));
+        mController.button(1).onTrue(Commands.runOnce(() -> {
+            mShoulder.enable();
+            mShoulder.setSetpoint(200);
+        }, mShoulder));
 
         // Button bindings
         mController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
-
-
     }
 
     public Command getAutonomousCommand() {
