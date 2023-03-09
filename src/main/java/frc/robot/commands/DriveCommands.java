@@ -18,7 +18,7 @@ public class DriveCommands {
             var forwardY = MathUtil.applyDeadband(controller.getRawAxis(1), 0.1);
             var rotation = controller.getRawAxis(2) - controller.getRawAxis(3);
 
-            driveTrain.drive(-strafeX, forwardY, rotation, fieldRelative);
+           driveTrain.drive(-strafeX, forwardY, rotation, fieldRelative);
         }, driveTrain, swerveModules[0], swerveModules[1], swerveModules[2], swerveModules[3]);
     }
 

@@ -8,5 +8,5 @@ import frc.robot.subsystems.Shoulder;
 public class ShoulderCommands {
     public static Command getRunSimpleCommand(Shoulder shoulder, CommandJoystick joystick){
         return Commands.run(() -> shoulder.runShoulder(joystick.getRawAxis(5)), shoulder);
-    }
+    } 
 }
