@@ -25,7 +25,7 @@ public class LazySolenoid extends Solenoid {
         if (on == mLastValue) return;
      
         mLastValue = on;
-        set(on);
+        super.set(on);
     }
 
 }
