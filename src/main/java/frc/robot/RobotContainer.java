@@ -1,6 +1,8 @@
 package frc.robot;
 
 import frc.robot.subsystems.*;
+import frc.robot.utilities.PathPlannerConverter;
+import prime.models.PidConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +18,6 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.DriveCommands;
 import frc.robot.config.AutoMap;
@@ -112,6 +113,17 @@ public class RobotContainer implements Sendable {
                 eventMap);
 
         return autoBuilder.fullAuto(pathGroup.get(0));
+    }
+
+    public void updatePIDValuesFromSmartDashboard() {
+        AutoMap.kTranslatePidConstants = PathPlannerConverter
+                .toPPPidConstants((PidConstants) SmartDashboard.getData(AutoMap.kTranslatePidConstantsName));
+
+        AutoMap.kRotatePidConstants = PathPlannerConverter
+                .toPPPidConstants((PidConstants) SmartDashboard.getData(AutoMap.kRotatePidConstantsName));
+
+        DriveMap.kDrivePidConstants = (PidConstants) SmartDashboard.getData(DriveMap.kDrivePidConstantsName);
+        DriveMap.kSteeringPidConstants = (PidConstants) SmartDashboard.getData(DriveMap.kSteeringPidConstantsName);
     }
 
     @Override
