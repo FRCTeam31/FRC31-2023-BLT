@@ -1,5 +1,6 @@
 package frc.robot.config;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import prime.models.PidConstants;
 
 public class DriveMap {
@@ -22,8 +23,10 @@ public class DriveMap {
     public static final double driveKs = -0.13939;
     public static final double driveKv = 0.029115;
     public static final double driveKa = 0.0050108;
-    public static final PidConstants kDrivePidConstants = new PidConstants(0.0016983);
-    public static final PidConstants kSteeringPidConstants = new PidConstants(0.2);
+    public static final String kDrivePidConstantsName = "SwerveModule drive PID Constants";
+    public static PidConstants kDrivePidConstants = new PidConstants(0.0016983);
+    public static final String kSteeringPidConstantsName = "SwerveModule steering PID Constants";
+    public static PidConstants kSteeringPidConstants = new PidConstants(0.2);
     // public static final PidConstants kSteeringPidConstants = new
     // PidConstants(0.18);
 
@@ -83,4 +86,9 @@ public class DriveMap {
     // Slow Drive Coefficent
 
     public static final double slowDriveCoefficent = 0.2;
+
+    public DriveMap() {
+        SmartDashboard.putData(kDrivePidConstantsName, kDrivePidConstants);
+        SmartDashboard.putData(kSteeringPidConstantsName, kSteeringPidConstants);
+    }
 }

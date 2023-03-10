@@ -16,9 +16,9 @@ public class Shoulder extends PIDSubsystem {
 
     public Shoulder() {
         super(new PIDController(
-            ShoulderMap.AnglePid.kP, 
-            ShoulderMap.AnglePid.kI, 
-            ShoulderMap.AnglePid.kD));
+                ShoulderMap.kSprocketPid.kP,
+                ShoulderMap.kSprocketPid.kI,
+                ShoulderMap.kSprocketPid.kD));
 
         shoulder1 = new LazyCANSparkMax(ShoulderMap.kShoulder1Id, MotorType.kBrushless);
         shoulder1.restoreFactoryDefaults();
@@ -47,6 +47,6 @@ public class Shoulder extends PIDSubsystem {
 
     @Override
     protected void useOutput(double output, double setpoint) {
-        
+
     }
 }
