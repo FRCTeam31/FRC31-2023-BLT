@@ -25,6 +25,10 @@ public class DriveCommands {
             var forwardY = MathUtil.applyDeadband(controller.getRawAxis(1), 0.1);
             var rotation = controller.getRawAxis(2) - controller.getRawAxis(3);
 
+            strafeX = MathUtil.clamp(strafeX, -DriveMap.slowDriveCoefficent, DriveMap.slowDriveCoefficent);
+            forwardY = MathUtil.clamp(forwardY, -DriveMap.slowDriveCoefficent, DriveMap.slowDriveCoefficent);
+            rotation = MathUtil.clamp(-rotation, -DriveMap.slowDriveCoefficent, DriveMap.slowDriveCoefficent);
+
             driveTrain.drive(-strafeX, forwardY, rotation, fieldRelative);
         }, driveTrain, swerveModules[0], swerveModules[1], swerveModules[2], swerveModules[3]);
     }
@@ -33,42 +37,27 @@ public class DriveCommands {
         return Commands.runOnce(() -> driveTrain.resetGyro(), driveTrain);
     }
 
-    // public static Command followTrajectoryWithEventsCommand(Drivetrain drivetrain, PathPlannerTrajectory trajectory, boolean isFirstPath) {
-    //     return new SequentialCommandGroup(
-    //             new InstantCommand(() -> {
-    //                 // Reset odometry for the first path you run during auto
-    //                 if (isFirstPath) {
-    //                     drivetrain.resetOdometry(trajectory.getInitialHolonomicPose());
-    //                 }
-    //             }),
-    //             new PPSwerveControllerCommand(
-    //                     trajectory,
-    //                     drivetrain::getPose, // Pose supplier
-    //                     new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-    //                     new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
-    //                     new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving
-    //                                                 // them 0 will only use feedforwards.
-    //                     drivetrain::drive,
-    //                     drivetrain));
-    // }
+    public static Command followTrajectoryWithEventCommand(Drivetrain drivetrain, PathPlannerTrajectory trajectory,
+            boolean isFirstPath) {
+        var thetaController = new PIDController(DriveMap.kAutonRotationKp, DriveMap.kAutonRotationKi,
+                DriveMap.kAutonDriveXKd);
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    public static Command followTrajectoryWithEventCommand(Drivetrain drivetrain, PathPlannerTrajectory trajectory, boolean isFirstPath){
         return new SequentialCommandGroup(
-            new InstantCommand(() -> {
-                 // Reset odometry for the first path you run during auto
-                 if (isFirstPath){
-                    drivetrain.resetOdometry(trajectory.getInitialHolonomicPose());
-                 }
-                
+                new InstantCommand(() -> {
+                    // Reset odometry for the first path you run during auto
+                    if (isFirstPath) {
+                        drivetrain.resetOdometry(trajectory.getInitialHolonomicPose());
+                    }
 
-            }), 
-            new PPSwerveControllerCommand(trajectory,
-             drivetrain::getPose,
-            new PIDController(DriveMap.kAutonDriveXKp, DriveMap.kAutonDriveXKi, DriveMap.kAutonDriveXKd),
-            new PIDController(DriveMap.kAutonDriveYKp, DriveMap.kAutonDriveYKi, DriveMap.kAutonDriveYKd),
-            new PIDController(DriveMap.kAutonRotationKp, DriveMap.kAutonRotationKi, DriveMap.kAutonDriveXKd),
-             drivetrain::drive,
-              drivetrain)
-        );
+                }),
+                new PPSwerveControllerCommand(trajectory,
+                        drivetrain::getPose,
+                        drivetrain.mKinematics,
+                        new PIDController(DriveMap.kAutonDriveXKp, DriveMap.kAutonDriveXKi, DriveMap.kAutonDriveXKd),
+                        new PIDController(DriveMap.kAutonDriveYKp, DriveMap.kAutonDriveYKi, DriveMap.kAutonDriveYKd),
+                        thetaController,
+                        drivetrain::drive,
+                        drivetrain));
     }
 }

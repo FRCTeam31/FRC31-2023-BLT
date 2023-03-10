@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -99,6 +100,10 @@ public class Drivetrain extends SubsystemBase {
         var swerveModuleStates = mKinematics.toSwerveModuleStates(desiredChassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveMap.kDriveMaxSpeedMetersPerSecond);
 
+        drive(swerveModuleStates);
+    }
+
+    public void drive(SwerveModuleState[] swerveModuleStates) {
         FrontLeftSwerveModule.setDesiredState(swerveModuleStates[0]);
         FrontRightSwerveModule.setDesiredState(swerveModuleStates[1]);
         RearLeftSwerveModule.setDesiredState(swerveModuleStates[2]);
@@ -110,9 +115,17 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        mOdometry.resetPosition(null, null, pose);
+        SwerveModulePosition[] swerveModules = new SwerveModulePosition[4];
+        swerveModules[0] = FrontLeftSwerveModule.getPosition();
+        swerveModules[1] = FrontRightSwerveModule.getPosition();
+        swerveModules[2] = RearLeftSwerveModule.getPosition();
+        swerveModules[3] = RearRightSwerveModule.getPosition();
+
+        mOdometry.resetPosition(getRotation2d(), swerveModules, pose);
     }
 
-    public void getRotation2d(){}
+    public Rotation2d getRotation2d() {
+        return Rotation2d.fromRadians(mGyro.getYaw());
+    }
 
 }
