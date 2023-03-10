@@ -8,7 +8,6 @@ import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -20,32 +19,33 @@ import frc.robot.config.DriveMap;
 
 public class Drivetrain extends SubsystemBase {
     // Default PID values for steering each module and driving each module
-    private final Field2d mField = new Field2d();
+    Field2d mField = new Field2d();
 
     // Initialize "locations" of each wheel in terms of x, y translation in meters
     // from the origin (middle of the robot)
     double halfWheelBase = DriveMap.kRobotWheelBaseMeters / 2;
     double halfTrackWidth = DriveMap.kRobotTrackWidthMeters / 2;
-    final Translation2d frontLeftLocation = new Translation2d(-halfTrackWidth, halfWheelBase);
-    final Translation2d frontRightLocation = new Translation2d(halfTrackWidth, halfWheelBase);
-    final Translation2d rearLeftLocation = new Translation2d(-halfTrackWidth, -halfWheelBase);
-    final Translation2d rearRightLocation = new Translation2d(halfTrackWidth, -halfWheelBase);
-
-    // Build a gyro and a kinematics class for our drive
-    final WPI_Pigeon2 mGyro = new WPI_Pigeon2(DriveMap.kPigeonId, DriveMap.kCANivoreBusName);
-    public final SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
-            frontLeftLocation,
-            frontRightLocation,
-            rearLeftLocation,
-            rearRightLocation);
+    Translation2d frontLeftLocation = new Translation2d(-halfTrackWidth, halfWheelBase);
+    Translation2d frontRightLocation = new Translation2d(halfTrackWidth, halfWheelBase);
+    Translation2d rearLeftLocation = new Translation2d(-halfTrackWidth, -halfWheelBase);
+    Translation2d rearRightLocation = new Translation2d(halfTrackWidth, -halfWheelBase);
 
     // Swerve Modules
     SwerveModule FrontLeftSwerveModule;
     SwerveModule FrontRightSwerveModule;
     SwerveModule RearLeftSwerveModule;
     SwerveModule RearRightSwerveModule;
-
     SwerveDriveOdometry mOdometry;
+
+    // Build a gyro and a kinematics class for our drive
+    WPI_Pigeon2 mGyro = new WPI_Pigeon2(DriveMap.kPigeonId, DriveMap.kCANivoreBusName);
+    SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
+            frontLeftLocation,
+            frontRightLocation,
+            rearLeftLocation,
+            rearRightLocation);
+
+    boolean mInHighGear = false;
 
     /** Creates a new SwerveDriveTrainSubsystem. */
     public Drivetrain(SwerveModule FrontLeftSwerveModule, SwerveModule FrontRightSwerveModule,
@@ -111,5 +111,17 @@ public class Drivetrain extends SubsystemBase {
 
     public void resetOdometry(Pose2d pose) {
         mOdometry.resetPosition(null, null, pose);
+    }
+
+    public void setShift(boolean inHighGear) {
+        mInHighGear = inHighGear;
+    }
+
+    public void toggleShifter() {
+        mInHighGear = !mInHighGear;
+    }
+
+    public double getShiftedSpeedCoefficient() {
+        return mInHighGear ? DriveMap.kHighGearCoefficient : DriveMap.kLowGearCoefficient;
     }
 }

@@ -18,12 +18,21 @@ public class DriveCommands {
             var forwardY = MathUtil.applyDeadband(controller.getRawAxis(1), 0.1);
             var rotation = controller.getRawAxis(2) - controller.getRawAxis(3);
 
-            driveTrain.drive(-strafeX, forwardY, rotation, fieldRelative);
+            var gearCoefficient = driveTrain.getShiftedSpeedCoefficient();
+            strafeX = MathUtil.clamp(strafeX, -gearCoefficient, gearCoefficient);
+            forwardY = MathUtil.clamp(forwardY, -gearCoefficient, gearCoefficient);
+            rotation = MathUtil.clamp(rotation, -gearCoefficient, gearCoefficient);
+
+            driveTrain.drive(-strafeX, forwardY, -rotation, fieldRelative);
         }, driveTrain, swerveModules[0], swerveModules[1], swerveModules[2], swerveModules[3]);
     }
 
     public static Command resetGyroComamand(Drivetrain driveTrain) {
         return Commands.runOnce(() -> driveTrain.resetGyro(), driveTrain);
+    }
+
+    public static Command toggleShifter(Drivetrain drive) {
+        return Commands.runOnce(() -> drive.toggleShifter());
     }
 
     // public static Command followTrajectoryWithEventsCommand(Drivetrain drivetrain, PathPlannerTrajectory trajectory, boolean isFirstPath) {

@@ -19,6 +19,6 @@ public class LazyCANSparkMax extends CANSparkMax {
             return;
 
         mLastSpeed = speed;
-        set(speed);
+        super.set(speed);
     }
 }
