@@ -1,20 +1,17 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import frc.robot.config.ShoulderMap;
-import prime.movers.LazyCANSparkMax;
+import prime.movers.LazyWPITalonSRX;
 
 public class Shoulder extends PIDSubsystem {
-    private LazyCANSparkMax shoulder1;
-    // private LazyCANSparkMax shoulder2;
+    private LazyWPITalonSRX shoulder1;
+    private LazyWPITalonSRX shoulder2;
     private WPI_CANCoder mEncoder;
     private double _lastPIDoutput = 0;
 
@@ -24,16 +21,17 @@ public class Shoulder extends PIDSubsystem {
             ShoulderMap.AnglePid.kI, 
             ShoulderMap.AnglePid.kD));
 
-        shoulder1 = new LazyCANSparkMax(ShoulderMap.kShoulder1Id, MotorType.kBrushless);
-        shoulder1.clearFaults();
-        shoulder1.restoreFactoryDefaults();
-        shoulder1.setIdleMode(IdleMode.kBrake);
-        shoulder1.setOpenLoopRampRate(ShoulderMap.kOpenLoopRampRate);
+        shoulder1 = new LazyWPITalonSRX(ShoulderMap.kShoulder1Id);
+        shoulder1.clearStickyFaults();
+        shoulder1.configFactoryDefault();
+        shoulder1.setNeutralMode(NeutralMode.Brake);
+        shoulder1.configOpenloopRamp(0.5);
 
-        // shoulder2 = new LazyCANSparkMax(ShoulderMap.kShoulder2Id, MotorType.kBrushless);
-        // shoulder2.restoreFactoryDefaults();
-        // shoulder2.setIdleMode(IdleMode.kBrake);
-        // shoulder2.follow(shoulder1);
+        shoulder2 = new LazyWPITalonSRX(ShoulderMap.kShoulder2Id);
+        shoulder2.clearStickyFaults();
+        shoulder2.configFactoryDefault();
+        shoulder2.setNeutralMode(NeutralMode.Brake);
+        shoulder2.follow(shoulder1);
 
         mEncoder = new WPI_CANCoder(ShoulderMap.kEncoderId);
 
@@ -48,20 +46,11 @@ public class Shoulder extends PIDSubsystem {
      * @param speed
      */
     public void runShoulder(double speed) {
-        // speed *= 0.7;
         shoulder1.set(MathUtil.applyDeadband(speed, 0.15));
-    }
-
-    public void runShoulderNoFilter(double speed) {
-        shoulder1.set(speed);
     }
 
     public void setShoulderAngle(double angleInDegrees) {
         setSetpoint(angleInDegrees);
-    }
-
-    public void zeroShoulderEncoder() {
-        mEncoder.setPosition(0);
     }
 
     public void setPIDEnabled(boolean enabled) {
