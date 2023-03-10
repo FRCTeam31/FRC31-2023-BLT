@@ -14,7 +14,7 @@ import prime.movers.LazyCANSparkMax;
 
 public class Shoulder extends PIDSubsystem {
     private LazyCANSparkMax shoulder1;
-    private LazyCANSparkMax shoulder2;
+    // private LazyCANSparkMax shoulder2;
     private WPI_CANCoder mEncoder;
     private double _lastPIDoutput = 0;
 
@@ -30,9 +30,10 @@ public class Shoulder extends PIDSubsystem {
         shoulder1.setIdleMode(IdleMode.kBrake);
         shoulder1.setOpenLoopRampRate(ShoulderMap.kOpenLoopRampRate);
 
-        shoulder2 = new LazyCANSparkMax(ShoulderMap.kShoulder2Id, MotorType.kBrushless);
-        shoulder2.restoreFactoryDefaults();
-        shoulder2.follow(shoulder1);
+        // shoulder2 = new LazyCANSparkMax(ShoulderMap.kShoulder2Id, MotorType.kBrushless);
+        // shoulder2.restoreFactoryDefaults();
+        // shoulder2.setIdleMode(IdleMode.kBrake);
+        // shoulder2.follow(shoulder1);
 
         mEncoder = new WPI_CANCoder(ShoulderMap.kEncoderId);
 
@@ -42,9 +43,17 @@ public class Shoulder extends PIDSubsystem {
         disable();
     }
 
+    /**
+     * Run shoulder at low speed with a deadband
+     * @param speed
+     */
     public void runShoulder(double speed) {
-        speed *= 0.3;
+        // speed *= 0.7;
         shoulder1.set(MathUtil.applyDeadband(speed, 0.15));
+    }
+
+    public void runShoulderNoFilter(double speed) {
+        shoulder1.set(speed);
     }
 
     public void setShoulderAngle(double angleInDegrees) {
@@ -73,8 +82,8 @@ public class Shoulder extends PIDSubsystem {
 
     @Override
     protected void useOutput(double output, double setpoint) {
-        _lastPIDoutput = MathUtil.clamp(output, -0.2, 0.2);
-        runShoulder(_lastPIDoutput);
+        _lastPIDoutput = MathUtil.clamp(output, -0.4, 0.4);
+        runShoulderNoFilter(_lastPIDoutput);
     }
 
     @Override

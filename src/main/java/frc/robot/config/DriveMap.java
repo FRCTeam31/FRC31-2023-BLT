@@ -7,12 +7,9 @@ public class DriveMap {
   public static final double kRobotTrackWidthMeters = 0.4445;
   public static final double kRobotWheelBaseMeters = 0.6477;
   public static final double kRobotWheelBaseCircumferenceMeters = 2.46788;
-
   public static final double kDriveWheelDiameterMeters = 0.102;
   public static final byte kDriveMotorOutputTeeth = 13;
   public static final byte kDriveMotorDrivenGearTeeth = 42;
-
-  // Calculated values
 
   // Calculated values
   public static final double kDriveGearRatio = kDriveMotorDrivenGearTeeth / kDriveMotorOutputTeeth;
@@ -64,4 +61,6 @@ public class DriveMap {
   public static final double kDriveMaxSpeedMetersPerSecond = 4.938; // 16.2ft per second in meters per second
   public static final double kDriveMaxAngularSpeed = DriveMap.kRobotWheelBaseCircumferenceMeters
       / kDriveMaxSpeedMetersPerSecond;
+  public static final double kHighGearCoefficient = 0.7;
+  public static final double kLowGearCoefficient = 0.15;
 }

@@ -9,7 +9,7 @@ public class ShoulderMap {
     public static final int kEncoderId = 20;
 
     // PID
-    public static final PidConstants AnglePid = new PidConstants(0.01);
+    public static final PidConstants AnglePid = new PidConstants(0.04);
 
     // constants
     public static final double kOpenLoopRampRate = 1.00;

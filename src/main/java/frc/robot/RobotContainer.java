@@ -3,7 +3,6 @@ package frc.robot;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.DriveCommands;
@@ -74,14 +73,15 @@ public class RobotContainer {
         mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mController, mDrivetrain, modules, true));
 
         // Shoulder
-        // mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder, mController));
-        mController.button(1).onTrue(Commands.runOnce(() -> {
-            mShoulder.enable();
-            mShoulder.setSetpoint(200);
-        }, mShoulder));
+        mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder, mController));
+        // mController.button(1).onTrue(Commands.runOnce(() -> {
+        //     mShoulder.enable();
+        //     mShoulder.setSetpoint(200);
+        // }, mShoulder));
 
         // Button bindings
-        mController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+        mController.button(3).onTrue(DriveCommands.resetGyroComamand(mDrivetrain));
+        mController.button(2).onTrue(DriveCommands.toggleShifter(mDrivetrain));
     }
 
     public Command getAutonomousCommand() {
