@@ -19,6 +19,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.DriveMap;
 
 public class Drivetrain extends SubsystemBase {
+
+    public SwerveModulePosition[] swerveModules = new SwerveModulePosition[4];
+
     // Default PID values for steering each module and driving each module
     private final Field2d mField = new Field2d();
 
@@ -67,6 +70,7 @@ public class Drivetrain extends SubsystemBase {
         this.FrontRightSwerveModule = FrontRightSwerveModule;
         this.RearLeftSwerveModule = RearLeftSwerveModule;
         this.RearRightSwerveModule = RearRightSwerveModule;
+
     }
 
     @Override
@@ -81,6 +85,26 @@ public class Drivetrain extends SubsystemBase {
         });
 
         mField.setRobotPose(robotPose);
+
+        if (swerveModules[0] != null) {
+            SmartDashboard.putNumber("FrontLeftCurrentSpeed", swerveModules[0].distanceMeters);
+            SmartDashboard.putNumber("FrontLeftCurrentAngle", swerveModules[0].angle.getDegrees());
+        }
+
+        if (swerveModules[1] != null) {
+            SmartDashboard.putNumber("FrontRightCurrentSpeed", swerveModules[1].distanceMeters);
+            SmartDashboard.putNumber("FrontRightCurrentAngle", swerveModules[1].angle.getDegrees());
+        }
+
+        if (swerveModules[2] != null) {
+            SmartDashboard.putNumber("RearLeftCurrentSpeed", swerveModules[2].distanceMeters);
+            SmartDashboard.putNumber("RearLeftCurrentAngle", swerveModules[2].angle.getDegrees());
+        }
+
+        if (swerveModules[3] != null) {
+            SmartDashboard.putNumber("RearRightCurrentSpeed", swerveModules[3].distanceMeters);
+            SmartDashboard.putNumber("RearLeftCurrentAngle", swerveModules[3].angle.getDegrees());
+        }
     }
 
     public void resetGyro() {
@@ -107,6 +131,7 @@ public class Drivetrain extends SubsystemBase {
         FrontRightSwerveModule.setDesiredState(swerveModuleStates[1]);
         RearLeftSwerveModule.setDesiredState(swerveModuleStates[2]);
         RearRightSwerveModule.setDesiredState(swerveModuleStates[3]);
+
     }
 
     public Pose2d getPose() {
@@ -114,7 +139,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        SwerveModulePosition[] swerveModules = new SwerveModulePosition[4];
+
         swerveModules[0] = FrontLeftSwerveModule.getPosition();
         swerveModules[1] = FrontRightSwerveModule.getPosition();
         swerveModules[2] = RearLeftSwerveModule.getPosition();
