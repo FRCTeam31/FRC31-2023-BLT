@@ -72,7 +72,7 @@ public class Shoulder extends PIDSubsystem {
     @Override
     protected void useOutput(double output, double setpoint) {
         _lastPIDoutput = MathUtil.clamp(output, -0.4, 0.4);
-        runShoulderNoFilter(_lastPIDoutput);
+        // TODO: set the output to the motor
     }
 
     @Override
