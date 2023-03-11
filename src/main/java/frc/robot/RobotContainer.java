@@ -89,6 +89,7 @@ public class RobotContainer {
         // Button bindings
         mController.button(3).onTrue(DriveCommands.resetGyroComamand(mDrivetrain));
         mController.button(2).onTrue(DriveCommands.toggleShifter(mDrivetrain));
+       
     }
 
     public Command getAutonomousCommand() {
