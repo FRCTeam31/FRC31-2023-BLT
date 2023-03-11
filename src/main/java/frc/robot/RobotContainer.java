@@ -22,37 +22,37 @@ public class RobotContainer {
 
     public RobotContainer() {
         mFrontLeftSwerve = new SwerveModule(
-            DriveMap.kFrontLeftDrivingMotorId, 
-            DriveMap.kFrontLeftSteeringMotorId, 
-            DriveMap.kFrontLeftEncoderId,
-            DriveMap.kFrontLeftEncoderOffset,
-            DriveMap.kFrontLeftInverted);
+                DriveMap.kFrontLeftDrivingMotorId,
+                DriveMap.kFrontLeftSteeringMotorId,
+                DriveMap.kFrontLeftEncoderId,
+                DriveMap.kFrontLeftEncoderOffset,
+                DriveMap.kFrontLeftInverted);
         SmartDashboard.putData("Front Left Module", mFrontLeftSwerve);
 
         mFrontRightSwerve = new SwerveModule(
-            DriveMap.kFrontRightDrivingMotorId, 
-            DriveMap.kFrontRightSteeringMotorId, 
-            DriveMap.kFrontRightEncoderId, 
-            DriveMap.kFrontRightEncoderOffset,
-            DriveMap.kFrontRightInverted);
+                DriveMap.kFrontRightDrivingMotorId,
+                DriveMap.kFrontRightSteeringMotorId,
+                DriveMap.kFrontRightEncoderId,
+                DriveMap.kFrontRightEncoderOffset,
+                DriveMap.kFrontRightInverted);
         SmartDashboard.putData("Front Right Module", mFrontRightSwerve);
 
         mRearLeftSwerve = new SwerveModule(
-            DriveMap.kRearLeftDrivingMotorId, 
-            DriveMap.kRearLeftSteeringMotorId, 
-            DriveMap.kRearLeftEncoderId, 
-            DriveMap.kRearLeftEncoderOffset,
-            DriveMap.kRearLeftInverted);
+                DriveMap.kRearLeftDrivingMotorId,
+                DriveMap.kRearLeftSteeringMotorId,
+                DriveMap.kRearLeftEncoderId,
+                DriveMap.kRearLeftEncoderOffset,
+                DriveMap.kRearLeftInverted);
         SmartDashboard.putData("Rear Left Module", mRearLeftSwerve);
 
         mRearRightSwerve = new SwerveModule(
-            DriveMap.kRearRightDrivingMotorId, 
-            DriveMap.kRearRightSteeringMotorId, 
-            DriveMap.kRearRightEncoderId, 
-            DriveMap.kRearRightEncoderOffset,
-            DriveMap.kRearRightInverted);
+                DriveMap.kRearRightDrivingMotorId,
+                DriveMap.kRearRightSteeringMotorId,
+                DriveMap.kRearRightEncoderId,
+                DriveMap.kRearRightEncoderOffset,
+                DriveMap.kRearRightInverted);
         SmartDashboard.putData("Rear Right Module", mRearRightSwerve);
-        
+
         mDrivetrain = new Drivetrain(mFrontLeftSwerve, mFrontRightSwerve, mRearLeftSwerve, mRearRightSwerve);
         SmartDashboard.putData(mDrivetrain);
 
@@ -67,13 +67,12 @@ public class RobotContainer {
 
     private void configureBindings() {
         mController = new CommandJoystick(0);
-        SwerveModule[] modules = new SwerveModule[]{
-            mFrontLeftSwerve,
-            mFrontRightSwerve,
-            mRearLeftSwerve,
-            mRearRightSwerve
+        SwerveModule[] modules = new SwerveModule[] {
+                mFrontLeftSwerve,
+                mFrontRightSwerve,
+                mRearLeftSwerve,
+                mRearRightSwerve
 
-    
         };
 
         // Default commands
@@ -82,14 +81,13 @@ public class RobotContainer {
         // Shoulder
         mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder, mController));
         // mController.button(1).onTrue(Commands.runOnce(() -> {
-        //     mShoulder.enable();
-        //     mShoulder.setSetpoint(200);
+        // mShoulder.enable();
+        // mShoulder.setSetpoint(200);
         // }, mShoulder));
 
         // Button bindings
         mController.button(3).onTrue(DriveCommands.resetGyroComamand(mDrivetrain));
         mController.button(2).onTrue(DriveCommands.toggleShifter(mDrivetrain));
-       
     }
 
     public Command getAutonomousCommand() {
