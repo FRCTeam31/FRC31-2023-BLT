@@ -1,17 +1,8 @@
 package frc.robot.commands;
 
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
-
-// import com.pathplanner.lib.PathPlannerTrajectory;
-// import com.pathplanner.lib.commands.PPSwerveControllerCommand;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.config.DriveMap;
 import frc.robot.subsystems.Drivetrain;
@@ -35,29 +26,5 @@ public class DriveCommands {
 
     public static Command resetGyroComamand(Drivetrain driveTrain) {
         return Commands.runOnce(() -> driveTrain.resetGyro(), driveTrain);
-    }
-
-    public static Command followTrajectoryWithEventCommand(Drivetrain drivetrain, PathPlannerTrajectory trajectory,
-            boolean isFirstPath) {
-        var thetaController = new PIDController(DriveMap.kAutonRotationKp, DriveMap.kAutonRotationKi,
-                DriveMap.kAutonDriveXKd);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> {
-                    // Reset odometry for the first path you run during auto
-                    if (isFirstPath) {
-                        drivetrain.resetOdometry(trajectory.getInitialHolonomicPose());
-                    }
-
-                }),
-                new PPSwerveControllerCommand(trajectory,
-                        drivetrain::getPose,
-                        drivetrain.mKinematics,
-                        new PIDController(DriveMap.kAutonDriveXKp, DriveMap.kAutonDriveXKi, DriveMap.kAutonDriveXKd),
-                        new PIDController(DriveMap.kAutonDriveYKp, DriveMap.kAutonDriveYKi, DriveMap.kAutonDriveYKd),
-                        thetaController,
-                        drivetrain::drive,
-                        drivetrain));
     }
 }
