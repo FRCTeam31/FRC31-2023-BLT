@@ -86,9 +86,4 @@ public class DriveMap {
     // Slow Drive Coefficent
 
     public static final double slowDriveCoefficent = 0.2;
-
-    public DriveMap() {
-        SmartDashboard.putData(kDrivePidConstantsName, kDrivePidConstants);
-        SmartDashboard.putData(kSteeringPidConstantsName, kSteeringPidConstants);
-    }
 }

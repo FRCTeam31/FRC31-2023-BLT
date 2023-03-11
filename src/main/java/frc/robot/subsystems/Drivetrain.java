@@ -72,6 +72,11 @@ public class Drivetrain extends SubsystemBase {
         this.RearLeftSwerveModule = RearLeftSwerveModule;
         this.RearRightSwerveModule = RearRightSwerveModule;
 
+        swerveModules[0] = FrontLeftSwerveModule.getPosition();
+        swerveModules[1] = FrontRightSwerveModule.getPosition();
+        swerveModules[2] = RearLeftSwerveModule.getPosition();
+        swerveModules[3] = RearRightSwerveModule.getPosition();
+
     }
 
     @Override

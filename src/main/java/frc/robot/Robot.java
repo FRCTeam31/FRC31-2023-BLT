@@ -13,7 +13,6 @@ import frc.robot.commands.DriveCommands;
 
 public class Robot extends TimedRobot {
     private RobotContainer mRobotContainer;
-    private Command mAutoCommand;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -29,7 +28,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        mAutoCommand = mRobotContainer.getAutonomousCommand();
+        var mAutoCommand = mRobotContainer.getAutonomousCommand();
         mAutoCommand.schedule();
     }
 
@@ -51,10 +50,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if (mAutoCommand != null) {
-            mAutoCommand.cancel();
-        }
-
         DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
     }
 

@@ -98,8 +98,8 @@ public class SwerveModule extends PIDSubsystem {
         var desiredRotationsPer20ms = desiredVelocity20ms / DriveMap.kDriveWheelCircumference;
         var desiredVelocity = (desiredRotationsPer20ms * DriveMap.falconTotalSensorUnits * 5);
 
-        if (DriverStation.isAutonomousEnabled())
-            desiredVelocity *= 0.3;
+        // if (DriverStation.isAutonomousEnabled())
+        // desiredVelocity *= 0.3;
         mDriveMotor.set(ControlMode.Velocity, desiredVelocity);
     }
 
