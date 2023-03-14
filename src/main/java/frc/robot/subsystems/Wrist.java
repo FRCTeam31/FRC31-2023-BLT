@@ -1,20 +1,17 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import prime.movers.LazyCANSparkMax;
 import prime.movers.LazySolenoid;
-import prime.movers.LazyWPITalonSRX;
 import frc.robot.config.WristMap;
 
 public class Wrist extends SubsystemBase {
     private LazyCANSparkMax wrist1;
-    private LazyCANSparkMax wrist2;
     private LazySolenoid wristActuator; 
-    private LazyWPITalonSRX forearm;
+    
     
 
 
@@ -22,36 +19,37 @@ public class Wrist extends SubsystemBase {
         wrist1 = new LazyCANSparkMax(WristMap.kWrist1Id, MotorType.kBrushless);
         wrist1.restoreFactoryDefaults();
         
-        wrist2 = new LazyCANSparkMax(WristMap.kWrist2Id, MotorType.kBrushless);
-        wrist2.restoreFactoryDefaults();
+        
+     
 
         wristActuator = new LazySolenoid(PneumaticsModuleType.CTREPCM, WristMap.kWristActuatorId);
-        forearm = new LazyWPITalonSRX(WristMap.kForearmId);
+        
     }
 
+    @Deprecated
     public void intakeCone() {
-        wrist1.set(WristMap.kIntakeConeSpeed);
-        wrist2.set(WristMap.kIntakeConeSpeed);
-    }
+       runMotors(WristMap.kIntakeConeSpeed);  
+     }
 
+     @Deprecated
     public void intakeCube() {
-        wrist1.set(WristMap.kIntakeCubeSpeed);
-        wrist2.set(WristMap.kIntakeCubeSpeed);
+        runMotors(WristMap.kIntakeCubeSpeed);
     }
 
+    @Deprecated
     public void ejectCone() {
-        wrist1.set(WristMap.kEjectConeSpeed);
-        wrist2.set(WristMap.kEjectConeSpeed);
+        runMotors(WristMap.kEjectConeSpeed);
+    
     }
 
+    @Deprecated
     public void ejectCube() {
-        wrist1.set(WristMap.kEjectCubeSpeed);
-        wrist2.set(WristMap.kEjectCubeSpeed);
+        runMotors(WristMap.kEjectCubeSpeed);
     }
 
     public void stopIntake() {
         wrist1.stopMotor();
-        wrist2.stopMotor();
+        
     }
 
     public void toggleWrist() {
@@ -66,14 +64,13 @@ public class Wrist extends SubsystemBase {
         return wristActuator.get();
     }
 
-    public void pushAndPull(int direction){
-        forearm.set(WristMap.kPushAndPullSpeed * direction);
+    
 
+    public void runMotors(double speed){
+        wrist1.set(speed * 0.60);
+        
     }
-
-    public void stopForearm(){
-        forearm.stopMotor();
-    }
-
+    
+    
 
 }

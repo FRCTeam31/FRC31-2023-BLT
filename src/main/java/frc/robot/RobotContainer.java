@@ -90,14 +90,14 @@ public class RobotContainer {
         // Button bindings
         mController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
 
-        //Forearm bindings
+        //Wrist bindings
         mController.pov(0)
-        .onTrue(WristCommands.runWristCommand(mWrist, 1))
-        .onFalse(WristCommands.stopWristCommand(mWrist));
+        .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true))
+        .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
         mController.pov(180)
-        .onTrue(WristCommands.runWristCommand(mWrist,-1))
-        .onFalse(WristCommands.stopWristCommand(mWrist));
+        .onTrue(WristCommands.runIntakeConeAndEjectCubeCommand(mWrist,false))
+        .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
 
     }
