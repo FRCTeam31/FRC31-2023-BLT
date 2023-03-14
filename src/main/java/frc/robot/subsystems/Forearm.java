@@ -23,6 +23,8 @@ public class Forearm extends PIDSubsystem {
         forearmMotor.setNeutralMode(NeutralMode.Brake);
         forearmMotor.configOpenloopRamp(ForearmMap.kOpenLoopRampRate);
         forearmMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute, 0, 20);
+
+        enable();
     }
 
     public void setSetpoint(double angle) {
