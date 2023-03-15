@@ -64,3 +64,4 @@ public class DriveMap {
   public static final double kHighGearCoefficient = 0.7;
   public static final double kLowGearCoefficient = 0.15;
 }
+
