@@ -38,7 +38,7 @@ public class Shoulder extends PIDSubsystem {
         var pidController = getController();
         pidController.reset();
         pidController.setTolerance(0.1);
-        disable();
+        enable();
     }
 
     /**
