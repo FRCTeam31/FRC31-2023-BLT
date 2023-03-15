@@ -3,6 +3,7 @@ package frc.robot;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.DriveCommands;
@@ -79,16 +80,32 @@ public class RobotContainer {
                 mRearRightSwerve
         };
 
-        // Default commands
+        // Drive commands
         mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriveController, mDrivetrain, modules, true));
+        mDriveController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
 
-        // Shoulder
+        // Shoulder commands
         mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder, mOperatorController));
+
+        // Forearm commands
         mForearm.setDefaultCommand(ForearmCommands.getRunSimpleCommand(mForearm, mOperatorController));
 
-        // Button bindings
-        mDriveController.button(3).onTrue(DriveCommands.resetGyroComamand(mDrivetrain));
-        mDriveController.button(2).onTrue(DriveCommands.toggleShifter(mDrivetrain));
+        // Wrist commands
+        mOperatorController.button(1)
+                .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
+                .onFalse(WristCommands.stopIntakeCommand(mWrist));
+
+        mOperatorController.button(2)
+                .onTrue(WristCommands.toggleActuatorCommand(mWrist));
+
+        // mController.pov(0)
+        // .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true))
+        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
+
+        // mController.pov(180)
+        // .onTrue(WristCommands.runIntakeConeAndEjectCubeCommand(mWrist,false))
+        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
+
     }
 
     public Command getAutonomousCommand() {
