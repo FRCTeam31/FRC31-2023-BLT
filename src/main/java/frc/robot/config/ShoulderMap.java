@@ -11,6 +11,8 @@ public class ShoulderMap {
     // PID
     public static final PidConstants AnglePid = new PidConstants(0.04);
 
-    // constants
+    // Constants
     public static final double kOpenLoopRampRate = 1.00;
+    public static final double kMaxAngle = 200;
+    public static final double kMinAngle = 150;
 }

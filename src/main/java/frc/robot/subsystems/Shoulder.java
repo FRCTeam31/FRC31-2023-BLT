@@ -17,9 +17,9 @@ public class Shoulder extends PIDSubsystem {
 
     public Shoulder() {
         super(new PIDController(
-            ShoulderMap.AnglePid.kP, 
-            ShoulderMap.AnglePid.kI, 
-            ShoulderMap.AnglePid.kD));
+                ShoulderMap.AnglePid.kP,
+                ShoulderMap.AnglePid.kI,
+                ShoulderMap.AnglePid.kD));
 
         shoulder1 = new LazyWPITalonSRX(ShoulderMap.kShoulder1Id);
         shoulder1.clearStickyFaults();
@@ -43,27 +43,47 @@ public class Shoulder extends PIDSubsystem {
 
     /**
      * Run shoulder at low speed with a deadband
+     * 
      * @param speed
      */
     public void runShoulder(double speed) {
+        if (isEnabled())
+            disable();
+
         shoulder1.set(MathUtil.applyDeadband(speed, 0.15));
     }
 
     public void setShoulderAngle(double angleInDegrees) {
         setSetpoint(angleInDegrees);
+
+        if (!isEnabled())
+            enable();
     }
 
     public void setPIDEnabled(boolean enabled) {
         if (enabled)
-            enable(); 
-        else 
+            enable();
+        else
             disable();
     }
 
+    public void togglePIDEnabled() {
+        if (isEnabled())
+            disable();
+        else
+            enable();
+    }
+
+    /**
+     * Gets the last calculated PID output value
+     */
     public double getLastPIDOutput() {
         return _lastPIDoutput;
     }
 
+    /**
+     * Gets the position of the encoder in degrees [0,360)
+     */
     @Override
     public double getMeasurement() {
         return mEncoder.getAbsolutePosition();
@@ -72,13 +92,13 @@ public class Shoulder extends PIDSubsystem {
     @Override
     protected void useOutput(double output, double setpoint) {
         _lastPIDoutput = MathUtil.clamp(output, -0.4, 0.4);
-        // TODO: set the output to the motor
+        // TODO: set the output to the motor once we k now how it behaves
     }
 
     @Override
-    public void initSendable(SendableBuilder builder){
-      builder.addDoubleProperty("Shoulder Position", this::getMeasurement, null);
-      builder.addBooleanProperty("PID enabled", super::isEnabled, null);
-      builder.addDoubleProperty("Last PID output", this::getLastPIDOutput, null);
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("Shoulder Position", this::getMeasurement, null);
+        builder.addBooleanProperty("PID enabled", super::isEnabled, this::setPIDEnabled);
+        builder.addDoubleProperty("Last PID output", this::getLastPIDOutput, null);
     }
 }

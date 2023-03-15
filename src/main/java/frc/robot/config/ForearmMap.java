@@ -7,7 +7,7 @@ public class ForearmMap {
     public static final int kForearmMotor1Id = 23;
 
     // PID
-    public static final PidConstants AnglePid = new PidConstants(0.04);
+    public static final PidConstants PushAndPullPIDConstants = new PidConstants(0.04);
 
     // Constants
     public static final double kOpenLoopRampRate = 1.00;

@@ -16,7 +16,8 @@ public class Forearm extends PIDSubsystem {
     private double _lastEncoderRead = 0;
 
     public Forearm() {
-        super(new PIDController(ForearmMap.AnglePid.kP, ForearmMap.AnglePid.kI, ForearmMap.AnglePid.kD));
+        super(new PIDController(ForearmMap.PushAndPullPIDConstants.kP, ForearmMap.PushAndPullPIDConstants.kI,
+                ForearmMap.PushAndPullPIDConstants.kD));
         forearmMotor = new LazyWPITalonSRX(ForearmMap.kForearmMotor1Id);
         forearmMotor.clearStickyFaults();
         forearmMotor.configFactoryDefault();
