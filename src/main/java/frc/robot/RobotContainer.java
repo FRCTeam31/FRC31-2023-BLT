@@ -23,37 +23,37 @@ public class RobotContainer {
 
     public RobotContainer() {
         mFrontLeftSwerve = new SwerveModule(
-            DriveMap.kFrontLeftDrivingMotorId, 
-            DriveMap.kFrontLeftSteeringMotorId, 
-            DriveMap.kFrontLeftEncoderId,
-            DriveMap.kFrontLeftEncoderOffset,
-            DriveMap.kFrontLeftInverted);
+                DriveMap.kFrontLeftDrivingMotorId,
+                DriveMap.kFrontLeftSteeringMotorId,
+                DriveMap.kFrontLeftEncoderId,
+                DriveMap.kFrontLeftEncoderOffset,
+                DriveMap.kFrontLeftInverted);
         SmartDashboard.putData("Front Left Module", mFrontLeftSwerve);
 
         mFrontRightSwerve = new SwerveModule(
-            DriveMap.kFrontRightDrivingMotorId, 
-            DriveMap.kFrontRightSteeringMotorId, 
-            DriveMap.kFrontRightEncoderId, 
-            DriveMap.kFrontRightEncoderOffset,
-            DriveMap.kFrontRightInverted);
+                DriveMap.kFrontRightDrivingMotorId,
+                DriveMap.kFrontRightSteeringMotorId,
+                DriveMap.kFrontRightEncoderId,
+                DriveMap.kFrontRightEncoderOffset,
+                DriveMap.kFrontRightInverted);
         SmartDashboard.putData("Front Right Module", mFrontRightSwerve);
 
         mRearLeftSwerve = new SwerveModule(
-            DriveMap.kRearLeftDrivingMotorId, 
-            DriveMap.kRearLeftSteeringMotorId, 
-            DriveMap.kRearLeftEncoderId, 
-            DriveMap.kRearLeftEncoderOffset,
-            DriveMap.kRearLeftInverted);
+                DriveMap.kRearLeftDrivingMotorId,
+                DriveMap.kRearLeftSteeringMotorId,
+                DriveMap.kRearLeftEncoderId,
+                DriveMap.kRearLeftEncoderOffset,
+                DriveMap.kRearLeftInverted);
         SmartDashboard.putData("Rear Left Module", mRearLeftSwerve);
 
         mRearRightSwerve = new SwerveModule(
-            DriveMap.kRearRightDrivingMotorId, 
-            DriveMap.kRearRightSteeringMotorId, 
-            DriveMap.kRearRightEncoderId, 
-            DriveMap.kRearRightEncoderOffset,
-            DriveMap.kRearRightInverted);
+                DriveMap.kRearRightDrivingMotorId,
+                DriveMap.kRearRightSteeringMotorId,
+                DriveMap.kRearRightEncoderId,
+                DriveMap.kRearRightEncoderOffset,
+                DriveMap.kRearRightInverted);
         SmartDashboard.putData("Rear Right Module", mRearRightSwerve);
-        
+
         mDrivetrain = new Drivetrain(mFrontLeftSwerve, mFrontRightSwerve, mRearLeftSwerve, mRearRightSwerve);
         SmartDashboard.putData(mDrivetrain);
 
@@ -68,37 +68,43 @@ public class RobotContainer {
 
     private void configureBindings() {
         mController = new CommandJoystick(0);
-        SwerveModule[] modules = new SwerveModule[]{
-            mFrontLeftSwerve,
-            mFrontRightSwerve,
-            mRearLeftSwerve,
-            mRearRightSwerve
+        SwerveModule[] modules = new SwerveModule[] {
+                mFrontLeftSwerve,
+                mFrontRightSwerve,
+                mRearLeftSwerve,
+                mRearRightSwerve
 
-    
         };
 
         // Default commands
         mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mController, mDrivetrain, modules, true));
 
         // Shoulder
-        // mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder, mController));
-        mController.button(1).onTrue(Commands.runOnce(() -> {
-            mShoulder.enable();
-            mShoulder.setSetpoint(200);
-        }, mShoulder));
+        // mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder,
+        // mController));
+        // mController.button(1).onTrue(Commands.runOnce(() -> {
+        // mShoulder.enable();
+        // mShoulder.setSetpoint(200);
+        // }, mShoulder));
 
         // Button bindings
         mController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
 
-        //Wrist bindings
-        mController.pov(0)
-        .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true))
-        .onFalse(WristCommands.stopIntakeCommand(mWrist));
+        // Wrist bindings
+        mController.button(1)
+                .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
+                .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
-        mController.pov(180)
-        .onTrue(WristCommands.runIntakeConeAndEjectCubeCommand(mWrist,false))
-        .onFalse(WristCommands.stopIntakeCommand(mWrist));
+        mController.button(2)
+                .onTrue(WristCommands.toggleActuatorCommand(mWrist));
 
+        // mController.pov(0)
+        // .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true))
+        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
+
+        // mController.pov(180)
+        // .onTrue(WristCommands.runIntakeConeAndEjectCubeCommand(mWrist,false))
+        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
     }
 
