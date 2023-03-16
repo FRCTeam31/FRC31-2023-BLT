@@ -17,9 +17,9 @@ public class Shoulder extends PIDSubsystem {
 
     public Shoulder() {
         super(new PIDController(
-                ShoulderMap.AnglePid.kP,
-                ShoulderMap.AnglePid.kI,
-                ShoulderMap.AnglePid.kD));
+                ShoulderMap.kSprocketPid.kP,
+                ShoulderMap.kSprocketPid.kI,
+                ShoulderMap.kSprocketPid.kD));
 
         shoulder1 = new LazyWPITalonSRX(ShoulderMap.kShoulder1Id);
         shoulder1.clearStickyFaults();

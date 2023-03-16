@@ -13,135 +13,141 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.config.DriveMap;
 import prime.utilities.CTREConverter;
 import prime.movers.LazyWPITalonFX;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
 public class SwerveModule extends PIDSubsystem {
-   private LazyWPITalonFX mSteeringMotor;
-   private LazyWPITalonFX mDriveMotor;
-   private WPI_CANCoder mEncoder;
-   private int mEncoderOffset;
+    private LazyWPITalonFX mSteeringMotor;
+    private LazyWPITalonFX mDriveMotor;
+    private WPI_CANCoder mEncoder;
+    private int mEncoderOffset;
 
-   public SwerveModule(
-         int driveMotorId,
-         int steeringMotorId,
-         int encoderId,
-         int encoderAbsoluteOffset,
-         boolean driveInverted) {
-      super(new PIDController(DriveMap.kSteeringPidConstants.kP, DriveMap.kSteeringPidConstants.kI,
-            DriveMap.kSteeringPidConstants.kD));
-      mEncoderOffset = encoderAbsoluteOffset;
+    public SwerveModule(
+            int driveMotorId,
+            int steeringMotorId,
+            int encoderId,
+            int encoderAbsoluteOffset,
+            boolean driveInverted) {
+        super(new PIDController(DriveMap.kSteeringPidConstants.kP, DriveMap.kSteeringPidConstants.kI,
+                DriveMap.kSteeringPidConstants.kD));
+        mEncoderOffset = encoderAbsoluteOffset;
 
-      // Set up the steering motor
-      mSteeringMotor = new LazyWPITalonFX(steeringMotorId);
-      mSteeringMotor.configFactoryDefault();
-      mSteeringMotor.clearStickyFaults();
-      mSteeringMotor.setNeutralMode(NeutralMode.Brake);
-      mSteeringMotor.setInverted(TalonFXInvertType.CounterClockwise);
-      mSteeringMotor.configOpenloopRamp(0.2);
+        // Set up the steering motor
+        mSteeringMotor = new LazyWPITalonFX(steeringMotorId);
+        mSteeringMotor.configFactoryDefault();
+        mSteeringMotor.clearStickyFaults();
+        mSteeringMotor.setNeutralMode(NeutralMode.Brake);
+        mSteeringMotor.setInverted(TalonFXInvertType.CounterClockwise);
+        mSteeringMotor.configOpenloopRamp(0.2);
 
-      // Set up the drive motor
-      mDriveMotor = new LazyWPITalonFX(driveMotorId);
+        // Set up the drive motor
+        mDriveMotor = new LazyWPITalonFX(driveMotorId);
 
-      mDriveMotor.configFactoryDefault();
-      mDriveMotor.clearStickyFaults();
-      mDriveMotor.setNeutralMode(NeutralMode.Brake);
-      mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the Falcon is the falcon's encoder
-      mDriveMotor.configClosedloopRamp(1);
-      mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
-         : TalonFXInvertType.Clockwise);
+        mDriveMotor.configFactoryDefault();
+        mDriveMotor.clearStickyFaults();
+        mDriveMotor.setNeutralMode(NeutralMode.Brake);
+        mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the
+                                                                                   // Falcon is the falcon's encoder
+        mDriveMotor.configClosedloopRamp(1);
+        mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
+                : TalonFXInvertType.Clockwise);
 
-      // Set up our encoder
-      mEncoder = new WPI_CANCoder(encoderId);
-      mEncoder.clearStickyFaults();
-      mEncoder.configFactoryDefault();
-      mEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
+        // Set up our encoder
+        mEncoder = new WPI_CANCoder(encoderId);
+        mEncoder.clearStickyFaults();
+        mEncoder.configFactoryDefault();
+        mEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
-      // Create a PID controller to calculate steering motor output
-      TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
-      driveMotorConfig.slot0.kP = DriveMap.kDrivePidConstants.kP;
-      mDriveMotor.configAllSettings(driveMotorConfig);
+        // Create a PID controller to calculate steering motor output
+        TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
+        driveMotorConfig.slot0.kP = DriveMap.kDrivePidConstants.kP;
+        mDriveMotor.configAllSettings(driveMotorConfig);
 
-      getController().enableContinuousInput(-Math.PI, Math.PI);
-      getController().setTolerance(Math.PI / 180);
-      enable();
-   }
+        getController().enableContinuousInput(-Math.PI, Math.PI);
+        getController().setTolerance(Math.PI / 180);
+        enable();
+    }
 
-   @Override
-   public void initSendable(SendableBuilder builder) {
-      builder.addDoubleProperty("Encoder position", this::getEncoderPosition, this::setEncoderPosition);
-      builder.addDoubleProperty("Encoder absolute position", this::getEncoderAbsolutePosition, this::setEncoderPosition);
-   }
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("Encoder position", this::getEncoderPosition, this::setEncoderPosition);
+        builder.addDoubleProperty("Encoder absolute position", this::getEncoderAbsolutePosition,
+                this::setEncoderPosition);
+    }
 
-   public SwerveModulePosition getPosition() {
-      return new SwerveModulePosition(
-            CTREConverter.falconToMeters(
-                  mDriveMotor.getSelectedSensorPosition(),
-                  DriveMap.kDriveWheelCircumference,
-                  DriveMap.kDriveGearRatio),
-            getAbsoluteRotation2d());
-   }
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(
+                CTREConverter.falconToMeters(
+                        mDriveMotor.getSelectedSensorPosition(),
+                        DriveMap.kDriveWheelCircumference,
+                        DriveMap.kDriveGearRatio),
+                getAbsoluteRotation2d());
+    }
 
-   public void setDesiredAngle(Rotation2d angle) {
-      getController().setSetpoint(MathUtil.angleModulus(angle.getRadians()));
-   }
+    public void setDesiredAngle(Rotation2d angle) {
+        getController().setSetpoint(MathUtil.angleModulus(angle.getRadians()));
+    }
 
-   public void setDesiredSpeed(double speedMetersPerSecond) {
-      var desiredVelocity20ms = (speedMetersPerSecond / 50) * DriveMap.falconTotalSensorUnits;
-      var desiredRotationsPer20ms = desiredVelocity20ms / DriveMap.kDriveWheelCircumference;
-      var desiredVelocity = (desiredRotationsPer20ms * DriveMap.falconTotalSensorUnits * 5);
-      mDriveMotor.set(ControlMode.Velocity, desiredVelocity);
-   }
+    public void setDesiredSpeed(double speedMetersPerSecond) {
+        var desiredVelocity20ms = (speedMetersPerSecond / 50) * DriveMap.falconTotalSensorUnits;
+        var desiredRotationsPer20ms = desiredVelocity20ms / DriveMap.kDriveWheelCircumference;
+        var desiredVelocity = (desiredRotationsPer20ms * DriveMap.falconTotalSensorUnits * 5);
 
-   /**
-    * Sets the desired state of the module.
-    * 
-    * @param desiredState The state of the module that we'd like to be at in this
-    *                     period
-    */
-   public void setDesiredState(SwerveModuleState desiredState) {
-      // Optimize the state to avoid turning wheels further than 90 degrees
-      var encoderRotation = getAbsoluteRotation2d();
-      desiredState = SwerveModuleState.optimize(desiredState, encoderRotation);
+        if (DriverStation.isAutonomousEnabled())
+            desiredVelocity *= 0.3;
+        mDriveMotor.set(ControlMode.Velocity, desiredVelocity);
+    }
 
-      setDesiredSpeed(desiredState.speedMetersPerSecond);
-      setDesiredAngle(desiredState.angle);
-   }
+    /**
+     * Sets the desired state of the module.
+     * 
+     * @param desiredState The state of the module that we'd like to be at in this
+     *                     period
+     */
+    public void setDesiredState(SwerveModuleState desiredState) {
+        // Optimize the state to avoid turning wheels further than 90 degrees
+        var encoderRotation = getAbsoluteRotation2d();
+        desiredState = SwerveModuleState.optimize(desiredState, encoderRotation);
 
-   public void setEncoderPosition(double newPosition) {
-      mEncoder.setPosition(newPosition);
-   }
+        setDesiredSpeed(desiredState.speedMetersPerSecond);
+        setDesiredAngle(desiredState.angle);
+    }
 
-   public double getEncoderPosition() {
-      return mEncoder.getPosition();
-   }
+    public void setEncoderPosition(double newPosition) {
+        mEncoder.setPosition(newPosition);
+    }
 
-   public void setEncoderPositionToAbsolute() {
-      mEncoder.setPositionToAbsolute();
-   }
+    public double getEncoderPosition() {
+        return mEncoder.getPosition();
+    }
 
-   public double getEncoderAbsolutePosition() {
-      return mEncoder.getAbsolutePosition();
-   }
+    public void setEncoderPositionToAbsolute() {
+        mEncoder.setPositionToAbsolute();
+    }
 
-   public Rotation2d getRotation2d() {
-      return Rotation2d.fromDegrees(mEncoder.getPosition());
-   }
+    public double getEncoderAbsolutePosition() {
+        return mEncoder.getAbsolutePosition();
+    }
 
-   @Override
-   protected void useOutput(double output, double setpoint) {
-      mSteeringMotor.set(ControlMode.PercentOutput, MathUtil.clamp(output, -1, 1));
-   }
+    public Rotation2d getRotation2d() {
+        return Rotation2d.fromDegrees(mEncoder.getPosition());
+    }
 
-   @Override
-   protected double getMeasurement() {
-      var currentPositionRadians = getAbsoluteRotation2d().getRadians();
-      return currentPositionRadians;
-   }
+    @Override
+    protected void useOutput(double output, double setpoint) {
+        mSteeringMotor.set(ControlMode.PercentOutput, MathUtil.clamp(output, -1, 1));
+    }
 
-   private Rotation2d getAbsoluteRotation2d() {
-      return Rotation2d.fromDegrees(mEncoder.getAbsolutePosition() - mEncoderOffset);
-   }
+    @Override
+    protected double getMeasurement() {
+        var currentPositionRadians = getAbsoluteRotation2d().getRadians();
+        return currentPositionRadians;
+    }
+
+    private Rotation2d getAbsoluteRotation2d() {
+        return Rotation2d.fromDegrees(mEncoder.getAbsolutePosition() - mEncoderOffset);
+    }
 }
