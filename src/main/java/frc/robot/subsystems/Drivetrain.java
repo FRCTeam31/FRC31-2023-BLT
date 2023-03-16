@@ -8,12 +8,12 @@ import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,17 +39,20 @@ public class Drivetrain extends SubsystemBase {
     final WPI_Pigeon2 mGyro = new WPI_Pigeon2(DriveMap.kPigeonId, DriveMap.kCANivoreBusName);
     public final SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
             frontLeftLocation,
-            frontRightLocation,
             rearLeftLocation,
-            rearRightLocation);
+            rearRightLocation,
+            frontRightLocation);
 
     // Swerve Modules
     SwerveModule FrontLeftSwerveModule;
-    SwerveModule FrontRightSwerveModule;
     SwerveModule RearLeftSwerveModule;
     SwerveModule RearRightSwerveModule;
+    SwerveModule FrontRightSwerveModule;
 
     SwerveDriveOdometry mOdometry;
+
+    // State machines
+    private SwerveModuleState[] _lastDesiredStates = null;
 
     /** Creates a new SwerveDriveTrainSubsystem. */
     public Drivetrain(SwerveModule FrontLeftSwerveModule, SwerveModule FrontRightSwerveModule,
@@ -61,9 +64,9 @@ public class Drivetrain extends SubsystemBase {
                 mGyro.getRotation2d(),
                 new SwerveModulePosition[] {
                         FrontLeftSwerveModule.getPosition(),
-                        FrontRightSwerveModule.getPosition(),
                         RearLeftSwerveModule.getPosition(),
                         RearRightSwerveModule.getPosition(),
+                        FrontRightSwerveModule.getPosition(),
                 },
                 new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
 
@@ -71,46 +74,6 @@ public class Drivetrain extends SubsystemBase {
         this.FrontRightSwerveModule = FrontRightSwerveModule;
         this.RearLeftSwerveModule = RearLeftSwerveModule;
         this.RearRightSwerveModule = RearRightSwerveModule;
-
-        swerveModules[0] = FrontLeftSwerveModule.getPosition();
-        swerveModules[1] = FrontRightSwerveModule.getPosition();
-        swerveModules[2] = RearLeftSwerveModule.getPosition();
-        swerveModules[3] = RearRightSwerveModule.getPosition();
-
-    }
-
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-        var gyroAngle = mGyro.getRotation2d();
-        SmartDashboard.putNumber("Drivetrain gyro angle", gyroAngle.getDegrees());
-
-        var robotPose = mOdometry.update(gyroAngle, new SwerveModulePosition[] {
-                FrontLeftSwerveModule.getPosition(), FrontRightSwerveModule.getPosition(),
-                RearLeftSwerveModule.getPosition(), RearRightSwerveModule.getPosition()
-        });
-
-        mField.setRobotPose(robotPose);
-
-        if (swerveModules[0] != null) {
-            SmartDashboard.putNumber("FrontLeftCurrentSpeed", swerveModules[0].distanceMeters);
-            SmartDashboard.putNumber("FrontLeftCurrentAngle", swerveModules[0].angle.getDegrees());
-        }
-
-        if (swerveModules[1] != null) {
-            SmartDashboard.putNumber("FrontRightCurrentSpeed", swerveModules[1].distanceMeters);
-            SmartDashboard.putNumber("FrontRightCurrentAngle", swerveModules[1].angle.getDegrees());
-        }
-
-        if (swerveModules[2] != null) {
-            SmartDashboard.putNumber("RearLeftCurrentSpeed", swerveModules[2].distanceMeters);
-            SmartDashboard.putNumber("RearLeftCurrentAngle", swerveModules[2].angle.getDegrees());
-        }
-
-        if (swerveModules[3] != null) {
-            SmartDashboard.putNumber("RearRightCurrentSpeed", swerveModules[3].distanceMeters);
-            SmartDashboard.putNumber("RearLeftCurrentAngle", swerveModules[3].angle.getDegrees());
-        }
     }
 
     public void resetGyro() {
@@ -133,11 +96,11 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void drive(SwerveModuleState[] swerveModuleStates) {
+        _lastDesiredStates = swerveModuleStates;
         FrontLeftSwerveModule.setDesiredState(swerveModuleStates[0]);
-        FrontRightSwerveModule.setDesiredState(swerveModuleStates[1]);
-        RearLeftSwerveModule.setDesiredState(swerveModuleStates[2]);
-        RearRightSwerveModule.setDesiredState(swerveModuleStates[3]);
-
+        RearLeftSwerveModule.setDesiredState(swerveModuleStates[1]);
+        RearRightSwerveModule.setDesiredState(swerveModuleStates[2]);
+        FrontRightSwerveModule.setDesiredState(swerveModuleStates[3]);
     }
 
     public Pose2d getPose() {
@@ -145,11 +108,10 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-
         swerveModules[0] = FrontLeftSwerveModule.getPosition();
-        swerveModules[1] = FrontRightSwerveModule.getPosition();
-        swerveModules[2] = RearLeftSwerveModule.getPosition();
-        swerveModules[3] = RearRightSwerveModule.getPosition();
+        swerveModules[1] = RearLeftSwerveModule.getPosition();
+        swerveModules[2] = RearRightSwerveModule.getPosition();
+        swerveModules[3] = FrontRightSwerveModule.getPosition();
 
         mOdometry.resetPosition(getRotation2d(), swerveModules, pose);
     }
@@ -158,4 +120,36 @@ public class Drivetrain extends SubsystemBase {
         return Rotation2d.fromRadians(mGyro.getYaw());
     }
 
+    public double getRotationDegrees() {
+        return getRotation2d().getDegrees();
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("Drivetrain gyro angle", this::getRotationDegrees, null);
+
+        builder.addDoubleProperty("Drive - FL Speed", () -> _lastDesiredStates[0].speedMetersPerSecond, null);
+        builder.addDoubleProperty("Drive - FL Angle", () -> _lastDesiredStates[0].angle.getDegrees(), null);
+
+        builder.addDoubleProperty("Drive - RL Speed", () -> _lastDesiredStates[1].speedMetersPerSecond, null);
+        builder.addDoubleProperty("Drive - RL Angle", () -> _lastDesiredStates[1].angle.getDegrees(), null);
+
+        builder.addDoubleProperty("Drive - RR Speed", () -> _lastDesiredStates[2].speedMetersPerSecond, null);
+        builder.addDoubleProperty("Drive - RR Angle", () -> _lastDesiredStates[2].angle.getDegrees(), null);
+
+        builder.addDoubleProperty("Drive - FR Speed", () -> _lastDesiredStates[3].speedMetersPerSecond, null);
+        builder.addDoubleProperty("Drive - FR Angle", () -> _lastDesiredStates[3].angle.getDegrees(), null);
+    }
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+        var gyroAngle = mGyro.getRotation2d();
+        var robotPose = mOdometry.update(gyroAngle, new SwerveModulePosition[] {
+                FrontLeftSwerveModule.getPosition(), FrontRightSwerveModule.getPosition(),
+                RearLeftSwerveModule.getPosition(), RearRightSwerveModule.getPosition()
+        });
+
+        mField.setRobotPose(robotPose);
+    }
 }

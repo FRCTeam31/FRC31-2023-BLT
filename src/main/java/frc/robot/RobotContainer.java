@@ -139,13 +139,18 @@ public class RobotContainer implements Sendable {
     }
 
     public void updatePIDValuesFromSmartDashboard() {
-        AutoMap.kTranslatePidConstants = PathPlannerConverter
-                .toPPPidConstants((PidConstants) SmartDashboard.getData(AutoMap.kTranslatePidConstantsName));
-        AutoMap.kRotatePidConstants = PathPlannerConverter
-                .toPPPidConstants((PidConstants) SmartDashboard.getData(AutoMap.kRotatePidConstantsName));
+        // AutoMap.kTranslatePidConstants = PathPlannerConverter
+        // .toPPPidConstants((PidConstants)
+        // SmartDashboard.getData(AutoMap.kTranslatePidConstantsName));
 
-        DriveMap.kDrivePidConstants = (PidConstants) SmartDashboard.getData(DriveMap.kDrivePidConstantsName);
-        DriveMap.kSteeringPidConstants = (PidConstants) SmartDashboard.getData(DriveMap.kSteeringPidConstantsName);
+        // AutoMap.kRotatePidConstants = PathPlannerConverter
+        // .toPPPidConstants((PidConstants)
+        // SmartDashboard.getData(AutoMap.kRotatePidConstantsName));
+
+        // DriveMap.kDrivePidConstants = (PidConstants)
+        // SmartDashboard.getData(DriveMap.kDrivePidConstantsName);
+        // DriveMap.kSteeringPidConstants = (PidConstants)
+        // SmartDashboard.getData(DriveMap.kSteeringPidConstantsName);
     }
 
     @Override
