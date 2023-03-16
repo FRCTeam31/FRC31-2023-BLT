@@ -24,6 +24,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.DriveCommands;
 import frc.robot.config.AutoMap;
@@ -100,6 +101,8 @@ public class RobotContainer implements Sendable {
 
         // Button bindings
         mController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+
+        mController.button(1).onTrue(getAutonomousCommand());
     }
 
     // public Command getAutonomousCommand() {
@@ -111,10 +114,10 @@ public class RobotContainer implements Sendable {
 
     // }
 
-    public Command getAutonomousCommand() {
+    public SequentialCommandGroup getAutonomousCommand() {
 
         PathPlannerTrajectory drive1Meter = PathPlanner.generatePath(
-                new PathConstraints(0.5, 0.05),
+                new PathConstraints(0.1, .1),
                 new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)),
                 new PathPoint(new Translation2d(0, 1), Rotation2d.fromDegrees(45), Rotation2d.fromDegrees(0)));
 
@@ -135,7 +138,9 @@ public class RobotContainer implements Sendable {
                 mDrivetrain::drive,
                 eventMap);
 
-        return autoBuilder.fullAuto(pathGroup.get(0));
+        return new SequentialCommandGroup(
+                Commands.runOnce(() -> mDrivetrain.resetOdometry(drive1Meter.getInitialHolonomicPose())),
+                autoBuilder.fullAuto(pathGroup.get(0)));
     }
 
     public void updatePIDValuesFromSmartDashboard() {
@@ -145,7 +150,7 @@ public class RobotContainer implements Sendable {
 
         // AutoMap.kRotatePidConstants = PathPlannerConverter
         // .toPPPidConstants((PidConstants)
-        // SmartDashboard.getData(AutoMap.kRotatePidConstantsName));
+        // SmartDashboard.getData(.AutoMap.kRotatePidConstantsName));
 
         // DriveMap.kDrivePidConstants = (PidConstants)
         // SmartDashboard.getData(DriveMap.kDrivePidConstantsName);

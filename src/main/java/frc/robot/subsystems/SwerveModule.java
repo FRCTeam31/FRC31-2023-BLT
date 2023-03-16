@@ -63,11 +63,11 @@ public class SwerveModule extends PIDSubsystem {
         mEncoder.configFactoryDefault();
         mEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
-        // Create a PID controller to calculate steering motor output
         TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
         driveMotorConfig.slot0.kP = DriveMap.kDrivePidConstants.kP;
         mDriveMotor.configAllSettings(driveMotorConfig);
 
+        // Create a PID controller to calculate steering motor output
         getController().enableContinuousInput(-Math.PI, Math.PI);
         getController().setTolerance(Math.PI / 180);
         enable();
