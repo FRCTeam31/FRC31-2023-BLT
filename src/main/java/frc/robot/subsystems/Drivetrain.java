@@ -51,10 +51,9 @@ public class Drivetrain extends SubsystemBase {
     // Swerve Modules
     SwerveModule FrontLeftSwerveModule, FrontRightSwerveModule, RearLeftSwerveModule, RearRightSwerveModule;
     SwerveDriveOdometry mOdometry;
-
-    private DoubleLogEntry frontLeftSpeedLog, frontRightSpeedLog, rearLeftSpeedLog, rearRightSpeedLog;
-    private DoubleLogEntry frontLeftAngleLog, frontRightAngleLog, rearLeftAngleLog, rearRightAngleLog;
-    private DoubleLogEntry headingLog;
+    DoubleLogEntry frontLeftSpeedLog, frontRightSpeedLog, rearLeftSpeedLog, rearRightSpeedLog;
+    DoubleLogEntry frontLeftAngleLog, frontRightAngleLog, rearLeftAngleLog, rearRightAngleLog;
+    DoubleLogEntry headingLog;
     DoubleArrayLogEntry logCurrentStates, logDesiredStates;
 
     // State machines

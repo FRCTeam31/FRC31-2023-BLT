@@ -5,11 +5,28 @@ import com.ctre.phoenix.sensors.WPI_CANCoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
-import frc.robot.config.ShoulderMap;
+import prime.models.PidConstants;
 import prime.movers.LazyWPITalonSRX;
 
 public class Shoulder extends PIDSubsystem {
+    public static class ShoulderMap {
+        // CAN ids
+        public static final int kShoulder1Id = 23;
+        public static final int kShoulder2Id = 24;
+        public static final int kEncoderId = 20;
+
+        // PID
+        public static final String kSprocketPidName = "Shoulder PID constants";
+        public static final PidConstants kSprocketPid = new PidConstants(0.04);
+
+        // Constants
+        public static final double kOpenLoopRampRate = 1.00;
+        public static final double kMaxAngle = 200;
+        public static final double kMinAngle = 150;
+    }
+
     private LazyWPITalonSRX shoulder1;
     private LazyWPITalonSRX shoulder2;
     private WPI_CANCoder mEncoder;
@@ -38,6 +55,7 @@ public class Shoulder extends PIDSubsystem {
         var pidController = getController();
         pidController.reset();
         pidController.setTolerance(0.1);
+        SmartDashboard.putData(ShoulderMap.kSprocketPidName, pidController);
         enable();
     }
 

@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -96,30 +97,44 @@ public class RobotContainer implements Sendable {
     private void configureBindings() {
         mDriveController = new CommandJoystick(0);
         mOperatorController = new CommandJoystick(1);
-        SwerveModule[] modules = new SwerveModule[] {
-                mFrontLeftSwerve,
-                mFrontRightSwerve,
-                mRearLeftSwerve,
-                mRearRightSwerve
-        };
+        // SwerveModule[] modules = new SwerveModule[] {
+        // mFrontLeftSwerve,
+        // mFrontRightSwerve,
+        // mRearLeftSwerve,
+        // mRearRightSwerve
+        // };
 
         // Drive commands
-        mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriveController, mDrivetrain, modules, true));
-        mDriveController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+        // mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriveController,
+        // mDrivetrain, modules, true));
+        // mDriveController.button(3).onTrue(Commands.runOnce(() ->
+        // mDrivetrain.resetGyro()));
 
         // Shoulder commands
         mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder, mOperatorController));
+        mOperatorController.button(7).onTrue(Commands.runOnce(() -> {
+            if (mShoulder.isEnabled())
+                mShoulder.disable();
+            else
+                mShoulder.enable();
+        }));
 
         // Forearm commands
         mForearm.setDefaultCommand(ForearmCommands.getRunSimpleCommand(mForearm, mOperatorController));
+        mOperatorController.button(8).onTrue(Commands.runOnce(() -> {
+            if (mForearm.isEnabled())
+                mForearm.disable();
+            else
+                mForearm.enable();
+        }));
 
         // Wrist commands
-        mOperatorController.button(1)
-                .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
-                .onFalse(WristCommands.stopIntakeCommand(mWrist));
+        // mOperatorController.button(1)
+        // .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
+        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
-        mOperatorController.button(2)
-                .onTrue(WristCommands.toggleActuatorCommand(mWrist));
+        // mOperatorController.button(2)
+        // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
 
         // mController.pov(0)
         // .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true))
@@ -130,22 +145,13 @@ public class RobotContainer implements Sendable {
         // .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
         // Button bindings
-        mDriveController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+        // mDriveController.button(3).onTrue(Commands.runOnce(() ->
+        // mDrivetrain.resetGyro()));
 
-        mDriveController.button(1).onTrue(getAutonomousCommand());
+        // mDriveController.button(1).onTrue(getAutonomousCommand());
     }
 
-    // public Command getAutonomousCommand() {
-    // PathPlannerTrajectory driveForwardOneMeter =
-    // PathPlanner.loadPath("DriveForwardOneMeter",
-    // new PathConstraints(0.1, 0.01));
-    // return DriveCommands.followTrajectoryWithEventCommand(mDrivetrain,
-    // driveForwardOneMeter, true);
-
-    // }
-
     public SequentialCommandGroup getAutonomousCommand() {
-
         PathPlannerTrajectory drive1Meter = PathPlanner.generatePath(
                 new PathConstraints(1, 0.1),
                 new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)),
@@ -172,21 +178,6 @@ public class RobotContainer implements Sendable {
                 Commands.runOnce(() -> mDrivetrain.resetOdometry(drive1Meter.getInitialHolonomicPose())),
                 autoBuilder.fullAuto(pathGroup.get(0)));
 
-    }
-
-    public void updatePIDValuesFromSmartDashboard() {
-        // AutoMap.kTranslatePidConstants = PathPlannerConverter
-        // .toPPPidConstants((PidConstants)
-        // SmartDashboard.getData(AutoMap.kTranslatePidConstantsName));
-
-        // AutoMap.kRotatePidConstants = PathPlannerConverter
-        // .toPPPidConstants((PidConstants)
-        // SmartDashboard.getData(.AutoMap.kRotatePidConstantsName));
-
-        // DriveMap.kDrivePidConstants = (PidConstants)
-        // SmartDashboard.getData(DriveMap.kDrivePidConstantsName);
-        // DriveMap.kSteeringPidConstants = (PidConstants)
-        // SmartDashboard.getData(DriveMap.kSteeringPidConstantsName);
     }
 
     @Override
