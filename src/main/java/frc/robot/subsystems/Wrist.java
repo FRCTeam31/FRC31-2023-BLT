@@ -21,6 +21,7 @@ public class Wrist extends SubsystemBase {
     public Wrist() {
         wrist1 = new LazyCANSparkMax(WristMap.kWrist1Id, MotorType.kBrushless);
         wrist1.restoreFactoryDefaults();
+        wrist1.setOpenLoopRampRate(0.5);
 
         compressor = new Compressor(PneumaticsModuleType.CTREPCM);
         compressor.enableDigital();
@@ -29,27 +30,6 @@ public class Wrist extends SubsystemBase {
         setWrist(false);
 
         mHallSensor = new DigitalInput(WristMap.kWristHallSensorChannel);
-    }
-
-    @Deprecated
-    public void intakeCone() {
-        runMotors(WristMap.kIntakeConeSpeed);
-    }
-
-    @Deprecated
-    public void intakeCube() {
-        runMotors(WristMap.kIntakeCubeSpeed);
-    }
-
-    @Deprecated
-    public void ejectCone() {
-        runMotors(WristMap.kEjectConeSpeed);
-
-    }
-
-    @Deprecated
-    public void ejectCube() {
-        runMotors(WristMap.kEjectCubeSpeed);
     }
 
     public void stopIntake() {
@@ -72,8 +52,7 @@ public class Wrist extends SubsystemBase {
     }
 
     public void runMotors(double speed) {
-        wrist1.set(speed * 0.60);
-
+        wrist1.set(speed);
     }
 
     @Override

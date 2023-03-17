@@ -78,6 +78,7 @@ public class RobotContainer {
 
         // Default commands
         mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mController, mDrivetrain, modules, true));
+        mWrist.setDefaultCommand(WristCommands.controlWithJoystickCommand(mWrist, mController));
 
         // Shoulder
         // mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder,
@@ -91,19 +92,21 @@ public class RobotContainer {
         mController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
 
         // Wrist bindings
-        mController.button(1)
-                .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
-                .onFalse(WristCommands.stopIntakeCommand(mWrist));
+        // mController.button(1)
+        // .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
+        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
-        mController.button(2)
-                .onTrue(WristCommands.toggleActuatorCommand(mWrist));
+        // mController.button(2)
+        // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
 
-        // mController.pov(0)
-        // .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true))
+        // mController.pov(90)
+        // .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true,
+        // mController))
         // .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
         // mController.pov(180)
-        // .onTrue(WristCommands.runIntakeConeAndEjectCubeCommand(mWrist,false))
+        // .onTrue(WristCommands.runIntakeConeAndEjectCubeCommand(mWrist, false,
+        // mController))
         // .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
     }
