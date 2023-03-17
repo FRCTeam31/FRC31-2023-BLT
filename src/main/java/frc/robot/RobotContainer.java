@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ForearmCommands;
+import frc.robot.commands.LightCommands;
 import frc.robot.commands.ShoulderCommands;
+import frc.robot.commands.WristCommands;
 import frc.robot.config.DriveMap;
 
 public class RobotContainer {
@@ -66,7 +68,7 @@ public class RobotContainer {
         mWrist = new Wrist();
         SmartDashboard.putData(mWrist);
 
-        lights = new Light();
+        Light lights = new Light();
 
         configureBindings();
         LightCommands.getSetFrontStripColor(lights, 0, 255, 0);
