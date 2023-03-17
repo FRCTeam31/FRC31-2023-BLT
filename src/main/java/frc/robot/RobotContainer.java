@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ForearmCommands;
+import frc.robot.commands.LightCommands;
 import frc.robot.commands.ShoulderCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.config.AutoMap;
@@ -91,7 +92,10 @@ public class RobotContainer implements Sendable {
         SmartDashboard.putData(DriveMap.kDrivePidConstantsName, DriveMap.kDrivePidConstants);
         SmartDashboard.putData(DriveMap.kSteeringPidConstantsName, DriveMap.kSteeringPidConstants);
 
+        Light lights = new Light();
+
         configureBindings();
+        LightCommands.getSetFrontStripColor(lights, 0, 255, 0);
     }
 
     private void configureBindings() {
