@@ -117,9 +117,9 @@ public class RobotContainer implements Sendable {
     public SequentialCommandGroup getAutonomousCommand() {
 
         PathPlannerTrajectory drive1Meter = PathPlanner.generatePath(
-                new PathConstraints(0.1, .1),
+                new PathConstraints(1, 0.1),
                 new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)),
-                new PathPoint(new Translation2d(0, 1), Rotation2d.fromDegrees(45), Rotation2d.fromDegrees(0)));
+                new PathPoint(new Translation2d(0, 2), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)));
 
         ArrayList<PathPlannerTrajectory> pathGroup = new ArrayList<PathPlannerTrajectory>();
         pathGroup.add(drive1Meter);
@@ -141,6 +141,7 @@ public class RobotContainer implements Sendable {
         return new SequentialCommandGroup(
                 Commands.runOnce(() -> mDrivetrain.resetOdometry(drive1Meter.getInitialHolonomicPose())),
                 autoBuilder.fullAuto(pathGroup.get(0)));
+
     }
 
     public void updatePIDValuesFromSmartDashboard() {

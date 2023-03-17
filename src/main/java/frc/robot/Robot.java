@@ -29,6 +29,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         var mAutoCommand = mRobotContainer.getAutonomousCommand();
+        DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain);
         mAutoCommand.schedule();
     }
 

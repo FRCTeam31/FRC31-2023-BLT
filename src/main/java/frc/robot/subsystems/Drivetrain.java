@@ -13,7 +13,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,6 +53,10 @@ public class Drivetrain extends SubsystemBase {
 
     SwerveDriveOdometry mOdometry;
 
+    private DoubleLogEntry frontLeftSpeedLog, frontRightSpeedLog, rearLeftSpeedLog, rearRightSpeedLog;
+    private DoubleLogEntry frontLeftAngleLog, frontRightAngleLog, rearLeftAngleLog, rearRightAngleLog;
+    private DoubleLogEntry headingLog;
+
     // State machines
     private SwerveModuleState[] _lastDesiredStates = new SwerveModuleState[4];
 
@@ -74,6 +80,20 @@ public class Drivetrain extends SubsystemBase {
         this.FrontRightSwerveModule = FrontRightSwerveModule;
         this.RearLeftSwerveModule = RearLeftSwerveModule;
         this.RearRightSwerveModule = RearRightSwerveModule;
+
+        var log = DataLogManager.getLog();
+        frontLeftSpeedLog = new DoubleLogEntry(log, "/drive/speed/fl");
+        frontRightSpeedLog = new DoubleLogEntry(log, "/drive/speed/fr");
+        rearLeftSpeedLog = new DoubleLogEntry(log, "/drive/speed/rl");
+        rearRightSpeedLog = new DoubleLogEntry(log, "/drive/speed/rr");
+
+        frontLeftAngleLog = new DoubleLogEntry(log, "/drive/angle/fl");
+        frontRightAngleLog = new DoubleLogEntry(log, "/drive/angle/fr");
+        rearLeftAngleLog = new DoubleLogEntry(log, "/drive/angle/rl");
+        rearRightAngleLog = new DoubleLogEntry(log, "/drive/angle/rr");
+        var robotHeadinglog = DataLogManager.getLog();
+        headingLog = new DoubleLogEntry(log, "/heading");
+
     }
 
     public void resetGyro() {
@@ -97,6 +117,17 @@ public class Drivetrain extends SubsystemBase {
 
     public void drive(SwerveModuleState[] swerveModuleStates) {
         _lastDesiredStates = swerveModuleStates;
+        frontLeftSpeedLog.append(swerveModuleStates[0].speedMetersPerSecond);
+        frontLeftAngleLog.append(swerveModuleStates[0].angle.getDegrees());
+        rearLeftSpeedLog.append(swerveModuleStates[1].speedMetersPerSecond);
+        rearLeftAngleLog.append(swerveModuleStates[1].angle.getDegrees());
+        rearRightSpeedLog.append(swerveModuleStates[2].speedMetersPerSecond);
+        rearRightAngleLog.append(swerveModuleStates[2].angle.getDegrees());
+        frontRightSpeedLog.append(swerveModuleStates[3].speedMetersPerSecond);
+        frontRightAngleLog.append(swerveModuleStates[3].angle.getDegrees());
+
+        headingLog.append(Math.toDegrees(mGyro.getYaw()));
+
         FrontLeftSwerveModule.setDesiredState(swerveModuleStates[0]);
         RearLeftSwerveModule.setDesiredState(swerveModuleStates[1]);
         RearRightSwerveModule.setDesiredState(swerveModuleStates[2]);
@@ -175,19 +206,10 @@ public class Drivetrain extends SubsystemBase {
         if (_lastDesiredStates[0] != null) {
             SmartDashboard.putNumber("Drive - FL Speed", _lastDesiredStates[0].speedMetersPerSecond);
             SmartDashboard.putNumber("Drive - FL Angle", _lastDesiredStates[0].angle.getDegrees());
-        }
-
-        if (_lastDesiredStates[1] != null) {
             SmartDashboard.putNumber("Drive - RL Speed", _lastDesiredStates[1].speedMetersPerSecond);
             SmartDashboard.putNumber("Drive - RL Angle", _lastDesiredStates[1].angle.getDegrees());
-        }
-
-        if (_lastDesiredStates[2] != null) {
             SmartDashboard.putNumber("Drive - RR Speed", _lastDesiredStates[2].speedMetersPerSecond);
             SmartDashboard.putNumber("Drive - RR Angle", _lastDesiredStates[2].angle.getDegrees());
-        }
-
-        if (_lastDesiredStates[3] != null) {
             SmartDashboard.putNumber("Drive - FR Speed", _lastDesiredStates[3].speedMetersPerSecond);
             SmartDashboard.putNumber("Drive - FR Angle", _lastDesiredStates[3].angle.getDegrees());
         }
