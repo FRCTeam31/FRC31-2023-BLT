@@ -2,21 +2,14 @@ package frc.robot;
 
 import frc.robot.subsystems.*;
 import frc.robot.utilities.PathPlannerConverter;
-import prime.models.PidConstants;
-
-import java.lang.reflect.Array;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
@@ -31,12 +24,16 @@ import frc.robot.config.AutoMap;
 import frc.robot.config.DriveMap;
 
 public class RobotContainer implements Sendable {
-    public CommandJoystick mController;
+    public CommandJoystick mDriveController;
+    public CommandJoystick mOperatorController;
     public SwerveModule mFrontLeftSwerve;
     public SwerveModule mFrontRightSwerve;
     public SwerveModule mRearLeftSwerve;
     public SwerveModule mRearRightSwerve;
     public Drivetrain mDrivetrain;
+    public Shoulder mShoulder;
+    // public Forearm mForearm;
+    public Wrist mWrist;
 
     public RobotContainer() {
         mFrontLeftSwerve = new SwerveModule(
@@ -88,7 +85,7 @@ public class RobotContainer implements Sendable {
     }
 
     private void configureBindings() {
-        mController = new CommandJoystick(0);
+        mDriveController = new CommandJoystick(0);
         SwerveModule[] modules = new SwerveModule[] {
                 mFrontLeftSwerve,
                 mFrontRightSwerve,
@@ -97,12 +94,12 @@ public class RobotContainer implements Sendable {
         };
 
         // Default commands
-        mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mController, mDrivetrain, modules, true));
+        mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriveController, mDrivetrain, modules, true));
 
         // Button bindings
-        mController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+        mDriveController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
 
-        mController.button(1).onTrue(getAutonomousCommand());
+        mDriveController.button(1).onTrue(getAutonomousCommand());
     }
 
     // public Command getAutonomousCommand() {

@@ -94,13 +94,8 @@ public class SwerveModule extends PIDSubsystem {
     }
 
     public void setDesiredSpeed(double speedMetersPerSecond) {
-        var desiredVelocity20ms = (speedMetersPerSecond / 50) * DriveMap.falconTotalSensorUnits;
-        var desiredRotationsPer20ms = desiredVelocity20ms / DriveMap.kDriveWheelCircumference;
-        var desiredVelocity = (desiredRotationsPer20ms * DriveMap.falconTotalSensorUnits * 5);
-
-        // if (DriverStation.isAutonomousEnabled())
-        // desiredVelocity *= 0.3;
-        mDriveMotor.set(ControlMode.Velocity, desiredVelocity);
+        mDriveMotor.set(ControlMode.Velocity, CTREConverter.MPSToFalcon(speedMetersPerSecond,
+                DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
     }
 
     /**
@@ -124,6 +119,17 @@ public class SwerveModule extends PIDSubsystem {
 
     public double getEncoderPosition() {
         return mEncoder.getPosition();
+    }
+
+    public double getRawSpeed() {
+        return mDriveMotor.get();
+    }
+
+    public double getVelocityMetersPerSecond() {
+        // getSelectedSensorVelocity() returns speed in sensor units per 100ms
+        // First, convert to sensor units per 1s. Then, convert to MPS
+        return CTREConverter.falconToMPS(mDriveMotor.getSelectedSensorVelocity(), DriveMap.kDriveWheelCircumference,
+                DriveMap.kDriveGearRatio);
     }
 
     public void setEncoderPositionToAbsolute() {

@@ -13,7 +13,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,6 +38,7 @@ public class Drivetrain extends SubsystemBase {
     final Translation2d rearRightLocation = new Translation2d(halfTrackWidth, -halfWheelBase);
 
     // Build a gyro and a kinematics class for our drive
+    boolean mInHighGear = false;
     final WPI_Pigeon2 mGyro = new WPI_Pigeon2(DriveMap.kPigeonId, DriveMap.kCANivoreBusName);
     public final SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
             frontLeftLocation,
@@ -44,12 +47,9 @@ public class Drivetrain extends SubsystemBase {
             frontRightLocation);
 
     // Swerve Modules
-    SwerveModule FrontLeftSwerveModule;
-    SwerveModule RearLeftSwerveModule;
-    SwerveModule RearRightSwerveModule;
-    SwerveModule FrontRightSwerveModule;
-
+    SwerveModule FrontLeftSwerveModule, FrontRightSwerveModule, RearLeftSwerveModule, RearRightSwerveModule;
     SwerveDriveOdometry mOdometry;
+    DoubleArrayLogEntry logCurrentStates, logDesiredStates;
 
     // State machines
     private SwerveModuleState[] _lastDesiredStates = new SwerveModuleState[4];
@@ -74,6 +74,9 @@ public class Drivetrain extends SubsystemBase {
         this.FrontRightSwerveModule = FrontRightSwerveModule;
         this.RearLeftSwerveModule = RearLeftSwerveModule;
         this.RearRightSwerveModule = RearRightSwerveModule;
+
+        logCurrentStates = new DoubleArrayLogEntry(DataLogManager.getLog(), "/drive/currentStates");
+        logDesiredStates = new DoubleArrayLogEntry(DataLogManager.getLog(), "/drive/desiredStates");
     }
 
     public void resetGyro() {
@@ -187,9 +190,27 @@ public class Drivetrain extends SubsystemBase {
             SmartDashboard.putNumber("Drive - RR Angle", _lastDesiredStates[2].angle.getDegrees());
         }
 
-        if (_lastDesiredStates[3] != null) {
-            SmartDashboard.putNumber("Drive - FR Speed", _lastDesiredStates[3].speedMetersPerSecond);
-            SmartDashboard.putNumber("Drive - FR Angle", _lastDesiredStates[3].angle.getDegrees());
-        }
+        var flState = FrontLeftSwerveModule.getPosition();
+        var flDesiredState = _lastDesiredStates[0];
+        var rlState = RearLeftSwerveModule.getPosition();
+        var rlDesiredState = _lastDesiredStates[0];
+        var rrState = RearRightSwerveModule.getPosition();
+        var rrDesiredState = _lastDesiredStates[0];
+        var frState = FrontRightSwerveModule.getPosition();
+        var frDesiredState = _lastDesiredStates[0];
+
+        logCurrentStates.append(new double[] {
+                flState.angle.getDegrees(), FrontLeftSwerveModule.getVelocityMetersPerSecond(),
+                rlState.angle.getDegrees(), RearLeftSwerveModule.getVelocityMetersPerSecond(),
+                rrState.angle.getDegrees(), RearRightSwerveModule.getVelocityMetersPerSecond(),
+                frState.angle.getDegrees(), FrontRightSwerveModule.getVelocityMetersPerSecond(),
+        });
+
+        logDesiredStates.append(new double[] {
+                flDesiredState.angle.getDegrees(), flDesiredState.speedMetersPerSecond,
+                rlDesiredState.angle.getDegrees(), rlDesiredState.speedMetersPerSecond,
+                rrDesiredState.angle.getDegrees(), rrDesiredState.speedMetersPerSecond,
+                frDesiredState.angle.getDegrees(), frDesiredState.speedMetersPerSecond,
+        });
     }
 }
