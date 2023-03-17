@@ -2,22 +2,22 @@ package frc.robot;
 
 import frc.robot.subsystems.*;
 import frc.robot.utilities.PathPlannerConverter;
-import prime.models.PidConstants;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
-
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ForearmCommands;
@@ -26,10 +26,9 @@ import frc.robot.commands.WristCommands;
 import frc.robot.config.AutoMap;
 import frc.robot.config.DriveMap;
 
-public class RobotContainer {
+public class RobotContainer implements Sendable {
     public CommandJoystick mDriveController;
     public CommandJoystick mOperatorController;
-
     public SwerveModule mFrontLeftSwerve;
     public SwerveModule mFrontRightSwerve;
     public SwerveModule mRearLeftSwerve;
@@ -81,6 +80,16 @@ public class RobotContainer {
         mWrist = new Wrist();
         SmartDashboard.putData(mWrist);
 
+        SmartDashboard.putData(
+                AutoMap.kTranslatePidConstantsName,
+                PathPlannerConverter.fromPPPIDConstants(AutoMap.kTranslatePidConstants));
+
+        SmartDashboard.putData(
+                AutoMap.kRotatePidConstantsName,
+                PathPlannerConverter.fromPPPIDConstants(AutoMap.kRotatePidConstants));
+        SmartDashboard.putData(DriveMap.kDrivePidConstantsName, DriveMap.kDrivePidConstants);
+        SmartDashboard.putData(DriveMap.kSteeringPidConstantsName, DriveMap.kSteeringPidConstants);
+
         configureBindings();
     }
 
@@ -120,6 +129,10 @@ public class RobotContainer {
         // .onTrue(WristCommands.runIntakeConeAndEjectCubeCommand(mWrist,false))
         // .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
+        // Button bindings
+        mDriveController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+
+        mDriveController.button(1).onTrue(getAutonomousCommand());
     }
 
     // public Command getAutonomousCommand() {
@@ -131,24 +144,34 @@ public class RobotContainer {
 
     // }
 
-    public Command getAutonomousCommand() {
-        ArrayList<PathPlannerTrajectory> pathGroup = (ArrayList<PathPlannerTrajectory>) PathPlanner
-                .loadPathGroup("DriveForwardOneMeter", new PathConstraints(4, 3));
+    public SequentialCommandGroup getAutonomousCommand() {
 
+        PathPlannerTrajectory drive1Meter = PathPlanner.generatePath(
+                new PathConstraints(1, 0.1),
+                new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)),
+                new PathPoint(new Translation2d(0, 2), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)));
+
+        ArrayList<PathPlannerTrajectory> pathGroup = new ArrayList<PathPlannerTrajectory>();
+        pathGroup.add(drive1Meter);
         HashMap<String, Command> eventMap = new HashMap<>();
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
                 mDrivetrain::getPose,
                 mDrivetrain::resetOdometry,
                 mDrivetrain.mKinematics,
-                new PIDConstants(AutoMap.kTranslatePidConstants.kP, AutoMap.kTranslatePidConstants.kI,
+                new PIDConstants(AutoMap.kTranslatePidConstants.kP,
+                        AutoMap.kTranslatePidConstants.kI,
                         AutoMap.kTranslatePidConstants.kD),
-                new PIDConstants(AutoMap.kRotatePidConstants.kP, AutoMap.kRotatePidConstants.kI,
+                new PIDConstants(AutoMap.kRotatePidConstants.kP,
+                        AutoMap.kRotatePidConstants.kI,
                         AutoMap.kRotatePidConstants.kD),
                 mDrivetrain::drive,
                 eventMap);
 
-        return autoBuilder.fullAuto(pathGroup.get(0));
+        return new SequentialCommandGroup(
+                Commands.runOnce(() -> mDrivetrain.resetOdometry(drive1Meter.getInitialHolonomicPose())),
+                autoBuilder.fullAuto(pathGroup.get(0)));
+
     }
 
     public void updatePIDValuesFromSmartDashboard() {
@@ -158,7 +181,7 @@ public class RobotContainer {
 
         // AutoMap.kRotatePidConstants = PathPlannerConverter
         // .toPPPidConstants((PidConstants)
-        // SmartDashboard.getData(AutoMap.kRotatePidConstantsName));
+        // SmartDashboard.getData(.AutoMap.kRotatePidConstantsName));
 
         // DriveMap.kDrivePidConstants = (PidConstants)
         // SmartDashboard.getData(DriveMap.kDrivePidConstantsName);

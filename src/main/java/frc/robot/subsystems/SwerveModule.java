@@ -61,11 +61,11 @@ public class SwerveModule extends PIDSubsystem {
         mEncoder.configFactoryDefault();
         mEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
-        // Create a PID controller to calculate steering motor output
         TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
         driveMotorConfig.slot0.kP = DriveMap.kDrivePidConstants.kP;
         mDriveMotor.configAllSettings(driveMotorConfig);
 
+        // Create a PID controller to calculate steering motor output
         getController().enableContinuousInput(-Math.PI, Math.PI);
         getController().setTolerance(Math.PI / 180);
         enable();
@@ -92,13 +92,8 @@ public class SwerveModule extends PIDSubsystem {
     }
 
     public void setDesiredSpeed(double speedMetersPerSecond) {
-        var desiredVelocity20ms = (speedMetersPerSecond / 50) * DriveMap.falconTotalSensorUnits;
-        var desiredRotationsPer20ms = desiredVelocity20ms / DriveMap.kDriveWheelCircumference;
-        var desiredVelocity = (desiredRotationsPer20ms * DriveMap.falconTotalSensorUnits * 5);
-
-        if (DriverStation.isAutonomousEnabled())
-            desiredVelocity *= 0.3;
-        mDriveMotor.set(ControlMode.Velocity, desiredVelocity);
+        mDriveMotor.set(ControlMode.Velocity, CTREConverter.MPSToFalcon(speedMetersPerSecond,
+                DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
     }
 
     /**
@@ -122,6 +117,17 @@ public class SwerveModule extends PIDSubsystem {
 
     public double getEncoderPosition() {
         return mEncoder.getPosition();
+    }
+
+    public double getRawSpeed() {
+        return mDriveMotor.get();
+    }
+
+    public double getVelocityMetersPerSecond() {
+        // getSelectedSensorVelocity() returns speed in sensor units per 100ms
+        // First, convert to sensor units per 1s. Then, convert to MPS
+        return CTREConverter.falconToMPS(mDriveMotor.getSelectedSensorVelocity(), DriveMap.kDriveWheelCircumference,
+                DriveMap.kDriveGearRatio);
     }
 
     public void setEncoderPositionToAbsolute() {

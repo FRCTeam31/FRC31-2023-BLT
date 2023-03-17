@@ -78,16 +78,11 @@ public class DriveMap {
     public static final byte kAutonDriveYKi = 0;
     public static final byte kAutonDriveYKd = 1;
 
-    public static final byte kAutonRotationKp = 0;
+    public static final byte kAutonRotationKp = 1;
     public static final byte kAutonRotationKi = 0;
     public static final byte kAutonRotationKd = 0;
 
     // Slow Drive Coefficent
 
     public static final double slowDriveCoefficent = 0.2;
-
-    public DriveMap() {
-        SmartDashboard.putData(kDrivePidConstantsName, kDrivePidConstants);
-        SmartDashboard.putData(kSteeringPidConstantsName, kSteeringPidConstants);
-    }
 }
