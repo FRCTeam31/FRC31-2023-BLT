@@ -6,8 +6,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.LightCommands;
 import frc.robot.commands.ShoulderCommands;
-import frc.robot.commands.WristCommands;
 import frc.robot.config.DriveMap;
 
 public class RobotContainer {
@@ -19,6 +19,7 @@ public class RobotContainer {
     public Drivetrain mDrivetrain;
     public Shoulder mShoulder;
     public Wrist mWrist;
+    public Light lights;
 
     public RobotContainer() {
         mFrontLeftSwerve = new SwerveModule(
@@ -62,8 +63,11 @@ public class RobotContainer {
         mWrist = new Wrist();
         SmartDashboard.putData(mWrist);
 
+        lights = new Light();
+
         configureBindings();
-    }
+        LightCommands.getSetFrontStripColor(lights, 0, 255, 0)
+;    }
 
     private void configureBindings() {
         mController = new CommandJoystick(0);
