@@ -10,7 +10,8 @@ public class ShoulderCommands {
     public static Command getRunSimpleCommand(Shoulder shoulder, CommandJoystick joystick){
         return new SequentialCommandGroup(
             getSetPIDEnabledCommand(shoulder, false),
-            Commands.run(() -> shoulder.runShoulder(joystick.getRawAxis(5)), shoulder)
+            Commands.run(() -> shoulder.runShoulder(joystick.getRawAxis(5)), shoulder
+            )
         );
     }
 
