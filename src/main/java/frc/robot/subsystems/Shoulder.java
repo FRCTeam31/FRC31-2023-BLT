@@ -17,9 +17,9 @@ public class Shoulder extends PIDSubsystem {
 
     public Shoulder() {
         super(new PIDController(
-                ShoulderMap.AnglePid.kP,
-                ShoulderMap.AnglePid.kI,
-                ShoulderMap.AnglePid.kD));
+                ShoulderMap.kSprocketPid.kP,
+                ShoulderMap.kSprocketPid.kI,
+                ShoulderMap.kSprocketPid.kD));
 
         shoulder1 = new LazyWPITalonSRX(ShoulderMap.kShoulder1Id);
         shoulder1.clearStickyFaults();
@@ -75,13 +75,6 @@ public class Shoulder extends PIDSubsystem {
     }
 
     /**
-     * Gets the last calculated PID output value
-     */
-    public double getLastPIDOutput() {
-        return _lastPIDoutput;
-    }
-
-    /**
      * Gets the position of the encoder in degrees [0,360)
      */
     @Override
@@ -99,6 +92,6 @@ public class Shoulder extends PIDSubsystem {
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Shoulder Position", this::getMeasurement, null);
         builder.addBooleanProperty("PID enabled", super::isEnabled, this::setPIDEnabled);
-        builder.addDoubleProperty("Last PID output", this::getLastPIDOutput, null);
+        builder.addDoubleProperty("Last PID output", () -> _lastPIDoutput, null);
     }
 }
