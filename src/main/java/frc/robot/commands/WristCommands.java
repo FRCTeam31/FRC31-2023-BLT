@@ -32,6 +32,12 @@ public class WristCommands {
         });
     }
 
+    public static Command setWristCommand(Wrist wrist, boolean out) {
+        return Commands.runOnce(() -> {
+            wrist.setWrist(out);
+        });
+    }
+
     public static Command runIntakeFallenConeCommand(Wrist wrist, boolean out) {
         return new SequentialCommandGroup(new Command[] {
                 Commands.runOnce(() -> wrist.setWrist(false), wrist),

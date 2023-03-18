@@ -105,16 +105,11 @@ public class RobotContainer {
                 // mController.button(2)
                 // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
 
-                // mController.pov(90)
-                // .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true,
-                // mController))
-                // .onFalse(WristCommands.stopIntakeCommand(mWrist));
+                mOperatorController.pov(90)
+                                .onTrue(WristCommands.setWristCommand(mWrist, true));
 
-                // mController.pov(180)
-                // .onTrue(WristCommands.runIntakeConeAndEjectCubeCommand(mWrist, false,
-                // mController))
-                // .onFalse(WristCommands.stopIntakeCommand(mWrist));
-
+                mOperatorController.pov(180)
+                                .onTrue(WristCommands.setWristCommand(mWrist, false));
         }
 
         public Command getAutonomousCommand() {
