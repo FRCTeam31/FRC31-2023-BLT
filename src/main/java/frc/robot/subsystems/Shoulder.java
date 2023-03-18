@@ -48,7 +48,6 @@ public class Shoulder extends PIDSubsystem {
     public Shoulder() {
         super(new PIDController(Map.kSprocketPid.kP, Map.kSprocketPid.kI, Map.kSprocketPid.kD));
         getController().setTolerance(1);
-        SmartDashboard.putData("Shoulder PID Controller", getController());
         mUpperLimitSwitch = new DigitalInput(Map.kUpperLimitSwitchDIOChannel);
 
         shoulder1 = new LazyWPITalonSRX(Map.kShoulder1Id);
@@ -58,11 +57,8 @@ public class Shoulder extends PIDSubsystem {
         shoulder1.setInverted(InvertType.InvertMotorOutput);
         shoulder1.configMotionAcceleration(Map.kmaxAccelerationPer100ms);
         shoulder1.configMotionCruiseVelocity(Map.kmaxVelocityPer100ms);
-
         // PID
         shoulder1.config_kP(0, Map.kSprocketPid.kP);
-
-        SmartDashboard.putData(shoulder1);
 
         shoulder2 = new LazyWPITalonSRX(Map.kShoulder2Id);
         shoulder2.clearStickyFaults();
@@ -87,9 +83,6 @@ public class Shoulder extends PIDSubsystem {
      * @param speed
      */
     public void runShoulder(double speed) {
-        // if (isEnabled())
-        // disable();
-
         if (speed > 0 && mUpperLimitSwitch.get())
             return;
 
@@ -124,12 +117,7 @@ public class Shoulder extends PIDSubsystem {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("Shoulder Position", () -> mEncoder.getAbsolutePosition(), null);
-        builder.addDoubleProperty("PID setpoint", () -> getController().getSetpoint(), null);
-        builder.addDoubleProperty("PID error", () -> getController().getPositionError(), null);
-        builder.addDoubleProperty("FF", () -> _lastFeedForward, null);
-        builder.addDoubleProperty("Final calculated output", () -> _lastFinalOutput, null);
-        builder.addDoubleProperty("PId output + FF", () -> _lastOutput, null);
+        builder.addDoubleProperty("Position", () -> mEncoder.getAbsolutePosition(), null);
         builder.addBooleanProperty("Upper Limit Switch", mUpperLimitSwitch::get, null);
     }
 }

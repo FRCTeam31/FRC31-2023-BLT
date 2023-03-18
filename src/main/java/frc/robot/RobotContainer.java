@@ -10,10 +10,15 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -36,6 +41,7 @@ public class RobotContainer implements Sendable {
     public Shoulder mShoulder;
     public Wrist mWrist;
     public Forearm mForearm;
+    public UsbCamera Camera;
 
     public RobotContainer() {
         // mFrontLeftSwerve = new SwerveModule(
@@ -96,7 +102,10 @@ public class RobotContainer implements Sendable {
         // DriveMap.kSteeringPidConstants);
 
         // Light lights = new Light();
+        Camera = CameraServer.startAutomaticCapture();
+        Camera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 1280, 720, 60);
 
+        SmartDashboard.putData(SendableCameraWrapper.wrap(Camera));
         configureBindings();
         // LightCommands.getSetFrontStripColor(lights, 0, 255, 0);
     }

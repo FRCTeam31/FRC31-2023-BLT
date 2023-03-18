@@ -43,7 +43,7 @@ public class Forearm extends SubsystemBase {
         forearmMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute, 0, 20);
         forearmMotor.setInverted(true);
 
-        SmartDashboard.putData("Forearm Motor", forearmMotor);
+        SmartDashboard.putData("Motor", forearmMotor);
     }
 
     public void setSetpoint(double angle) {
@@ -58,8 +58,8 @@ public class Forearm extends SubsystemBase {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("Shoulder Setpoint", () -> _lastSetpoint, (sp) -> setSetpoint(sp));
-        builder.addDoubleProperty("Shoulder last PID output", () -> _lastPidOutput, null);
-        builder.addDoubleProperty("Shoulder position", () -> forearmMotor.getSelectedSensorPosition(), null);
+        builder.addDoubleProperty("Setpoint", () -> _lastSetpoint, (sp) -> setSetpoint(sp));
+        builder.addDoubleProperty("PID output", () -> _lastPidOutput, null);
+        builder.addDoubleProperty("Position", () -> forearmMotor.getSelectedSensorPosition(), null);
     }
 }
