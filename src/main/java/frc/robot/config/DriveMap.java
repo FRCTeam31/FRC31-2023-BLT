@@ -1,6 +1,5 @@
 package frc.robot.config;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import prime.models.PidConstants;
 
 public class DriveMap {

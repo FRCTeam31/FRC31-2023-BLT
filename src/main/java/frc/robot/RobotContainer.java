@@ -14,17 +14,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ForearmCommands;
 import frc.robot.commands.LightCommands;
 import frc.robot.commands.ShoulderCommands;
-import frc.robot.commands.WristCommands;
 import frc.robot.config.AutoMap;
 import frc.robot.config.DriveMap;
 
@@ -41,61 +38,67 @@ public class RobotContainer implements Sendable {
     public Forearm mForearm;
 
     public RobotContainer() {
-        mFrontLeftSwerve = new SwerveModule(
-                DriveMap.kFrontLeftDrivingMotorId,
-                DriveMap.kFrontLeftSteeringMotorId,
-                DriveMap.kFrontLeftEncoderId,
-                DriveMap.kFrontLeftEncoderOffset,
-                DriveMap.kFrontLeftInverted);
-        SmartDashboard.putData("Front Left Module", mFrontLeftSwerve);
+        // mFrontLeftSwerve = new SwerveModule(
+        // DriveMap.kFrontLeftDrivingMotorId,
+        // DriveMap.kFrontLeftSteeringMotorId,
+        // DriveMap.kFrontLeftEncoderId,
+        // DriveMap.kFrontLeftEncoderOffset,
+        // DriveMap.kFrontLeftInverted);
+        // SmartDashboard.putData("Front Left Module", mFrontLeftSwerve);
 
-        mFrontRightSwerve = new SwerveModule(
-                DriveMap.kFrontRightDrivingMotorId,
-                DriveMap.kFrontRightSteeringMotorId,
-                DriveMap.kFrontRightEncoderId,
-                DriveMap.kFrontRightEncoderOffset,
-                DriveMap.kFrontRightInverted);
-        SmartDashboard.putData("Front Right Module", mFrontRightSwerve);
+        // mFrontRightSwerve = new SwerveModule(
+        // DriveMap.kFrontRightDrivingMotorId,
+        // DriveMap.kFrontRightSteeringMotorId,
+        // DriveMap.kFrontRightEncoderId,
+        // DriveMap.kFrontRightEncoderOffset,
+        // DriveMap.kFrontRightInverted);
+        // SmartDashboard.putData("Front Right Module", mFrontRightSwerve);
 
-        mRearLeftSwerve = new SwerveModule(
-                DriveMap.kRearLeftDrivingMotorId,
-                DriveMap.kRearLeftSteeringMotorId,
-                DriveMap.kRearLeftEncoderId,
-                DriveMap.kRearLeftEncoderOffset,
-                DriveMap.kRearLeftInverted);
-        SmartDashboard.putData("Rear Left Module", mRearLeftSwerve);
+        // mRearLeftSwerve = new SwerveModule(
+        // DriveMap.kRearLeftDrivingMotorId,
+        // DriveMap.kRearLeftSteeringMotorId,
+        // DriveMap.kRearLeftEncoderId,
+        // DriveMap.kRearLeftEncoderOffset,
+        // DriveMap.kRearLeftInverted);
+        // SmartDashboard.putData("Rear Left Module", mRearLeftSwerve);
 
-        mRearRightSwerve = new SwerveModule(
-                DriveMap.kRearRightDrivingMotorId,
-                DriveMap.kRearRightSteeringMotorId,
-                DriveMap.kRearRightEncoderId,
-                DriveMap.kRearRightEncoderOffset,
-                DriveMap.kRearRightInverted);
-        SmartDashboard.putData("Rear Right Module", mRearRightSwerve);
+        // mRearRightSwerve = new SwerveModule(
+        // DriveMap.kRearRightDrivingMotorId,
+        // DriveMap.kRearRightSteeringMotorId,
+        // DriveMap.kRearRightEncoderId,
+        // DriveMap.kRearRightEncoderOffset,
+        // DriveMap.kRearRightInverted);
+        // SmartDashboard.putData("Rear Right Module", mRearRightSwerve);
 
-        mDrivetrain = new Drivetrain(mFrontLeftSwerve, mFrontRightSwerve, mRearLeftSwerve, mRearRightSwerve);
-        SmartDashboard.putData(mDrivetrain);
+        // mDrivetrain = new Drivetrain(mFrontLeftSwerve, mFrontRightSwerve,
+        // mRearLeftSwerve, mRearRightSwerve);
+        // SmartDashboard.putData(mDrivetrain);
 
         mShoulder = new Shoulder();
         SmartDashboard.putData(mShoulder);
 
-        mWrist = new Wrist();
-        SmartDashboard.putData(mWrist);
+        mForearm = new Forearm();
+        SmartDashboard.putData(mForearm);
 
-        SmartDashboard.putData(
-                AutoMap.kTranslatePidConstantsName,
-                PathPlannerConverter.fromPPPIDConstants(AutoMap.kTranslatePidConstants));
+        // mWrist = new Wrist();
+        // SmartDashboard.putData(mWrist);
 
-        SmartDashboard.putData(
-                AutoMap.kRotatePidConstantsName,
-                PathPlannerConverter.fromPPPIDConstants(AutoMap.kRotatePidConstants));
-        SmartDashboard.putData(DriveMap.kDrivePidConstantsName, DriveMap.kDrivePidConstants);
-        SmartDashboard.putData(DriveMap.kSteeringPidConstantsName, DriveMap.kSteeringPidConstants);
+        // SmartDashboard.putData(
+        // AutoMap.kTranslatePidConstantsName,
+        // PathPlannerConverter.fromPPPIDConstants(AutoMap.kTranslatePidConstants));
 
-        Light lights = new Light();
+        // SmartDashboard.putData(
+        // AutoMap.kRotatePidConstantsName,
+        // PathPlannerConverter.fromPPPIDConstants(AutoMap.kRotatePidConstants));
+        // SmartDashboard.putData(DriveMap.kDrivePidConstantsName,
+        // DriveMap.kDrivePidConstants);
+        // SmartDashboard.putData(DriveMap.kSteeringPidConstantsName,
+        // DriveMap.kSteeringPidConstants);
+
+        // Light lights = new Light();
 
         configureBindings();
-        LightCommands.getSetFrontStripColor(lights, 0, 255, 0);
+        // LightCommands.getSetFrontStripColor(lights, 0, 255, 0);
     }
 
     private void configureBindings() {
@@ -115,22 +118,25 @@ public class RobotContainer implements Sendable {
         // mDrivetrain.resetGyro()));
 
         // Shoulder commands
-        mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder, mOperatorController));
-        mOperatorController.button(7).onTrue(Commands.runOnce(() -> {
-            if (mShoulder.isEnabled())
-                mShoulder.disable();
-            else
-                mShoulder.enable();
-        }));
+        mOperatorController.pov(0).onTrue(Commands.runOnce(() -> mShoulder.setSetpoint(mShoulder.getSetpoint() + 10)));
+        mOperatorController.pov(180)
+                .onTrue(Commands.runOnce(() -> mShoulder.setSetpoint(mShoulder.getSetpoint() - 10)));
+        // mOperatorController.button(7).onTrue(Commands.runOnce(() -> {
+        // if (mShoulder.isEnabled())
+        // mShoulder.disable();
+        // else
+        // mShoulder.enable();
+        // }));
 
         // Forearm commands
-        mForearm.setDefaultCommand(ForearmCommands.getRunSimpleCommand(mForearm, mOperatorController));
-        mOperatorController.button(8).onTrue(Commands.runOnce(() -> {
-            if (mForearm.isEnabled())
-                mForearm.disable();
-            else
-                mForearm.enable();
-        }));
+        // mForearm.setDefaultCommand(ForearmCommands.getRunSimpleCommand(mForearm,
+        // mOperatorController));
+        // mOperatorController.button(8).onTrue(Commands.runOnce(() -> {
+        // if (mForearm.isEnabled())
+        // mForearm.disable();
+        // else
+        // mForearm.enable();
+        // }));
 
         // Wrist commands
         // mOperatorController.button(1)
@@ -158,8 +164,10 @@ public class RobotContainer implements Sendable {
     public SequentialCommandGroup getAutonomousCommand() {
         PathPlannerTrajectory drive1Meter = PathPlanner.generatePath(
                 new PathConstraints(1, 0.1),
-                new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)),
-                new PathPoint(new Translation2d(0, 2), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0)));
+                new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0),
+                        Rotation2d.fromDegrees(0)),
+                new PathPoint(new Translation2d(0, 2), Rotation2d.fromDegrees(0),
+                        Rotation2d.fromDegrees(0)));
 
         ArrayList<PathPlannerTrajectory> pathGroup = new ArrayList<PathPlannerTrajectory>();
         pathGroup.add(drive1Meter);
@@ -186,53 +194,53 @@ public class RobotContainer implements Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        if (AutoMap.kTranslatePidConstants != null) {
-            builder.addDoubleProperty(
-                    "Translate P",
-                    () -> AutoMap.kTranslatePidConstants.kP,
-                    (double newP) -> AutoMap.kTranslatePidConstants = new PIDConstants(newP,
-                            AutoMap.kTranslatePidConstants.kI,
-                            AutoMap.kTranslatePidConstants.kD));
+        // if (AutoMap.kTranslatePidConstants != null) {
+        // builder.addDoubleProperty(
+        // "Translate P",
+        // () -> AutoMap.kTranslatePidConstants.kP,
+        // (double newP) -> AutoMap.kTranslatePidConstants = new PIDConstants(newP,
+        // AutoMap.kTranslatePidConstants.kI,
+        // AutoMap.kTranslatePidConstants.kD));
 
-            builder.addDoubleProperty(
-                    "Translate I",
-                    () -> AutoMap.kTranslatePidConstants.kI,
-                    (double newI) -> AutoMap.kTranslatePidConstants = new PIDConstants(
-                            AutoMap.kTranslatePidConstants.kP, newI,
-                            AutoMap.kTranslatePidConstants.kD));
+        // builder.addDoubleProperty(
+        // "Translate I",
+        // () -> AutoMap.kTranslatePidConstants.kI,
+        // (double newI) -> AutoMap.kTranslatePidConstants = new PIDConstants(
+        // AutoMap.kTranslatePidConstants.kP, newI,
+        // AutoMap.kTranslatePidConstants.kD));
 
-            builder.addDoubleProperty(
-                    "Translate D",
-                    () -> AutoMap.kTranslatePidConstants.kD,
-                    (double newD) -> AutoMap.kTranslatePidConstants = new PIDConstants(
-                            AutoMap.kTranslatePidConstants.kP,
-                            AutoMap.kTranslatePidConstants.kI,
-                            newD));
-        }
+        // builder.addDoubleProperty(
+        // "Translate D",
+        // () -> AutoMap.kTranslatePidConstants.kD,
+        // (double newD) -> AutoMap.kTranslatePidConstants = new PIDConstants(
+        // AutoMap.kTranslatePidConstants.kP,
+        // AutoMap.kTranslatePidConstants.kI,
+        // newD));
+        // }
 
-        if (AutoMap.kRotatePidConstants != null) {
-            builder.addDoubleProperty(
-                    "Rotate P",
-                    () -> AutoMap.kRotatePidConstants.kP,
-                    (double newP) -> AutoMap.kRotatePidConstants = new PIDConstants(newP,
-                            AutoMap.kRotatePidConstants.kI,
-                            AutoMap.kRotatePidConstants.kD));
+        // if (AutoMap.kRotatePidConstants != null) {
+        // builder.addDoubleProperty(
+        // "Rotate P",
+        // () -> AutoMap.kRotatePidConstants.kP,
+        // (double newP) -> AutoMap.kRotatePidConstants = new PIDConstants(newP,
+        // AutoMap.kRotatePidConstants.kI,
+        // AutoMap.kRotatePidConstants.kD));
 
-            builder.addDoubleProperty(
-                    "Rotate I",
-                    () -> AutoMap.kRotatePidConstants.kI,
-                    (double newI) -> AutoMap.kRotatePidConstants = new PIDConstants(
-                            AutoMap.kRotatePidConstants.kP, newI,
-                            AutoMap.kRotatePidConstants.kD));
+        // builder.addDoubleProperty(
+        // "Rotate I",
+        // () -> AutoMap.kRotatePidConstants.kI,
+        // (double newI) -> AutoMap.kRotatePidConstants = new PIDConstants(
+        // AutoMap.kRotatePidConstants.kP, newI,
+        // AutoMap.kRotatePidConstants.kD));
 
-            builder.addDoubleProperty(
-                    "Rotate D",
-                    () -> AutoMap.kRotatePidConstants.kD,
-                    (double newD) -> AutoMap.kRotatePidConstants = new PIDConstants(
-                            AutoMap.kRotatePidConstants.kP,
-                            AutoMap.kRotatePidConstants.kI,
-                            newD));
-        }
+        // builder.addDoubleProperty(
+        // "Rotate D",
+        // () -> AutoMap.kRotatePidConstants.kD,
+        // (double newD) -> AutoMap.kRotatePidConstants = new PIDConstants(
+        // AutoMap.kRotatePidConstants.kP,
+        // AutoMap.kRotatePidConstants.kI,
+        // newD));
+        // }
 
     }
 }

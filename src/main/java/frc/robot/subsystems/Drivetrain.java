@@ -17,7 +17,6 @@ import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -90,7 +89,6 @@ public class Drivetrain extends SubsystemBase {
         frontRightAngleLog = new DoubleLogEntry(log, "/drive/angle/fr");
         rearLeftAngleLog = new DoubleLogEntry(log, "/drive/angle/rl");
         rearRightAngleLog = new DoubleLogEntry(log, "/drive/angle/rr");
-        var robotHeadinglog = DataLogManager.getLog();
         headingLog = new DoubleLogEntry(log, "/heading");
 
         logCurrentStates = new DoubleArrayLogEntry(DataLogManager.getLog(), "/drive/currentStates");
@@ -223,6 +221,8 @@ public class Drivetrain extends SubsystemBase {
             SmartDashboard.putNumber("Drive - RL Angle", _lastDesiredStates[1].angle.getDegrees());
             SmartDashboard.putNumber("Drive - RR Speed", _lastDesiredStates[2].speedMetersPerSecond);
             SmartDashboard.putNumber("Drive - RR Angle", _lastDesiredStates[2].angle.getDegrees());
+            SmartDashboard.putNumber("Drive - FR Speed", _lastDesiredStates[3].speedMetersPerSecond);
+            SmartDashboard.putNumber("Drive - FR Angle", _lastDesiredStates[3].angle.getDegrees());
         }
 
         var flState = FrontLeftSwerveModule.getPosition();
