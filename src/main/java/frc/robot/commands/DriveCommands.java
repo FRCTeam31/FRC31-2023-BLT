@@ -16,14 +16,17 @@ public class DriveCommands {
             var forwardY = MathUtil.applyDeadband(controller.getRawAxis(5), 0.1);
             var rotation = MathUtil.applyDeadband(controller.getRawAxis(0), 0.1);
 
-            strafeX = MathUtil.clamp(strafeX, -DriveMap.slowDriveCoefficent, DriveMap.slowDriveCoefficent);
-            forwardY = MathUtil.clamp(forwardY, -DriveMap.slowDriveCoefficent, DriveMap.slowDriveCoefficent);
-            rotation = MathUtil.clamp(-rotation, -DriveMap.slowDriveCoefficent, DriveMap.slowDriveCoefficent);
+            // strafeX = MathUtil.clamp(strafeX, -DriveMap.slowDriveCoefficent,
+            // DriveMap.slowDriveCoefficent);
+            // forwardY = MathUtil.clamp(forwardY, -DriveMap.slowDriveCoefficent,
+            // DriveMap.slowDriveCoefficent);
+            // rotation = MathUtil.clamp(-rotation, -DriveMap.slowDriveCoefficent,
+            // DriveMap.slowDriveCoefficent);
 
-            var gearCoefficient = driveTrain.getShiftedSpeedCoefficient();
-            strafeX = MathUtil.clamp(strafeX, -gearCoefficient, gearCoefficient);
-            forwardY = MathUtil.clamp(forwardY, -gearCoefficient, gearCoefficient);
-            rotation = MathUtil.clamp(rotation, -gearCoefficient, gearCoefficient);
+            // var gearCoefficient = driveTrain.getShiftedSpeedCoefficient();
+            // strafeX = MathUtil.clamp(strafeX, -gearCoefficient, gearCoefficient);
+            // forwardY = MathUtil.clamp(forwardY, -gearCoefficient, gearCoefficient);
+            // rotation = MathUtil.clamp(rotation, -gearCoefficient, gearCoefficient);
 
             driveTrain.drive(-strafeX, forwardY, -rotation, fieldRelative);
         }, driveTrain, swerveModules[0], swerveModules[1], swerveModules[2], swerveModules[3]);

@@ -99,7 +99,7 @@ public class RobotContainer implements Sendable {
     }
 
     private void configureBindings() {
-        mDriverDriveController = new CommandJoystick(0);
+        mDriverController = new CommandJoystick(0);
         mOperatorController = new CommandJoystick(1);
         mOperatorController = new CommandJoystick(1);
         // SwerveModule[] modules = new SwerveModule[] {
@@ -117,7 +117,7 @@ public class RobotContainer implements Sendable {
 
         // Shoulder commands
         mShoulder.setDefaultCommand(
-                ShoulderCommands.getRunSimpleCommand(mDriverShoulder, mOperatorController));
+                ShoulderCommands.getRunSimpleCommand(mShoulder, mOperatorController));
         mOperatorController.button(7).onTrue(Commands.runOnce(() -> {
             if (mShoulder.isEnabled())
                 mShoulder.disable();
@@ -128,7 +128,9 @@ public class RobotContainer implements Sendable {
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mDriverController, mOperatorController));
 
         // Forearm commands
-        mForearm.setDefaultCommand(ForearmCommands.getRunSimpleCommand(mForearm, mOperatorController));
+        // mForearm.setDefaultCommand(
+        // ForearmCommands.getRunSimpleCommand(mForearm, mDriverController,
+        // mOperatorController));
         mOperatorController.button(8).onTrue(Commands.runOnce(() -> {
             if (mForearm.isEnabled())
                 mForearm.disable();
