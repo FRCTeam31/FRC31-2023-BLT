@@ -74,8 +74,8 @@ public class RobotContainer implements Sendable {
         // mRearLeftSwerve, mRearRightSwerve);
         // SmartDashboard.putData(mDrivetrain);
 
-        mShoulder = new Shoulder();
-        SmartDashboard.putData(mShoulder);
+        // mShoulder = new Shoulder();
+        // SmartDashboard.putData(mShoulder);
 
         mForearm = new Forearm();
         SmartDashboard.putData(mForearm);
@@ -118,9 +118,11 @@ public class RobotContainer implements Sendable {
         // mDrivetrain.resetGyro()));
 
         // Shoulder commands
-        mOperatorController.pov(0).onTrue(Commands.runOnce(() -> mShoulder.setSetpoint(mShoulder.getSetpoint() + 10)));
-        mOperatorController.pov(180)
-                .onTrue(Commands.runOnce(() -> mShoulder.setSetpoint(mShoulder.getSetpoint() - 10)));
+        // mOperatorController.pov(0).onTrue(Commands.runOnce(() ->
+        // mShoulder.setSetpoint(mShoulder.getSetpoint() + 10)));
+        // mOperatorController.pov(180)
+        // .onTrue(Commands.runOnce(() -> mShoulder.setSetpoint(mShoulder.getSetpoint()
+        // - 10)));
         // mOperatorController.button(7).onTrue(Commands.runOnce(() -> {
         // if (mShoulder.isEnabled())
         // mShoulder.disable();
@@ -129,8 +131,8 @@ public class RobotContainer implements Sendable {
         // }));
 
         // Forearm commands
-        // mForearm.setDefaultCommand(ForearmCommands.getRunSimpleCommand(mForearm,
-        // mOperatorController));
+        mForearm.setDefaultCommand(ForearmCommands.getRunSimpleCommand(mForearm,
+                mOperatorController));
         // mOperatorController.button(8).onTrue(Commands.runOnce(() -> {
         // if (mForearm.isEnabled())
         // mForearm.disable();

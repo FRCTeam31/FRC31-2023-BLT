@@ -33,7 +33,6 @@ public class Forearm extends SubsystemBase {
     private LazyWPITalonSRX forearmMotor;
     private double _lastPidOutput = 0;
     private double _lastSetpoint = 0;
-    private double _lastEncoderRead = 0;
 
     public Forearm() {
         forearmMotor = new LazyWPITalonSRX(ForearmMap.kForearmMotor1Id);
@@ -41,7 +40,7 @@ public class Forearm extends SubsystemBase {
         forearmMotor.configFactoryDefault();
         forearmMotor.setNeutralMode(NeutralMode.Brake);
         // forearmMotor.configOpenloopRamp(ForearmMap.kOpenLoopRampRate);
-        forearmMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
+        forearmMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute, 0, 20);
         forearmMotor.setInverted(true);
 
         SmartDashboard.putData("Forearm Motor", forearmMotor);
@@ -61,6 +60,6 @@ public class Forearm extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Shoulder Setpoint", () -> _lastSetpoint, (sp) -> setSetpoint(sp));
         builder.addDoubleProperty("Shoulder last PID output", () -> _lastPidOutput, null);
-        builder.addDoubleProperty("Shoulder last position", () -> _lastEncoderRead, null);
+        builder.addDoubleProperty("Shoulder position", () -> forearmMotor.getSelectedSensorPosition(), null);
     }
 }
