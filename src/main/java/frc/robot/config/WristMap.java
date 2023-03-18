@@ -14,4 +14,5 @@ public class WristMap {
     public static final double kIntakeCubeSpeed = 1;
     public static final double kEjectCubeSpeed = 1;
     public static final double kPushAndPullSpeed = 1;
+    public static final double triggerDeadBand = 0.1;
 }

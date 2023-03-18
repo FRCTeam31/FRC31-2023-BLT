@@ -8,17 +8,27 @@ import frc.robot.config.WristMap;
 import frc.robot.subsystems.Wrist;
 
 public class WristCommands {
-    public static Command runIntakeConeAndEjectCubeCommand(Wrist wrist, boolean out, CommandJoystick joystick) {
-        return new SequentialCommandGroup(new Command[] {
-                Commands.runOnce(() -> wrist.setWrist(out), wrist),
-                Commands.run(() -> wrist.runMotors(-joystick.getRawAxis(-5)), wrist)
+    public static Command runIntakeConeAndEjectCubeCommand(Wrist wrist, CommandJoystick driveController,
+            CommandJoystick operatorController) {
+        return Commands.run(() -> {
+
+            if (driveController.getRawAxis(2) > WristMap.triggerDeadBand) {
+                wrist.runMotors(WristMap.kEjectCubeSpeed);
+            } else if (operatorController.getRawAxis(2) > WristMap.triggerDeadBand) {
+                wrist.runMotors(WristMap.kEjectCubeSpeed);
+            }
         });
     }
 
-    public static Command runIntakeCubeAndEjectConeCommand(Wrist wrist, boolean out, CommandJoystick joystick) {
-        return new SequentialCommandGroup(new Command[] {
-                Commands.runOnce(() -> wrist.setWrist(out), wrist),
-                Commands.run(() -> wrist.runMotors(joystick.getRawAxis(5)), wrist)
+    public static Command runIntakeCubeAndEjectConeCommand(Wrist wrist, CommandJoystick driveController,
+            CommandJoystick operatorController) {
+        return Commands.run(() -> {
+
+            if (driveController.getRawAxis(3) > WristMap.triggerDeadBand) {
+                wrist.runMotors(WristMap.kIntakeCubeSpeed);
+            } else if (operatorController.getRawAxis(3) > WristMap.triggerDeadBand) {
+                wrist.runMotors(WristMap.kIntakeCubeSpeed);
+            }
         });
     }
 
