@@ -1,37 +1,53 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
-import frc.robot.config.ShoulderMap;
-import prime.movers.LazyCANSparkMax;
+import prime.models.PidConstants;
+import prime.movers.LazyWPITalonSRX;
 
 public class Shoulder extends PIDSubsystem {
-    private LazyCANSparkMax shoulder1;
-    private LazyCANSparkMax shoulder2;
+    public static class ShoulderMap {
+        // CAN ids
+        public static final int kShoulder1Id = 23;
+        public static final int kShoulder2Id = 24;
+        public static final int kEncoderId = 20;
+
+        // PID
+        public static final String kSprocketPidName = "Shoulder PID constants";
+        public static final PidConstants kSprocketPid = new PidConstants(0.04);
+
+        // Constants
+        public static final double kOpenLoopRampRate = 1.00;
+        public static final double kMaxAngle = 200;
+        public static final double kMinAngle = 150;
+    }
+
+    private LazyWPITalonSRX shoulder1;
+    private LazyWPITalonSRX shoulder2;
     private WPI_CANCoder mEncoder;
     private double _lastPIDoutput = 0;
 
     public Shoulder() {
         super(new PIDController(
-            ShoulderMap.AnglePid.kP, 
-            ShoulderMap.AnglePid.kI, 
-            ShoulderMap.AnglePid.kD));
+                ShoulderMap.kSprocketPid.kP,
+                ShoulderMap.kSprocketPid.kI,
+                ShoulderMap.kSprocketPid.kD));
 
-        shoulder1 = new LazyCANSparkMax(ShoulderMap.kShoulder1Id, MotorType.kBrushless);
-        shoulder1.clearFaults();
-        shoulder1.restoreFactoryDefaults();
-        shoulder1.setIdleMode(IdleMode.kBrake);
-        shoulder1.setOpenLoopRampRate(ShoulderMap.kOpenLoopRampRate);
+        shoulder1 = new LazyWPITalonSRX(ShoulderMap.kShoulder1Id);
+        shoulder1.clearStickyFaults();
+        shoulder1.configFactoryDefault();
+        shoulder1.setNeutralMode(NeutralMode.Brake);
+        shoulder1.configOpenloopRamp(0.5);
 
-        shoulder2 = new LazyCANSparkMax(ShoulderMap.kShoulder2Id, MotorType.kBrushless);
-        shoulder2.restoreFactoryDefaults();
+        shoulder2 = new LazyWPITalonSRX(ShoulderMap.kShoulder2Id);
+        shoulder2.clearStickyFaults();
+        shoulder2.configFactoryDefault();
+        shoulder2.setNeutralMode(NeutralMode.Brake);
         shoulder2.follow(shoulder1);
 
         mEncoder = new WPI_CANCoder(ShoulderMap.kEncoderId);
@@ -39,33 +55,46 @@ public class Shoulder extends PIDSubsystem {
         var pidController = getController();
         pidController.reset();
         pidController.setTolerance(0.1);
-        disable();
+        SmartDashboard.putData(ShoulderMap.kSprocketPidName, pidController);
+        enable();
     }
 
+    /**
+     * Run shoulder at low speed with a deadband
+     * 
+     * @param speed
+     */
     public void runShoulder(double speed) {
-        speed *= 0.3;
+        if (isEnabled())
+            disable();
+
         shoulder1.set(MathUtil.applyDeadband(speed, 0.15));
     }
 
     public void setShoulderAngle(double angleInDegrees) {
         setSetpoint(angleInDegrees);
-    }
 
-    public void zeroShoulderEncoder() {
-        mEncoder.setPosition(0);
+        if (!isEnabled())
+            enable();
     }
 
     public void setPIDEnabled(boolean enabled) {
         if (enabled)
-            enable(); 
-        else 
+            enable();
+        else
             disable();
     }
 
-    public double getLastPIDOutput() {
-        return _lastPIDoutput;
+    public void togglePIDEnabled() {
+        if (isEnabled())
+            disable();
+        else
+            enable();
     }
 
+    /**
+     * Gets the position of the encoder in degrees [0,360)
+     */
     @Override
     public double getMeasurement() {
         return mEncoder.getAbsolutePosition();
@@ -73,14 +102,14 @@ public class Shoulder extends PIDSubsystem {
 
     @Override
     protected void useOutput(double output, double setpoint) {
-        _lastPIDoutput = MathUtil.clamp(output, -0.2, 0.2);
-        runShoulder(_lastPIDoutput);
+        _lastPIDoutput = MathUtil.clamp(output, -0.4, 0.4);
+        // TODO: set the output to the motor once we k now how it behaves
     }
 
     @Override
-    public void initSendable(SendableBuilder builder){
-      builder.addDoubleProperty("Shoulder Position", this::getMeasurement, null);
-      builder.addBooleanProperty("PID enabled", super::isEnabled, null);
-      builder.addDoubleProperty("Last PID output", this::getLastPIDOutput, null);
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("Shoulder Position", this::getMeasurement, null);
+        builder.addBooleanProperty("PID enabled", super::isEnabled, this::setPIDEnabled);
+        builder.addDoubleProperty("Last PID output", () -> _lastPIDoutput, null);
     }
 }
