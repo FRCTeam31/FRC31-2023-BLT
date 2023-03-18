@@ -63,10 +63,6 @@ public class RobotContainer {
 
                 mWrist = new Wrist();
                 SmartDashboard.putData(mWrist);
-
-                WristCommands.runIntakeConeAndEjectCubeCommand(mWrist, mDriverController, mOperatorController);
-                WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, mDriverController, mOperatorController);
-
                 configureBindings();
         }
 
@@ -84,7 +80,8 @@ public class RobotContainer {
                 // Default commands
                 mDrivetrain.setDefaultCommand(
                                 DriveCommands.defaultDriveCommand(mDriverController, mDrivetrain, modules, true));
-                mWrist.setDefaultCommand(WristCommands.controlWithJoystickCommand(mWrist, mDriverController));
+
+                mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mDriverController, mOperatorController));
 
                 // Shoulder
                 // mShoulder.setDefaultCommand(ShoulderCommands.getRunSimpleCommand(mShoulder,
