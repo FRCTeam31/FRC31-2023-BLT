@@ -138,7 +138,8 @@ public class RobotContainer implements Sendable {
                 mForearm.enable();
         }));
 
-        mShoulder.setDefaultCommand(ShoulderCommands.controlWithJoystick(mShoulder, mDriverController));
+        mShoulder.setDefaultCommand(
+                ShoulderCommands.controlWithBothJoysticks(mShoulder, mOperatorDriveController, mOperatorController));
 
         // Wrist commands
         // mDriverOperatorController.button(1)

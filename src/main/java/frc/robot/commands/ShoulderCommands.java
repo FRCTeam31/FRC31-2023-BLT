@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.config.ControlsMap;
+import frc.robot.config.ShoulderMap;
 import frc.robot.subsystems.Shoulder;
 
 public class ShoulderCommands {
@@ -18,12 +19,31 @@ public class ShoulderCommands {
         return Commands.runOnce(() -> shoulder.setSetpoint(angle));
     }
 
-    public static Command controlWithJoystick(Shoulder shoulder, CommandJoystick driveJoystick) {
+    public static Command controlWithJoystick(Shoulder shoulder, CommandJoystick driveController) {
         return Commands.runOnce(() -> {
 
-            var setpoint = 200 + (driveJoystick.getRawAxis(ControlsMap.LEFT_STICK_Y) * 20);
+            var setpoint = 200 + (driveController.getRawAxis(ControlsMap.LEFT_STICK_Y) * 20);
 
             shoulder.setShoulderAngle(setpoint);
+
+        });
+    }
+
+    public static Command controlWithBothJoysticks(Shoulder shoulder, CommandJoystick driveController,
+            CommandJoystick operatorController) {
+        return Commands.runOnce(() -> {
+            if (driveController.getRawAxis(ControlsMap.LEFT_STICK_Y) > ShoulderMap.shoulderDeadband) {
+                var setpoint = 200 + (driveController.getRawAxis(ControlsMap.LEFT_STICK_Y) * 20);
+
+                shoulder.setShoulderAngle(setpoint);
+
+            } else if (operatorController.getRawAxis(ControlsMap.LEFT_STICK_Y) > ShoulderMap.shoulderDeadband) {
+
+                var setpoint = 200 + (driveController.getRawAxis(ControlsMap.LEFT_STICK_Y) * 20);
+
+                shoulder.setShoulderAngle(setpoint);
+
+            }
 
         });
     }
