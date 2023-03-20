@@ -81,7 +81,7 @@ public class WristCommands {
     }
 
     public static Command controlWithJoystickCommand(Wrist wrist, CommandJoystick joystick) {
-        return Commands.run(() -> wrist.runMotors(-joystick.getRawAxis(5)), wrist);
+        return Commands.run(() -> wrist.runMotors(-joystick.getRawAxis(ControlsMap.RIGHT_STICK_Y)), wrist);
     }
 
 }
