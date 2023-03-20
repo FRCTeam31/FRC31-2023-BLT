@@ -96,22 +96,23 @@ public class RobotContainer implements Sendable {
         Light lights = new Light();
         configureBindings();
         LightCommands.getSetFrontStripColor(lights, 0, 255, 0);
+
+        mForearm = new Forearm();
+        SmartDashboard.putData(mForearm);
     }
 
     private void configureBindings() {
-        mDriverController = new CommandJoystick(0);
+        mDriverController = new CommandJoystick();
         mOperatorController = new CommandJoystick(1);
-        mOperatorController = new CommandJoystick(1);
-        // SwerveModule[] modules = new SwerveModule[] {
-        // mFrontLeftSwerve,
-        // mFrontRightSwerve,
-        // mRearLeftSwerve,
-        // mRearRightSwerve
-        // };
+        SwerveModule[] modules = new SwerveModule[] {
+                mFrontLeftSwerve,
+                mFrontRightSwerve,
+                mRearLeftSwerve,
+                mRearRightSwerve
+        };
 
         // Drive commands
-        // mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriveController,
-        // mDrivetrain, modules, true));
+        mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriverController, mDrivetrain, modules, true));
         // mDriveController.button(3).onTrue(Commands.runOnce(() ->
         // mDrivetrain.resetGyro()));
 
@@ -128,15 +129,14 @@ public class RobotContainer implements Sendable {
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mDriverController, mOperatorController));
 
         // Forearm commands
-        // mForearm.setDefaultCommand(
-        // ForearmCommands.getRunSimpleCommand(mForearm, mDriverController,
-        // mOperatorController));
         mOperatorController.button(8).onTrue(Commands.runOnce(() -> {
             if (mForearm.isEnabled())
                 mForearm.disable();
             else
                 mForearm.enable();
         }));
+
+        mForearm.setDefaultCommand(ForearmCommands.controlWithJoystick(mForearm, mDriverController));
 
         // Wrist commands
         // mDriverOperatorController.button(1)
@@ -157,14 +157,20 @@ public class RobotContainer implements Sendable {
         // mController.button(2)
         // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
 
-        mOperatorController.pov(90)
+        mDriverController.pov(0)
+                .onTrue(WristCommands.setWristCommand(mWrist, true));
+
+        mDriverController
+                .pov(180).onTrue(WristCommands.setWristCommand(mWrist, false));
+
+        mOperatorController.pov(0)
                 .onTrue(WristCommands.setWristCommand(mWrist, true));
 
         mOperatorController.pov(180)
                 .onTrue(WristCommands.setWristCommand(mWrist, false));
+
         // Button bindings
-        // mDriveController.button(3).onTrue(Commands.runOnce(() ->
-        // mDrivetrain.resetGyro()));
+        mDriveController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
 
         // mDriveController.button(1).onTrue(getAutonomousCommand());
     }
