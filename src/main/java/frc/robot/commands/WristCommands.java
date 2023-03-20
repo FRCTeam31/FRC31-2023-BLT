@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.config.ControlsMap;
 import frc.robot.config.WristMap;
 import frc.robot.subsystems.Wrist;
 
@@ -37,15 +38,15 @@ public class WristCommands {
 
     public static Command runIntake(Wrist wrist, CommandJoystick driveController, CommandJoystick operatorController) {
         return Commands.runOnce(() -> {
-            if (driveController.getRawAxis(2) > WristMap.triggerDeadBand) {
+            if (driveController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand) {
                 wrist.runMotors(WristMap.kEjectConeSpeed);
-            } else if (operatorController.getRawAxis(2) > WristMap.triggerDeadBand) {
+            } else if (operatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand) {
                 wrist.runMotors(WristMap.kEjectConeSpeed);
             }
 
-            if (driveController.getRawAxis(3) > WristMap.triggerDeadBand) {
+            if (driveController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > WristMap.triggerDeadBand) {
                 wrist.runMotors(WristMap.kIntakeCubeSpeed);
-            } else if (operatorController.getRawAxis(3) > WristMap.triggerDeadBand) {
+            } else if (operatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > WristMap.triggerDeadBand) {
                 wrist.runMotors(WristMap.kIntakeCubeSpeed);
             }
 

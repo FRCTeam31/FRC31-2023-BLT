@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.config.ControlsMap;
 import frc.robot.subsystems.Forearm;
 
 public class ForearmCommands {
@@ -15,16 +16,18 @@ public class ForearmCommands {
     // Commands.run(() -> forearm.run(driverJoystick.getRawAxis(1)), forearm));
     // }
 
-    public static Command getSetAngleCommand(Forearm forearm, double angle) {
-        return Commands.runOnce(() -> forearm.setSetpoint(angle));
-    }
+    // public static Command getSetAngleCommand(Forearm forearm, double angle) {
+    // return Commands.runOnce(() -> forearm.setSetpoint(angle));
+    // }
 
-    public static Command controlWithJoystick(Forearm forearm, CommandJoystick driveJoystick) {
-        return Commands.runOnce(() -> {
+    // public static Command controlWithJoystick(Forearm forearm, CommandJoystick
+    // driveJoystick) {
+    // return Commands.runOnce(() -> {
 
-            var setpoint = 200 + (driveJoystick.getRawAxis(1) * 20);
+    // var setpoint = 200 + (driveJoystick.getRawAxis(ControlsMap.LEFT_STICK_Y) *
+    // 20);
 
-            forearm.setSetpoint(setpoint);
-        });
-    }
+    // forearm.setSetpoint(setpoint);
+    // });
+    // }
 }

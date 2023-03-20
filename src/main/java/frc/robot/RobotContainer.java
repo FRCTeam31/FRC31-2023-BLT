@@ -26,7 +26,9 @@ import frc.robot.commands.LightCommands;
 import frc.robot.commands.ShoulderCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.config.AutoMap;
+import frc.robot.config.ControlsMap;
 import frc.robot.config.DriveMap;
+import frc.robot.config.ShoulderMap;
 
 public class RobotContainer implements Sendable {
     public CommandJoystick mDriverController;
@@ -102,8 +104,8 @@ public class RobotContainer implements Sendable {
     }
 
     private void configureBindings() {
-        mDriverController = new CommandJoystick();
-        mOperatorController = new CommandJoystick(1);
+        mDriverController = new CommandJoystick(ControlsMap.DRIVER_PORT);
+        mOperatorController = new CommandJoystick(ControlsMap.OPERATOR_PORT);
         SwerveModule[] modules = new SwerveModule[] {
                 mFrontLeftSwerve,
                 mFrontRightSwerve,
@@ -119,7 +121,7 @@ public class RobotContainer implements Sendable {
         // Shoulder commands
         mShoulder.setDefaultCommand(
                 ShoulderCommands.getRunSimpleCommand(mShoulder, mOperatorController));
-        mOperatorController.button(7).onTrue(Commands.runOnce(() -> {
+        mOperatorController.button(ControlsMap.LOGO_LEFT).onTrue(Commands.runOnce(() -> {
             if (mShoulder.isEnabled())
                 mShoulder.disable();
             else
@@ -129,14 +131,14 @@ public class RobotContainer implements Sendable {
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mDriverController, mOperatorController));
 
         // Forearm commands
-        mOperatorController.button(8).onTrue(Commands.runOnce(() -> {
+        mOperatorController.button(ControlsMap.LOGO_RIGHT).onTrue(Commands.runOnce(() -> {
             if (mForearm.isEnabled())
                 mForearm.disable();
             else
                 mForearm.enable();
         }));
 
-        mForearm.setDefaultCommand(ForearmCommands.controlWithJoystick(mForearm, mDriverController));
+        mShoulder.setDefaultCommand(ShoulderCommands.controlWithJoystick(mShoulder, mDriverController));
 
         // Wrist commands
         // mDriverOperatorController.button(1)
@@ -157,20 +159,27 @@ public class RobotContainer implements Sendable {
         // mController.button(2)
         // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
 
-        mDriverController.pov(0)
+        mDriverController.pov(ControlsMap.up)
                 .onTrue(WristCommands.setWristCommand(mWrist, true));
 
         mDriverController
-                .pov(180).onTrue(WristCommands.setWristCommand(mWrist, false));
+                .pov(ControlsMap.down).onTrue(WristCommands.setWristCommand(mWrist, false));
 
-        mOperatorController.pov(0)
+        mOperatorController.pov(ControlsMap.up)
                 .onTrue(WristCommands.setWristCommand(mWrist, true));
 
-        mOperatorController.pov(180)
+        mOperatorController.pov(ControlsMap.down)
                 .onTrue(WristCommands.setWristCommand(mWrist, false));
 
         // Button bindings
-        mDriveController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+        mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+
+        mOperatorController.button(ControlsMap.Y)
+                .onTrue(ShoulderCommands.setAngleCommand(mShoulder, ShoulderMap.kTopRow));
+        mOperatorController.button(ControlsMap.B)
+                .onTrue(ShoulderCommands.setAngleCommand(mShoulder, ShoulderMap.kMiddleRow));
+        mOperatorController.button(ControlsMap.A)
+                .onTrue(ShoulderCommands.setAngleCommand(mShoulder, ShoulderMap.kGroundLevel));
 
         // mDriveController.button(1).onTrue(getAutonomousCommand());
     }
