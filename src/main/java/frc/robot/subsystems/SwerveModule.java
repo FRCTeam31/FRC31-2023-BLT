@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.config.DriveMap;
 import prime.utilities.CTREConverter;
 import prime.movers.LazyWPITalonFX;
@@ -111,6 +110,11 @@ public class SwerveModule extends PIDSubsystem {
         setDesiredAngle(desiredState.angle);
     }
 
+    /**
+     * Sets the encoder position to a new value
+     * 
+     * @param newPosition the new position of the encoder
+     */
     public void setEncoderPosition(double newPosition) {
         mEncoder.setPosition(newPosition);
     }
