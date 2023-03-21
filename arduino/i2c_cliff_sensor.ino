@@ -345,7 +345,7 @@ NeoPatterns accentStripRight(ACCENT_STRIP_LED_COUNT, ACCENT_STRIP_RIGHT_OUTPUT_P
 NeoPatterns accentStripLeft(ACCENT_STRIP_LED_COUNT, ACCENT_STRIP_LEFT_OUTPUT_PIN, NEO_GRB + NEO_KHZ800);
 
 // Variable to hold our current LED modes
-char currentLEDModes[4] = {'0', '0', '0', '0'};
+byte currentLEDModes[4] = {'0', '0', '0', '0'};
 // ====================================
 
 void pingSensorPollEvent()
@@ -385,39 +385,42 @@ long pingSensorPulseDistanceMM(uint8_t echoPin)
     return distance;
 }
 
-void setModeToStrip(NeoPatterns strip, char mode)
+void setModeToStrip(NeoPatterns strip, byte mode)
 {
     switch (mode)
     {
     default:
-    case '0':
-
-        break;
-    case '1':
+    case 0:
         /* code */
         break;
-    case '2':
+    case 1:
+        // SOLID GREEN
+        frontStrip.ColorSet(frontStrip.Green());
+        break;
+    case 2:
+        // GIMMEACONE (yellow)
+        indicatorStrip.ColorSet(frontStrip.Color(255, 255, 0));
+        break;
+    case 3:
+        // GIMMEACUBE (purple)
+        indicatorStrip.ColorSet(frontStrip.Color(255, 0, 255));
+        break;
+    case 4:
         /* code */
         break;
-    case '3':
+    case 5:
         /* code */
         break;
-    case '4':
+    case 6:
         /* code */
         break;
-    case '5':
+    case 7:
         /* code */
         break;
-    case '6':
+    case 8:
         /* code */
         break;
-    case '7':
-        /* code */
-        break;
-    case '8':
-        /* code */
-        break;
-    case '9':
+    case 9:
         /* code */
         break;
     }
@@ -426,7 +429,7 @@ void setModeToStrip(NeoPatterns strip, char mode)
 void ledStripUpdateEvent(int byteCount)
 {
     // Read the available characters from the I2C message
-    char msg[byteCount];
+    byte msg[byteCount];
     for (int i = 0; i < byteCount; i++)
     {
         if (Wire.available() <= 1)

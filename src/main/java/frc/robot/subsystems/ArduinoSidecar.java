@@ -12,11 +12,11 @@ public class ArduinoSidecar extends SubsystemBase {
         private static final int ArduinoAddress = 10;
     }
 
-    private enum StripModes {
+    public enum StripModes {
         OFF,
-        SOLID,
-        MODE3,
-        MODE4,
+        SOLID_GREEN,
+        GIMMEACONE,
+        GIMMEACUBE,
         MODE5,
         MODE6,
         MODE7,
@@ -24,7 +24,7 @@ public class ArduinoSidecar extends SubsystemBase {
         MODE9,
     }
 
-    private enum LEDStrips {
+    public enum LEDStrips {
         FRONT,
         INDICATOR,
         ACCENT_LEFT,
@@ -52,10 +52,16 @@ public class ArduinoSidecar extends SubsystemBase {
             DriverStation.reportError("[ERROR] Aborted while sending LED update to ArduinoSidecar", true);
     }
 
-    public boolean[] getCliffSensorStates() throws Exception {
+    public boolean[] getCliffSensorStates() {
         var readBytes = new byte[4];
-        if (!mArduinoI2c.read(0, 4, readBytes)) 
-            throw new Exception("Aborted while reading ArduinoSidecar cliff sensor data");
-        
+        if (!mArduinoI2c.read(0, 4, readBytes))
+            return new boolean[] { false, false, false, false };
+
+        var result = new boolean[4];
+        for (int i = 0; i < readBytes.length; i++) {
+            result[i] = readBytes[i] == 1;
+        }
+
+        return result;
     }
 }
