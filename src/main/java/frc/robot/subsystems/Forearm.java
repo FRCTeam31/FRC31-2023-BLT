@@ -46,14 +46,15 @@ public class Forearm extends SubsystemBase {
         SmartDashboard.putData("Motor", forearmMotor);
     }
 
-    public void setSetpoint(double angle) {
-        _lastSetpoint = angle;
-        forearmMotor.set(ControlMode.MotionMagic, MathUtil.clamp(angle, ForearmMap.kLowAngleLimit,
-                ForearmMap.kHighAngleLimit));
+    public void setSetpoint(double distance) {
+        _lastSetpoint = distance;
+        // forearmMotor.set(ControlMode.MotionMagic, MathUtil.clamp(distance,
+        // ForearmMap.kLowAngleLimit,
+        // ForearmMap.kHighAngleLimit));
     }
 
     public void runSimple(double speed) {
-        forearmMotor.set(ControlMode.PercentOutput, speed);
+        // forearmMotor.set(ControlMode.PercentOutput, speed);
     }
 
     @Override
