@@ -61,6 +61,6 @@ public class Forearm extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Setpoint", () -> _lastSetpoint, (sp) -> setSetpoint(sp));
         builder.addDoubleProperty("PID output", () -> _lastPidOutput, null);
-        builder.addDoubleProperty("Position", () -> forearmMotor.getSelectedSensorPosition(), null);
+        builder.addDoubleProperty("Position", forearmMotor::getSelectedSensorPosition, null);
     }
 }

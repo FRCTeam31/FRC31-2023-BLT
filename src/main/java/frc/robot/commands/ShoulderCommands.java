@@ -15,13 +15,15 @@ public class ShoulderCommands {
                 Commands.runOnce(() -> shoulder.setSetpoint(angle)));
     }
 
-    public static Command controlWithJoystick(Shoulder shoulder, CommandJoystick operatorController) {
-        return new SequentialCommandGroup(
-                Commands.runOnce(() -> shoulder.disable()),
-                Commands.run(() -> {
-                    var joystickInput = operatorController.getRawAxis(ControlsMap.LEFT_STICK_Y);
+    // public static Command controlWithJoystick(Shoulder shoulder, CommandJoystick
+    // operatorController) {
+    // return new SequentialCommandGroup(
+    // Commands.run(() -> {
+    // var joystickInput = operatorController.getRawAxis(ControlsMap.LEFT_STICK_Y);
 
-                    shoulder.setShoulderSpeed(MathUtil.applyDeadband(joystickInput, ControlsMap.AXIS_DEADBAND));
-                }, shoulder));
-    }
+    // if (Math.abs(joystickInput) > ControlsMap.Driver)
+    // shoulder.setShoulderSpeed(MathUtil.applyDeadband(joystickInput,
+    // ControlsMap.AXIS_DEADBAND));
+    // }, shoulder));
+    // }
 }

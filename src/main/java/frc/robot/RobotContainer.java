@@ -44,7 +44,8 @@ public class RobotContainer implements Sendable {
     public Shoulder mShoulder;
     public Wrist mWrist;
     public Forearm mForearm;
-    public UsbCamera Camera;
+    public ArduinoSidecar mSidecar;
+    public UsbCamera mCamera;
 
     public RobotContainer() {
         mFrontLeftSwerve = new SwerveModule(
@@ -121,22 +122,11 @@ public class RobotContainer implements Sendable {
         // mDriveController.button(3).onTrue(Commands.runOnce(() ->
         // mDrivetrain.resetGyro()));
 
-        // Shoulder commands
-        // mShoulder.setDefaultCommand(
-        // ShoulderCommands.getRunSimpleCommand(mShoulder, mOperatorController));
-        // mOperatorController.button(ControlsMap.LOGO_LEFT).onTrue(Commands.runOnce(()
-        // -> {
-        // if (mShoulder.isEnabled())
-        // mShoulder.disable();
-        // else
-        // mShoulder.enable();
-        // }));
-
-        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mDriverController, mOperatorController));
-        mShoulder.setDefaultCommand(ShoulderCommands.controlWithJoystick(mShoulder,
-                mOperatorController));
+        // mShoulder.setDefaultCommand(ShoulderCommands.controlWithJoystick(mShoulder,
+        // mOperatorController));
 
         // Wrist commands
+        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mDriverController, mOperatorController));
         // mDriverOperatorController.button(1)
         // .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
         // .onFalse(WristCommands.stopIntakeCommand(mWrist));
@@ -161,15 +151,15 @@ public class RobotContainer implements Sendable {
         // mDriverController
         // .pov(ControlsMap.down).onTrue(WristCommands.setWristCommand(mWrist, false));
 
-        // mOperatorController.button(ControlsMap.Y)
-        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
-        // Shoulder.Map.kHighAngleLimit));
-        // mOperatorController.button(ControlsMap.B)
-        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
-        // Shoulder.Map.kHighAngleLimit));
-        // mOperatorController.button(ControlsMap.A)
-        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
-        // Shoulder.Map.kHighAngleLimit));
+        mOperatorController.button(ControlsMap.Y)
+                .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
+                        Shoulder.Map.kTopRowAngle));
+        mOperatorController.button(ControlsMap.B)
+                .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
+                        Shoulder.Map.kMiddleRowAngle));
+        mOperatorController.button(ControlsMap.A)
+                .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
+                        Shoulder.Map.kGroundLevelAngle));
 
         mOperatorController.pov(ControlsMap.up)
                 .onTrue(WristCommands.setWristCommand(mWrist, true));
