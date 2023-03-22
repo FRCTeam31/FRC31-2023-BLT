@@ -18,13 +18,24 @@ public class LazyWPITalonSRX extends WPI_TalonSRX {
     public ControlMode getLastControlMode() {
         return mLastControlMode;
     }
-    
+
     @Override
     public void set(ControlMode mode, double value) {
-        if (value == mLastValue && mode == mLastControlMode) return;
-        
+        if (value == mLastValue && mode == mLastControlMode)
+            return;
+
         mLastValue = value;
         mLastControlMode = mode;
         super.set(mode, value);
+    }
+
+    @Override
+    public void set(double speed) {
+        if (speed == mLastValue && mLastControlMode == ControlMode.PercentOutput)
+            return;
+
+        mLastValue = speed;
+        mLastControlMode = ControlMode.PercentOutput;
+        super.set(speed);
     }
 }
