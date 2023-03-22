@@ -57,6 +57,7 @@ public class Wrist extends SubsystemBase {
 
     @Override
     public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
         builder.addBooleanProperty("Hall Sensor", () -> !mHallSensor.get(), null);
         builder.addBooleanProperty("Actuated", this::getWristOut, this::setWrist);
         builder.addBooleanProperty("Pressure switch", compressor::getPressureSwitchValue, null);

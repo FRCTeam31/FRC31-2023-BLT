@@ -32,11 +32,9 @@ import frc.robot.commands.WristCommands;
 import frc.robot.config.AutoMap;
 import frc.robot.config.ControlsMap;
 import frc.robot.config.DriveMap;
-import frc.robot.config.ShoulderMap;
 
 public class RobotContainer implements Sendable {
     public CommandJoystick mDriverController;
-    public CommandJoystick mOperatorDriveController;
     public CommandJoystick mOperatorController;
     public SwerveModule mFrontLeftSwerve;
     public SwerveModule mFrontRightSwerve;
@@ -105,100 +103,96 @@ public class RobotContainer implements Sendable {
                 DriveMap.kDrivePidConstants);
         SmartDashboard.putData(DriveMap.kSteeringPidConstantsName,
                 DriveMap.kSteeringPidConstants);
-
-        // Light lights = new Light();
-        // Camera = CameraServer.startAutomaticCapture();
-        // Camera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 1280, 720, 60);
-
-        // SmartDashboard.putData(SendableCameraWrapper.wrap(Camera));
-        // configureBindings();
-        // LightCommands.getSetFrontStripColor(lights, 0, 255, 0);
-
-        // mForearm = new Forearm();
-        // SmartDashboard.putData(mForearm);
     }
 
-    // private void configureBindings() {
-    // mDriverController = new CommandJoystick(ControlsMap.DRIVER_PORT);
-    // mOperatorController = new CommandJoystick(ControlsMap.OPERATOR_PORT);
-    // SwerveModule[] modules = new SwerveModule[] {
-    // mFrontLeftSwerve,
-    // mFrontRightSwerve,
-    // mRearLeftSwerve,
-    // mRearRightSwerve
-    // };
+    public void configureBindings() {
+        mDriverController = new CommandJoystick(ControlsMap.DRIVER_PORT);
+        mOperatorController = new CommandJoystick(ControlsMap.OPERATOR_PORT);
+        SwerveModule[] modules = new SwerveModule[] {
+                mFrontLeftSwerve,
+                mFrontRightSwerve,
+                mRearLeftSwerve,
+                mRearRightSwerve
+        };
 
-    // Drive commands
-    // mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriverController,
-    // mDrivetrain, modules, true));
-    // mDriveController.button(3).onTrue(Commands.runOnce(() ->
-    // mDrivetrain.resetGyro()));
+        // Drive commands
+        // mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriverController,
+        // mDrivetrain, modules, true));
+        // mDriveController.button(3).onTrue(Commands.runOnce(() ->
+        // mDrivetrain.resetGyro()));
 
-    // Shoulder commands
-    // mShoulder.setDefaultCommand(
-    // ShoulderCommands.getRunSimpleCommand(mShoulder, mOperatorController));
-    // mOperatorController.button(ControlsMap.LOGO_LEFT).onTrue(Commands.runOnce(()
-    // -> {
-    // if (mShoulder.isEnabled())
-    // mShoulder.disable();
-    // else
-    // mShoulder.enable();
-    // }));
+        // Shoulder commands
+        // mShoulder.setDefaultCommand(
+        // ShoulderCommands.getRunSimpleCommand(mShoulder, mOperatorController));
+        // mOperatorController.button(ControlsMap.LOGO_LEFT).onTrue(Commands.runOnce(()
+        // -> {
+        // if (mShoulder.isEnabled())
+        // mShoulder.disable();
+        // else
+        // mShoulder.enable();
+        // }));
 
-    // mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mDriverController,
-    // mOperatorController));
+        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mDriverController, mOperatorController));
+        mShoulder.setDefaultCommand(ShoulderCommands.controlWithJoystick(mShoulder, mDriverController));
 
-    // Forearm commands
+        // Forearm commands
 
-    // mShoulder.setDefaultCommand(
-    // ShoulderCommands.controlWithBothJoysticks(mShoulder,
-    // mOperatorDriveController, mOperatorController));
+        // mShoulder.setDefaultCommand(
+        // ShoulderCommands.controlWithBothJoysticks(mShoulder,
+        // mOperatorDriveController, mOperatorController));
 
-    // Wrist commands
-    // mDriverOperatorController.button(1)
-    // .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
-    // .onFalse(WristCommands.stopIntakeCommand(mWrist));
+        // Wrist commands
+        // mDriverOperatorController.button(1)
+        // .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
+        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
-    // Wrist bindings
-    // mController.button(1)
-    // .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
-    // .onFalse(WristCommands.stopIntakeCommand(mWrist));
-    // mOperatorController.button(2)
-    // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
+        // Wrist bindings
+        // mController.button(1)
+        // .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
+        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
+        // mOperatorController.button(2)
+        // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
 
-    // mController.pov(0)
-    // .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true))
-    // .onFalse(WristCommands.stopIntakeCommand(mWrist));
+        // mController.pov(0)
+        // .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true))
+        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
-    // mController.button(2)
-    // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
+        // mController.button(2)
+        // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
 
-    // mDriverController.pov(ControlsMap.up)
-    // .onTrue(WristCommands.setWristCommand(mWrist, true));
+        // mDriverController.pov(ControlsMap.up)
+        // .onTrue(WristCommands.setWristCommand(mWrist, true));
 
-    // mDriverController
-    // .pov(ControlsMap.down).onTrue(WristCommands.setWristCommand(mWrist, false));
+        // mDriverController
+        // .pov(ControlsMap.down).onTrue(WristCommands.setWristCommand(mWrist, false));
 
-    // mOperatorController.pov(ControlsMap.up)
-    // .onTrue(WristCommands.setWristCommand(mWrist, true));
+        mOperatorController.button(ControlsMap.Y)
+                .onTrue(ShoulderCommands.setAngleCommand(mShoulder, Shoulder.Map.kHighAngleLimit));
+        mOperatorController.button(ControlsMap.B)
+                .onTrue(ShoulderCommands.setAngleCommand(mShoulder, Shoulder.Map.kHighAngleLimit));
+        mOperatorController.button(ControlsMap.A)
+                .onTrue(ShoulderCommands.setAngleCommand(mShoulder, Shoulder.Map.kHighAngleLimit));
 
-    // mOperatorController.pov(ControlsMap.down)
-    // .onTrue(WristCommands.setWristCommand(mWrist, false));
+        mOperatorController.pov(ControlsMap.up)
+                .onTrue(WristCommands.setWristCommand(mWrist, true));
 
-    // Button bindings
-    // mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() ->
-    // mDrivetrain.resetGyro()));
+        mOperatorController.pov(ControlsMap.down)
+                .onTrue(WristCommands.setWristCommand(mWrist, false));
 
-    // mOperatorController.button(ControlsMap.Y)
-    // .onTrue(ShoulderCommands.setAngleCommand(mShoulder, ShoulderMap.kTopRow));
-    // mOperatorController.button(ControlsMap.B)
-    // .onTrue(ShoulderCommands.setAngleCommand(mShoulder, ShoulderMap.kMiddleRow));
-    // mOperatorController.button(ControlsMap.A)
-    // .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
-    // ShoulderMap.kGroundLevel));
+        // Button bindings
+        // mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() ->
+        // mDrivetrain.resetGyro()));
 
-    // mDriveController.button(1).onTrue(getAutonomousCommand());
-    // }
+        // mOperatorController.button(ControlsMap.Y)
+        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder, ShoulderMap.kTopRow));
+        // mOperatorController.button(ControlsMap.B)
+        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder, ShoulderMap.kMiddleRow));
+        // mOperatorController.button(ControlsMap.A)
+        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
+        // ShoulderMap.kGroundLevel));
+
+        // mDriveController.button(1).onTrue(getAutonomousCommand());
+    }
 
     // public SequentialCommandGroup getAutonomousCommand() {
     // PathPlannerTrajectory drive1Meter = PathPlanner.generatePath(

@@ -9,10 +9,9 @@ public class WristMap {
     public static final int kWristHallSensorChannel = 9;
 
     // Motor speeds
-    public static final double kIntakeConeSpeed = 1;
-    public static final double kEjectConeSpeed = 1;
-    public static final double kIntakeCubeSpeed = 1;
-    public static final double kEjectCubeSpeed = 1;
-    public static final double kPushAndPullSpeed = 1;
-    public static final double triggerDeadBand = 0.1;
+    public static final double kIntakeConeSpeed = -0.6;
+    public static final double kEjectConeSpeed = 0.6;
+    public static final double kIntakeCubeSpeed = 0.6;
+    public static final double kEjectCubeSpeed = -0.6;
+    public static final double triggerDeadBand = 0.4;
 }

@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
@@ -35,7 +36,14 @@ public class Shoulder extends PIDSubsystem {
         public static final double kLowAngleLimit = 180;
         public static final double kHighAngleLimit = 220;
         public static final double kHorizontalHoldOutput = -0.09;
+
+        // Scoring angles
+        public static final int kTopRow = 220;
+        public static final int kMiddleRow = 200;
+        public static final int kGroundLevel = 190;
     }
+
+    public ControlMode LastControlMode = ControlMode.Disabled;
 
     private LazyWPITalonSRX shoulder1;
     private LazyWPITalonSRX shoulder2;
@@ -55,6 +63,9 @@ public class Shoulder extends PIDSubsystem {
         shoulder1.configFactoryDefault();
         shoulder1.setNeutralMode(NeutralMode.Brake);
         shoulder1.setInverted(InvertType.InvertMotorOutput);
+        shoulder1.configContinuousCurrentLimit(20);
+        shoulder1.configPeakCurrentLimit(30);
+        shoulder1.configPeakCurrentDuration(100);
         shoulder1.configMotionAcceleration(Map.kmaxAccelerationPer100ms);
         shoulder1.configMotionCruiseVelocity(Map.kmaxVelocityPer100ms);
         // PID
@@ -77,23 +88,20 @@ public class Shoulder extends PIDSubsystem {
         setSetpoint(200);
     }
 
-    /**
-     * Run shoulder at low speed with a deadband
-     * 
-     * @param speed
-     */
-    public void runShoulder(double speed) {
-        if (speed > 0 && mUpperLimitSwitch.get())
-            return;
-
-        shoulder1.set(MathUtil.applyDeadband(speed, 0.15));
-    }
-
     public void setShoulderAngle(double angleInDegrees) {
         if (!isEnabled())
             enable();
 
+        LastControlMode = ControlMode.Position;
         setSetpoint(angleInDegrees);
+    }
+
+    public void setShoulderSpeed(double speed) {
+        if (isEnabled())
+            disable();
+
+        LastControlMode = ControlMode.PercentOutput;
+        runShoulderWithLimits(speed);
     }
 
     public Rotation2d getRotation() {
@@ -107,7 +115,7 @@ public class Shoulder extends PIDSubsystem {
         _lastFeedForward = gravCompensation * Map.kHorizontalHoldOutput;
         _lastFinalOutput = MathUtil.clamp(output + _lastFeedForward, -1, 1);
 
-        runShoulder(_lastFinalOutput);
+        runShoulderWithLimits(_lastFinalOutput);
     }
 
     @Override
@@ -118,6 +126,21 @@ public class Shoulder extends PIDSubsystem {
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Position", () -> mEncoder.getAbsolutePosition(), null);
+        builder.addDoubleProperty("Last motor output", () -> _lastOutput, null);
         builder.addBooleanProperty("Upper Limit Switch", mUpperLimitSwitch::get, null);
+    }
+
+    /**
+     * Run shoulder at low speed with a deadband
+     * 
+     * @param speed
+     */
+    private void runShoulderWithLimits(double speed) {
+        if (speed > 0 && mUpperLimitSwitch.get())
+            return;
+
+        shoulder1.set(ControlMode.PercentOutput, MathUtil.applyDeadband(speed, 0.15));
+        // if (getMeasurement() > Map.kGroundLevel)
+        // shoulder1.set(MathUtil.applyDeadband(speed, 0.15));
     }
 }

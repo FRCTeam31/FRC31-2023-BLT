@@ -36,21 +36,50 @@ public class WristCommands {
     // });
     // }
 
+    // public static Command runIntake(Wrist wrist, CommandJoystick driveController,
+    // CommandJoystick operatorController) {
+    // return Commands.runOnce(() -> {
+    // if (driveController.getRawAxis(ControlsMap.LEFT_TRIGGER) >
+    // WristMap.triggerDeadBand) {
+    // wrist.runMotors(WristMap.kEjectConeSpeed);
+    // } else if (operatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) >
+    // WristMap.triggerDeadBand) {
+    // wrist.runMotors(WristMap.kEjectConeSpeed);
+    // }
+
+    // if (driveController.getRawAxis(ControlsMap.RIGHT_TRIGGER) >
+    // WristMap.triggerDeadBand) {
+    // wrist.runMotors(WristMap.kIntakeCubeSpeed);
+    // } else if (operatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) >
+    // WristMap.triggerDeadBand) {
+    // wrist.runMotors(WristMap.kIntakeCubeSpeed);
+    // }
+
+    // });
+
+    // }
+
     public static Command runIntake(Wrist wrist, CommandJoystick driveController, CommandJoystick operatorController) {
-        return Commands.runOnce(() -> {
+        return Commands.run(() -> {
             if (driveController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand) {
                 wrist.runMotors(WristMap.kEjectConeSpeed);
-            } else if (operatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand) {
+                return;
+            } else if (driveController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > WristMap.triggerDeadBand) {
+                wrist.runMotors(WristMap.kIntakeConeSpeed);
+                return;
+            }
+
+            if (operatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand) {
                 wrist.runMotors(WristMap.kEjectConeSpeed);
-            }
-
-            if (driveController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > WristMap.triggerDeadBand) {
-                wrist.runMotors(WristMap.kIntakeCubeSpeed);
+                return;
             } else if (operatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > WristMap.triggerDeadBand) {
-                wrist.runMotors(WristMap.kIntakeCubeSpeed);
+                wrist.runMotors(WristMap.kIntakeConeSpeed);
+                return;
+            } else {
+                wrist.runMotors(0);
             }
 
-        });
+        }, wrist);
 
     }
 
