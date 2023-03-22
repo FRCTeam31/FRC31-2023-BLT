@@ -133,13 +133,8 @@ public class RobotContainer implements Sendable {
         // }));
 
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mDriverController, mOperatorController));
-        mShoulder.setDefaultCommand(ShoulderCommands.controlWithJoystick(mShoulder, mDriverController));
-
-        // Forearm commands
-
-        // mShoulder.setDefaultCommand(
-        // ShoulderCommands.controlWithBothJoysticks(mShoulder,
-        // mOperatorDriveController, mOperatorController));
+        mShoulder.setDefaultCommand(ShoulderCommands.controlWithJoystick(mShoulder,
+                mOperatorController));
 
         // Wrist commands
         // mDriverOperatorController.button(1)
@@ -166,12 +161,15 @@ public class RobotContainer implements Sendable {
         // mDriverController
         // .pov(ControlsMap.down).onTrue(WristCommands.setWristCommand(mWrist, false));
 
-        mOperatorController.button(ControlsMap.Y)
-                .onTrue(ShoulderCommands.setAngleCommand(mShoulder, Shoulder.Map.kHighAngleLimit));
-        mOperatorController.button(ControlsMap.B)
-                .onTrue(ShoulderCommands.setAngleCommand(mShoulder, Shoulder.Map.kHighAngleLimit));
-        mOperatorController.button(ControlsMap.A)
-                .onTrue(ShoulderCommands.setAngleCommand(mShoulder, Shoulder.Map.kHighAngleLimit));
+        // mOperatorController.button(ControlsMap.Y)
+        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
+        // Shoulder.Map.kHighAngleLimit));
+        // mOperatorController.button(ControlsMap.B)
+        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
+        // Shoulder.Map.kHighAngleLimit));
+        // mOperatorController.button(ControlsMap.A)
+        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
+        // Shoulder.Map.kHighAngleLimit));
 
         mOperatorController.pov(ControlsMap.up)
                 .onTrue(WristCommands.setWristCommand(mWrist, true));

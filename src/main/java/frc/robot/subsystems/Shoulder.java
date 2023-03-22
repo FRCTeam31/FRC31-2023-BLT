@@ -2,7 +2,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 import edu.wpi.first.math.MathUtil;
@@ -14,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import prime.models.PidConstants;
 import prime.movers.LazyWPITalonSRX;
+import prime.utilities.CTREConverter;
 
 public class Shoulder extends PIDSubsystem {
     public static class Map {
@@ -21,7 +25,7 @@ public class Shoulder extends PIDSubsystem {
         public static final int kShoulder1Id = 21;
         public static final int kShoulder2Id = 23;
         public static final int kEncoderId = 20;
-        public static final int kUpperLimitSwitchDIOChannel = 0;
+        public static final int kUpperLimitSwitchDIOChannel = 9;
 
         // PID
         public static final String kSprocketPidName = "Shoulder PID constants";
@@ -29,23 +33,18 @@ public class Shoulder extends PIDSubsystem {
 
         // Constants
         public static final double kOpenLoopRampRate = 1.00;
-        public static final double kMaxAngle = 220;
-        public static final double kMinAngle = 180;
-        public static final double kmaxVelocityPer100ms = 10;
-        public static final double kmaxAccelerationPer100ms = 10;
-        public static final double kLowAngleLimit = 180;
-        public static final double kHighAngleLimit = 220;
+        public static final double kLowAngleLimit = 5.5;
         public static final double kHorizontalHoldOutput = -0.09;
+        // public static final double kMaxVelocityDegreesPer100ms = 2;
+        // public static final double kMaxAccelerationDegreesPer100ms = 0.25;
 
         // Scoring angles
-        public static final int kTopRow = 220;
-        public static final int kMiddleRow = 200;
-        public static final int kGroundLevel = 190;
+        public static final int kTopRowAngle = 200;
+        public static final int kMiddleRowAngle = 100;
+        public static final int kGroundLevelAngle = 10;
     }
 
-    public ControlMode LastControlMode = ControlMode.Disabled;
-
-    private LazyWPITalonSRX shoulder1;
+    private LazyWPITalonSRX mShoulderMaster;
     private LazyWPITalonSRX shoulder2;
     private WPI_CANCoder mEncoder;
     private DigitalInput mUpperLimitSwitch;
@@ -56,33 +55,46 @@ public class Shoulder extends PIDSubsystem {
     public Shoulder() {
         super(new PIDController(Map.kSprocketPid.kP, Map.kSprocketPid.kI, Map.kSprocketPid.kD));
         getController().setTolerance(1);
+
         mUpperLimitSwitch = new DigitalInput(Map.kUpperLimitSwitchDIOChannel);
-
-        shoulder1 = new LazyWPITalonSRX(Map.kShoulder1Id);
-        shoulder1.clearStickyFaults();
-        shoulder1.configFactoryDefault();
-        shoulder1.setNeutralMode(NeutralMode.Brake);
-        shoulder1.setInverted(InvertType.InvertMotorOutput);
-        shoulder1.configContinuousCurrentLimit(20);
-        shoulder1.configPeakCurrentLimit(30);
-        shoulder1.configPeakCurrentDuration(100);
-        shoulder1.configMotionAcceleration(Map.kmaxAccelerationPer100ms);
-        shoulder1.configMotionCruiseVelocity(Map.kmaxVelocityPer100ms);
-        // PID
-        shoulder1.config_kP(0, Map.kSprocketPid.kP);
-
-        shoulder2 = new LazyWPITalonSRX(Map.kShoulder2Id);
-        shoulder2.clearStickyFaults();
-        shoulder2.configFactoryDefault();
-        shoulder2.setNeutralMode(NeutralMode.Brake);
-        shoulder2.follow(shoulder1);
-        shoulder2.setInverted(InvertType.FollowMaster);
 
         mEncoder = new WPI_CANCoder(Map.kEncoderId);
         mEncoder.clearStickyFaults();
         mEncoder.configFactoryDefault();
         mEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
-        SmartDashboard.putData(mEncoder);
+
+        // Setup the first shoulder motor
+        mShoulderMaster = new LazyWPITalonSRX(Map.kShoulder1Id);
+        mShoulderMaster.clearStickyFaults();
+        mShoulderMaster.configFactoryDefault();
+
+        // Define the motor's behavior
+        mShoulderMaster.setNeutralMode(NeutralMode.Brake);
+        mShoulderMaster.setInverted(InvertType.InvertMotorOutput);
+        mShoulderMaster.configContinuousCurrentLimit(20);
+        mShoulderMaster.configPeakCurrentLimit(30);
+        mShoulderMaster.configPeakCurrentDuration(250);
+
+        // shoulder1.configMotionAcceleration(Map.kMaxAccelerationPer100ms);
+        // shoulder1.configMotionCruiseVelocity(Map.kMaxVelocityPer100ms);
+        // shoulder1.configSelectedFeedbackSensor(RemoteFeedbackDevice.RemoteSensor0);
+        // shoulder1.configRemoteFeedbackFilter(mEncoder, 0);
+        // shoulder1.configReverseSoftLimitThreshold(
+        // CTREConverter.degreesToCANcoder(Map.kLowAngleLimit, 1));
+        // shoulder1.configReverseSoftLimitEnable(true);
+        // shoulder1.configForwardSoftLimitThreshold(CTREConverter.degreesToCANcoder(Map.kLowAngleLimit,
+        // 1));
+        // shoulder1.configForwardSoftLimitEnable(true);
+
+        // TalonSRX PID
+        // shoulder1.config_kP(0, Map.kSprocketPid.kP);
+
+        shoulder2 = new LazyWPITalonSRX(Map.kShoulder2Id);
+        shoulder2.clearStickyFaults();
+        shoulder2.configFactoryDefault();
+        shoulder2.setNeutralMode(NeutralMode.Brake);
+        shoulder2.follow(mShoulderMaster);
+        shoulder2.setInverted(InvertType.FollowMaster);
 
         enable();
         setSetpoint(200);
@@ -92,7 +104,6 @@ public class Shoulder extends PIDSubsystem {
         if (!isEnabled())
             enable();
 
-        LastControlMode = ControlMode.Position;
         setSetpoint(angleInDegrees);
     }
 
@@ -100,8 +111,7 @@ public class Shoulder extends PIDSubsystem {
         if (isEnabled())
             disable();
 
-        LastControlMode = ControlMode.PercentOutput;
-        runShoulderWithLimits(speed);
+        runShoulderWithLimits(-1 * speed);
     }
 
     public Rotation2d getRotation() {
@@ -125,7 +135,7 @@ public class Shoulder extends PIDSubsystem {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("Position", () -> mEncoder.getAbsolutePosition(), null);
+        builder.addDoubleProperty("Position", () -> getMeasurement(), null);
         builder.addDoubleProperty("Last motor output", () -> _lastOutput, null);
         builder.addBooleanProperty("Upper Limit Switch", mUpperLimitSwitch::get, null);
     }
@@ -139,8 +149,8 @@ public class Shoulder extends PIDSubsystem {
         if (speed > 0 && mUpperLimitSwitch.get())
             return;
 
-        shoulder1.set(ControlMode.PercentOutput, MathUtil.applyDeadband(speed, 0.15));
-        // if (getMeasurement() > Map.kGroundLevel)
-        // shoulder1.set(MathUtil.applyDeadband(speed, 0.15));
+        mShoulderMaster.set(ControlMode.PercentOutput, MathUtil.applyDeadband(speed, 0.15));
+        if (getMeasurement() >= Map.kLowAngleLimit + 5)
+            mShoulderMaster.set(MathUtil.applyDeadband(speed, 0.15));
     }
 }
