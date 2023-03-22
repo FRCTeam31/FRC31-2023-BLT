@@ -9,66 +9,8 @@ import frc.robot.config.WristMap;
 import frc.robot.subsystems.Wrist;
 
 public class WristCommands {
-    // public static Command runIntakeConeAndEjectCubeCommand(Wrist wrist,
-    // CommandJoystick driveController,
-    // CommandJoystick operatorController) {
-    // return Commands.run(() -> {
-
-    // if (driveController.getRawAxis(2) > WristMap.triggerDeadBand) {
-    // wrist.runMotors(WristMap.kEjectCubeSpeed);
-    // } else if (operatorController.getRawAxis(2) > WristMap.triggerDeadBand) {
-    // wrist.runMotors(WristMap.kEjectCubeSpeed);
-    // }
-
-    // });
-    // }
-
-    // public static Command runIntakeCubeAndEjectConeCommand(Wrist wrist,
-    // CommandJoystick driveController,
-    // CommandJoystick operatorController) {
-    // return Commands.run(() -> {
-
-    // if (driveController.getRawAxis(3) > WristMap.triggerDeadBand) {
-    // wrist.runMotors(WristMap.kIntakeCubeSpeed);
-    // } else if (operatorController.getRawAxis(3) > WristMap.triggerDeadBand) {
-    // wrist.runMotors(WristMap.kIntakeCubeSpeed);
-    // }
-    // });
-    // }
-
-    // public static Command runIntake(Wrist wrist, CommandJoystick driveController,
-    // CommandJoystick operatorController) {
-    // return Commands.runOnce(() -> {
-    // if (driveController.getRawAxis(ControlsMap.LEFT_TRIGGER) >
-    // WristMap.triggerDeadBand) {
-    // wrist.runMotors(WristMap.kEjectConeSpeed);
-    // } else if (operatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) >
-    // WristMap.triggerDeadBand) {
-    // wrist.runMotors(WristMap.kEjectConeSpeed);
-    // }
-
-    // if (driveController.getRawAxis(ControlsMap.RIGHT_TRIGGER) >
-    // WristMap.triggerDeadBand) {
-    // wrist.runMotors(WristMap.kIntakeCubeSpeed);
-    // } else if (operatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) >
-    // WristMap.triggerDeadBand) {
-    // wrist.runMotors(WristMap.kIntakeCubeSpeed);
-    // }
-
-    // });
-
-    // }
-
-    public static Command runIntake(Wrist wrist, CommandJoystick driveController, CommandJoystick operatorController) {
+    public static Command runIntake(Wrist wrist, CommandJoystick operatorController) {
         return Commands.run(() -> {
-            if (driveController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand) {
-                wrist.runMotors(WristMap.kEjectConeSpeed);
-                return;
-            } else if (driveController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > WristMap.triggerDeadBand) {
-                wrist.runMotors(WristMap.kIntakeConeSpeed);
-                return;
-            }
-
             if (operatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand) {
                 wrist.runMotors(WristMap.kEjectConeSpeed);
                 return;
@@ -80,7 +22,6 @@ public class WristCommands {
             }
 
         }, wrist);
-
     }
 
     public static Command setWristCommand(Wrist wrist, boolean out) {

@@ -9,6 +9,8 @@ import frc.robot.config.ControlsMap;
 import frc.robot.subsystems.Shoulder;
 
 public class ShoulderCommands {
+    // TODO: Look into binding operator control of the shoulder angle to a
+    // "while-held" condition and then re-enable and set the setpoint once let go
     public static SequentialCommandGroup setAngleCommand(Shoulder shoulder, double angle) {
         return new SequentialCommandGroup(
                 Commands.runOnce(() -> shoulder.enable()),

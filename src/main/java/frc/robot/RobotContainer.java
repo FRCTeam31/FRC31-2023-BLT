@@ -117,19 +117,12 @@ public class RobotContainer implements Sendable {
         };
 
         // Drive commands
-        // mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriverController,
-        // mDrivetrain, modules, true));
-        // mDriveController.button(3).onTrue(Commands.runOnce(() ->
-        // mDrivetrain.resetGyro()));
+        mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriverController,
+                mDrivetrain, modules, true));
+        mDriverController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
 
         // mShoulder.setDefaultCommand(ShoulderCommands.controlWithJoystick(mShoulder,
         // mOperatorController));
-
-        // Wrist commands
-        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mDriverController, mOperatorController));
-        // mDriverOperatorController.button(1)
-        // .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
-        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
 
         // Wrist bindings
         // mController.button(1)
@@ -138,19 +131,7 @@ public class RobotContainer implements Sendable {
         // mOperatorController.button(2)
         // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
 
-        // mController.pov(0)
-        // .onTrue(WristCommands.runIntakeCubeAndEjectConeCommand(mWrist, true))
-        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
-
-        // mController.button(2)
-        // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
-
-        // mDriverController.pov(ControlsMap.up)
-        // .onTrue(WristCommands.setWristCommand(mWrist, true));
-
-        // mDriverController
-        // .pov(ControlsMap.down).onTrue(WristCommands.setWristCommand(mWrist, false));
-
+        // Shoulder commands
         mOperatorController.button(ControlsMap.Y)
                 .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
                         Shoulder.Map.kTopRowAngle));
@@ -161,25 +142,13 @@ public class RobotContainer implements Sendable {
                 .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
                         Shoulder.Map.kGroundLevelAngle));
 
+        // Wrist commands
+        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mOperatorController));
         mOperatorController.pov(ControlsMap.up)
                 .onTrue(WristCommands.setWristCommand(mWrist, true));
 
         mOperatorController.pov(ControlsMap.down)
                 .onTrue(WristCommands.setWristCommand(mWrist, false));
-
-        // Button bindings
-        // mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() ->
-        // mDrivetrain.resetGyro()));
-
-        // mOperatorController.button(ControlsMap.Y)
-        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder, ShoulderMap.kTopRow));
-        // mOperatorController.button(ControlsMap.B)
-        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder, ShoulderMap.kMiddleRow));
-        // mOperatorController.button(ControlsMap.A)
-        // .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
-        // ShoulderMap.kGroundLevel));
-
-        // mDriveController.button(1).onTrue(getAutonomousCommand());
     }
 
     // public SequentialCommandGroup getAutonomousCommand() {
