@@ -68,7 +68,7 @@ public class RobotContainer implements Sendable {
                         Shoulder.Map.kMiddleRowAngle));
         mOperatorController.button(ControlsMap.A)
                 .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
-                        Shoulder.Map.kGroundLevelAngle));
+                        Shoulder.Map.kGroundAngle));
 
         mOperatorController.button(ControlsMap.LB)
                 .whileTrue(EndEffectorCommands.raiseEffectorManually(mShoulder,
