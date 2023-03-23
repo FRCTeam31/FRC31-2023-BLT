@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ForearmCommands;
 import frc.robot.commands.LightCommands;
@@ -121,16 +122,6 @@ public class RobotContainer implements Sendable {
                 mDrivetrain, modules, true));
         mDriverController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
 
-        // mShoulder.setDefaultCommand(ShoulderCommands.controlWithJoystick(mShoulder,
-        // mOperatorController));
-
-        // Wrist bindings
-        // mController.button(1)
-        // .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
-        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
-        // mOperatorController.button(2)
-        // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
-
         // Shoulder commands
         mOperatorController.button(ControlsMap.Y)
                 .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
@@ -141,6 +132,13 @@ public class RobotContainer implements Sendable {
         mOperatorController.button(ControlsMap.A)
                 .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
                         Shoulder.Map.kGroundLevelAngle));
+
+        mOperatorController.button(ControlsMap.LB)
+                .whileTrue(ShoulderCommands.disablePidAndRunManually(mShoulder, // While LB is held, control the arm
+                                                                                // speed with the left stick Y axis
+                        () -> mOperatorController.getRawAxis(ControlsMap.LEFT_STICK_Y)))
+                .onFalse(ShoulderCommands.lockCurrentAngle(mShoulder)); // When LB is released, set the shoulder
+                                                                        // setpoint to the current angle
 
         // Wrist commands
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mOperatorController));

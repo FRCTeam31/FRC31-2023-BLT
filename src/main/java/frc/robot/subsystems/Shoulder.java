@@ -97,14 +97,14 @@ public class Shoulder extends PIDSubsystem {
         shoulder2.setInverted(InvertType.FollowMaster);
     }
 
-    public void setShoulderAngle(double angleInDegrees) {
+    public void setAngle(double angleInDegrees) {
         if (!isEnabled())
             enable();
 
         setSetpoint(angleInDegrees);
     }
 
-    public void setShoulderSpeed(double speed) {
+    public void setSpeed(double speed) {
         if (isEnabled())
             disable();
 

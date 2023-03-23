@@ -1,20 +1,31 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.config.ControlsMap;
 import frc.robot.subsystems.Shoulder;
 
 public class ShoulderCommands {
-    // TODO: Look into binding operator control of the shoulder angle to a
-    // "while-held" condition and then re-enable and set the setpoint once let go
-    public static SequentialCommandGroup setAngleCommand(Shoulder shoulder, double angle) {
+    public static Command setAngleCommand(Shoulder shoulder, double angle) {
         return new SequentialCommandGroup(
                 Commands.runOnce(() -> shoulder.enable()),
                 Commands.runOnce(() -> shoulder.setSetpoint(angle)));
+    }
+
+    public static Command disablePidAndRunManually(Shoulder shoulder, DoubleSupplier joystickSupplier) {
+        return new SequentialCommandGroup(
+                Commands.runOnce(() -> shoulder.disable()),
+                runWithJoystick(shoulder, joystickSupplier));
+    }
+
+    public static Command runWithJoystick(Shoulder shoulder, DoubleSupplier joystickSupplier) {
+        return Commands.run(() -> shoulder.setSpeed(joystickSupplier.getAsDouble()), shoulder);
+    }
+
+    public static Command lockCurrentAngle(Shoulder shoulder) {
+        return Commands.runOnce(() -> shoulder.setAngle(shoulder.getRotation().getDegrees()), shoulder);
     }
 
     // public static Command controlWithJoystick(Shoulder shoulder, CommandJoystick
