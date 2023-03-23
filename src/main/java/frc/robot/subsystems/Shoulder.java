@@ -75,20 +75,6 @@ public class Shoulder extends PIDSubsystem {
         mShoulderMaster.configPeakCurrentLimit(30);
         mShoulderMaster.configPeakCurrentDuration(250);
 
-        mShoulderMaster.configMotionAcceleration(Map.kMaxAccelerationDegreesPer100ms);
-        mShoulderMaster.configMotionCruiseVelocity(Map.kMaxVelocityDegreesPer100ms);
-        // shoulder1.configSelectedFeedbackSensor(RemoteFeedbackDevice.RemoteSensor0);
-        // shoulder1.configRemoteFeedbackFilter(mEncoder, 0);
-        // shoulder1.configReverseSoftLimitThreshold(
-        // CTREConverter.degreesToCANcoder(Map.kLowAngleLimit, 1));
-        // shoulder1.configReverseSoftLimitEnable(true);
-        // shoulder1.configForwardSoftLimitThreshold(CTREConverter.degreesToCANcoder(Map.kLowAngleLimit,
-        // 1));
-        // shoulder1.configForwardSoftLimitEnable(true);
-
-        // TalonSRX PID
-        // shoulder1.config_kP(0, Map.kSprocketPid.kP);
-
         shoulder2 = new LazyWPITalonSRX(Map.kShoulder2Id);
         shoulder2.clearStickyFaults();
         shoulder2.configFactoryDefault();
