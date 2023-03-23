@@ -25,7 +25,7 @@ public class Shoulder extends PIDSubsystem {
         // Scoring angles
         public static final int kTopRowAngle = 62;
         public static final int kMiddleRowAngle = 40;
-        public static final int kGroundLevelAngle = 20;
+        public static final int kGroundAngle = 20;
 
         // PID
         public static final PidConstants kSprocketPid = new PidConstants((1d / 8), 0, 0.0012);
@@ -118,7 +118,7 @@ public class Shoulder extends PIDSubsystem {
     }
 
     @Override
-    protected double getMeasurement() {
+    public double getMeasurement() {
         return getRotation().getDegrees();
     }
 

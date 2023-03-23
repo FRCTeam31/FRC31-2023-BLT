@@ -54,10 +54,10 @@ public class WristCommands {
         return Commands.run(() -> wrist.runMotors(-joystick.getRawAxis(ControlsMap.RIGHT_STICK_Y)), wrist);
     }
 
-    public static Command runWristForTimeCommand(Wrist wrist) {
+    public static Command runWristForTimeCommand(Wrist wrist, double seconds, double speed) {
         return Commands.run(() -> {
-
-        });
+            wrist.runMotors(speed);
+        }).withTimeout(seconds);
     }
 
 }
