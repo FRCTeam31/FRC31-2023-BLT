@@ -118,8 +118,12 @@ public class RobotContainer implements Sendable {
         };
 
         // Drive commands
-        mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriverController,
-                mDrivetrain, modules, true));
+        mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDrivetrain,
+                () -> mDriverController.getRawAxis(
+                        ControlsMap.LEFT_STICK_Y),
+                () -> mDriverController.getRawAxis(
+                        ControlsMap.LEFT_STICK_X),
+                () -> mDriverController.getRawAxis(ControlsMap.RIGHT_STICK_X), modules, true));
         mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
         mDriverController.button(ControlsMap.Y).onTrue(DriveCommands.toggleShifter(mDrivetrain));
 

@@ -61,7 +61,7 @@ public class Drivetrain extends SubsystemBase {
     /** Creates a new SwerveDriveTrainSubsystem. */
     public Drivetrain(SwerveModule FrontLeftSwerveModule, SwerveModule FrontRightSwerveModule,
             SwerveModule RearLeftSwerveModule, SwerveModule RearRightSwerveModule) {
-        SmartDashboard.putData("Field", mField);
+        SmartDashboard.putData(getName() + "/Field", mField);
         mGyro.reset();
 
         this.mOdometry = new SwerveDriveOdometry(mKinematics,
@@ -168,35 +168,43 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        SmartDashboard.putNumber("Drivetrain gyro angle", getRotationDegrees());
+        super.initSendable(builder);
 
         if (_lastDesiredStates.length > 0) {
-            builder.addDoubleProperty("Drivetrain gyro angle", this::getRotationDegrees, null);
+            builder.addDoubleProperty("Heading", this::getRotationDegrees, null);
 
-            if (_lastDesiredStates.length > 0) {
-                if (_lastDesiredStates[0] != null) {
-                    builder.addDoubleProperty("Drive - FL Speed", () -> _lastDesiredStates[0].speedMetersPerSecond,
-                            null);
-                    builder.addDoubleProperty("Drive - FL Angle", () -> _lastDesiredStates[0].angle.getDegrees(), null);
-                }
+            // builder.addStringProperty("Active Command", () -> {
+            // if (this.getCurrentCommand() != null) {
+            // return this.getCurrentCommand().getName();
+            // } else {
+            // return "";
+            // }
+            // }, null);
+            // builder.addStringProperty("Default Command", () ->
+            // this.getDefaultCommand().getName(), null);
 
-                if (_lastDesiredStates[1] != null) {
-                    builder.addDoubleProperty("Drive - RL Speed", () -> _lastDesiredStates[1].speedMetersPerSecond,
-                            null);
-                    builder.addDoubleProperty("Drive - RL Angle", () -> _lastDesiredStates[1].angle.getDegrees(), null);
-                }
+            if (_lastDesiredStates[0] != null) {
+                builder.addDoubleProperty("Drive - FL Speed", () -> _lastDesiredStates[0].speedMetersPerSecond,
+                        null);
+                builder.addDoubleProperty("Drive - FL Angle", () -> _lastDesiredStates[0].angle.getDegrees(), null);
+            }
 
-                if (_lastDesiredStates[2] != null) {
-                    builder.addDoubleProperty("Drive - RR Speed", () -> _lastDesiredStates[2].speedMetersPerSecond,
-                            null);
-                    builder.addDoubleProperty("Drive - RR Angle", () -> _lastDesiredStates[2].angle.getDegrees(), null);
-                }
+            if (_lastDesiredStates[1] != null) {
+                builder.addDoubleProperty("Drive - RL Speed", () -> _lastDesiredStates[1].speedMetersPerSecond,
+                        null);
+                builder.addDoubleProperty("Drive - RL Angle", () -> _lastDesiredStates[1].angle.getDegrees(), null);
+            }
 
-                if (_lastDesiredStates[3] != null) {
-                    builder.addDoubleProperty("Drive - FR Speed", () -> _lastDesiredStates[3].speedMetersPerSecond,
-                            null);
-                    builder.addDoubleProperty("Drive - FR Angle", () -> _lastDesiredStates[3].angle.getDegrees(), null);
-                }
+            if (_lastDesiredStates[2] != null) {
+                builder.addDoubleProperty("Drive - RR Speed", () -> _lastDesiredStates[2].speedMetersPerSecond,
+                        null);
+                builder.addDoubleProperty("Drive - RR Angle", () -> _lastDesiredStates[2].angle.getDegrees(), null);
+            }
+
+            if (_lastDesiredStates[3] != null) {
+                builder.addDoubleProperty("Drive - FR Speed", () -> _lastDesiredStates[3].speedMetersPerSecond,
+                        null);
+                builder.addDoubleProperty("Drive - FR Angle", () -> _lastDesiredStates[3].angle.getDegrees(), null);
             }
         }
 
