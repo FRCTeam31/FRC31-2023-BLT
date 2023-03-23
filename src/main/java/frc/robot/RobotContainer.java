@@ -151,6 +151,10 @@ public class RobotContainer implements Sendable {
 
         mOperatorController.pov(ControlsMap.down)
                 .onTrue(WristCommands.setWristCommand(mWrist, false));
+
+        // Forearm commands
+        mForearm.setDefaultCommand(ForearmCommands.controlWithJoystick(mForearm,
+                () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_STICK_Y)));
     }
 
     // public SequentialCommandGroup getAutonomousCommand() {

@@ -26,8 +26,8 @@ public class Shoulder extends PIDSubsystem {
 
         // Scoring angles
         public static final int kTopRowAngle = 55;
-        public static final int kMiddleRowAngle = 30;
-        public static final int kGroundLevelAngle = 10;
+        public static final int kMiddleRowAngle = 40;
+        public static final int kGroundLevelAngle = 20;
 
         // PID
         public static final String kSprocketPidName = "Shoulder PID constants";
@@ -70,6 +70,7 @@ public class Shoulder extends PIDSubsystem {
         mShoulderMaster.configOpenloopRamp(Map.kOpenLoopRampRate);
         mShoulderMaster.setNeutralMode(NeutralMode.Brake);
         mShoulderMaster.setInverted(InvertType.InvertMotorOutput);
+        mShoulderMaster.enableVoltageCompensation(true);
         mShoulderMaster.configContinuousCurrentLimit(20);
         mShoulderMaster.configPeakCurrentLimit(30);
         mShoulderMaster.configPeakCurrentDuration(250);

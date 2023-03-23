@@ -54,7 +54,7 @@ public class Forearm extends SubsystemBase {
     }
 
     public void runSimple(double speed) {
-        // forearmMotor.set(ControlMode.PercentOutput, speed);
+        forearmMotor.set(ControlMode.PercentOutput, -speed);
     }
 
     @Override
