@@ -14,12 +14,6 @@ public class ShoulderCommands {
                 Commands.runOnce(() -> shoulder.setSetpoint(angle)));
     }
 
-    public static Command disablePidAndRunManually(Shoulder shoulder, DoubleSupplier joystickSupplier) {
-        return new SequentialCommandGroup(
-                Commands.runOnce(() -> shoulder.disable()),
-                runWithJoystick(shoulder, joystickSupplier));
-    }
-
     public static Command runWithJoystick(Shoulder shoulder, DoubleSupplier joystickSupplier) {
         return Commands.run(() -> shoulder.setSpeed(joystickSupplier.getAsDouble()), shoulder);
     }

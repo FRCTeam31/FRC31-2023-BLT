@@ -184,22 +184,19 @@ public class Drivetrain extends SubsystemBase {
         return mInHighGear ? DriveMap.kHighGearCoefficient : DriveMap.kLowGearCoefficient;
     }
 
+    public void stopMotors() {
+        mFrontLeftModule.stopMotors();
+        mRearLeftModule.stopMotors();
+        mRearRightModule.stopMotors();
+        mFrontRightModule.stopMotors();
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
         if (_lastDesiredStates.length > 0) {
             builder.addDoubleProperty("Heading", this::getRotationDegrees, null);
-
-            // builder.addStringProperty("Active Command", () -> {
-            // if (this.getCurrentCommand() != null) {
-            // return this.getCurrentCommand().getName();
-            // } else {
-            // return "";
-            // }
-            // }, null);
-            // builder.addStringProperty("Default Command", () ->
-            // this.getDefaultCommand().getName(), null);
 
             if (_lastDesiredStates[0] != null) {
                 builder.addDoubleProperty("Drive - FL Speed", () -> _lastDesiredStates[0].speedMetersPerSecond,

@@ -1,38 +1,21 @@
 package frc.robot;
 
 import frc.robot.subsystems.*;
-import frc.robot.utilities.PathPlannerConverter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
-
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.ForearmCommands;
-import frc.robot.commands.LightCommands;
 import frc.robot.commands.ShoulderCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.config.AutoMap;
 import frc.robot.config.ControlsMap;
-import frc.robot.config.DriveMap;
 
 public class RobotContainer implements Sendable {
     public CommandJoystick mDriverController;
@@ -88,11 +71,17 @@ public class RobotContainer implements Sendable {
                         Shoulder.Map.kGroundLevelAngle));
 
         mOperatorController.button(ControlsMap.LB)
-                .whileTrue(ShoulderCommands.disablePidAndRunManually(mShoulder, // While LB is held, control the arm
-                                                                                // speed with the left stick Y axis
-                        () -> mOperatorController.getRawAxis(ControlsMap.LEFT_STICK_Y)))
-                .onFalse(ShoulderCommands.lockCurrentAngle(mShoulder)); // When LB is released, set the shoulder
-                                                                        // setpoint to the current angle
+                .whileTrue(EndEffectorCommands.raiseEffectorManually(mShoulder,
+                        () -> mForearm.getMinSoftLimitReached(),
+                        () -> mOperatorController.getRawAxis(ControlsMap.LEFT_STICK_Y)));
+        // mOperatorController.button(ControlsMap.LB)
+        // .whileTrue(ShoulderCommands.disablePidAndRunManually(mShoulder, // While LB
+        // is held, control the arm
+        // // speed with the left stick Y axis
+        // () -> mOperatorController.getRawAxis(ControlsMap.LEFT_STICK_Y)))
+        // .onFalse(ShoulderCommands.lockCurrentAngle(mShoulder)); // When LB is
+        // released, set the shoulder
+        // // setpoint to the current angle
 
         // Wrist commands
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mOperatorController));
@@ -107,38 +96,12 @@ public class RobotContainer implements Sendable {
                 () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_STICK_Y)));
     }
 
-    // public SequentialCommandGroup getAutonomousCommand() {
-    // PathPlannerTrajectory drive1Meter = PathPlanner.generatePath(
-    // new PathConstraints(1, 0.1),
-    // new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0),
-    // Rotation2d.fromDegrees(0)),
-    // new PathPoint(new Translation2d(0, 2), Rotation2d.fromDegrees(0),
-    // Rotation2d.fromDegrees(0)));
-
-    // ArrayList<PathPlannerTrajectory> pathGroup = new
-    // ArrayList<PathPlannerTrajectory>();
-    // pathGroup.add(drive1Meter);
-    // HashMap<String, Command> eventMap = new HashMap<>();
-
-    // SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-    // mDrivetrain::getPose,
-    // mDrivetrain::resetOdometry,
-    // mDrivetrain.mKinematics,
-    // new PIDConstants(AutoMap.kTranslatePidConstants.kP,
-    // AutoMap.kTranslatePidConstants.kI,
-    // AutoMap.kTranslatePidConstants.kD),
-    // new PIDConstants(AutoMap.kRotatePidConstants.kP,
-    // AutoMap.kRotatePidConstants.kI,
-    // AutoMap.kRotatePidConstants.kD),
-    // mDrivetrain::drive,
-    // eventMap);
-
-    // return new SequentialCommandGroup(
-    // Commands.runOnce(() ->
-    // mDrivetrain.resetOdometry(drive1Meter.getInitialHolonomicPose())),
-    // autoBuilder.fullAuto(pathGroup.get(0)));
-
-    // }
+    public SequentialCommandGroup getAutonomousCommand() {
+        return new SequentialCommandGroup(
+                AutoCommands.moveForwardMeters(mDrivetrain, 0.48, 1 / 3d), // Push cube
+                AutoCommands.moveForwardMeters(mDrivetrain, -2, 1 / 3d) // Back up
+        );
+    }
 
     @Override
     public void initSendable(SendableBuilder builder) {
