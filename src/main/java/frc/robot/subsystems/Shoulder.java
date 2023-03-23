@@ -2,10 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 import edu.wpi.first.math.MathUtil;
@@ -26,9 +24,14 @@ public class Shoulder extends PIDSubsystem {
         public static final int kEncoderId = 20;
         public static final int kUpperLimitSwitchDIOChannel = 0;
 
+        // Scoring angles
+        public static final int kTopRowAngle = 120;
+        public static final int kMiddleRowAngle = 50;
+        public static final int kGroundLevelAngle = 10;
+
         // PID
         public static final String kSprocketPidName = "Shoulder PID constants";
-        public static final PidConstants kSprocketPid = new PidConstants((1d / 80), 0.002, 0.0005);
+        public static final PidConstants kSprocketPid = new PidConstants((1d / kTopRowAngle), 0, 0.0);
 
         // Constants
         public static final double kOpenLoopRampRate = 1.00;
@@ -37,11 +40,6 @@ public class Shoulder extends PIDSubsystem {
         public static final double kMaxVelocityDegreesPer100ms = 2;
         public static final double kMaxAccelerationDegreesPer100ms = 0.25;
         public static final double kMaxSpeed = 0.6;
-
-        // Scoring angles
-        public static final int kTopRowAngle = 120;
-        public static final int kMiddleRowAngle = 50;
-        public static final int kGroundLevelAngle = 10;
     }
 
     private LazyWPITalonSRX mShoulderMaster;
