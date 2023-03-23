@@ -49,6 +49,7 @@ public class EndEffectorCommands {
             shoulderAngle = Shoulder.Map.kTopRowAngle;
         }
         return new SequentialCommandGroup(ShoulderCommands.setAngleCommand(shoulder, shoulderAngle),
+                WristCommands.setWristCommand(wrist, false),
                 WristCommands.runWristForTimeCommand(wrist, 3, WristMap.kEjectConeSpeed),
                 WristCommands.stopIntakeCommand(wrist));
     }
