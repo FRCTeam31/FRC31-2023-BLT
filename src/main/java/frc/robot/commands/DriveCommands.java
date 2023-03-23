@@ -5,7 +5,6 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.config.DriveMap;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.SwerveModule;
 
@@ -17,18 +16,6 @@ public class DriveCommands {
             var strafeX = MathUtil.applyDeadband(xSupplier.getAsDouble(), 0.1);
             var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.1);
             var rotation = MathUtil.applyDeadband(rotationSupplier.getAsDouble(), 0.1);
-
-            strafeX = MathUtil.clamp(strafeX, -DriveMap.slowDriveCoefficent,
-                    DriveMap.slowDriveCoefficent);
-            forwardY = MathUtil.clamp(forwardY, -DriveMap.slowDriveCoefficent,
-                    DriveMap.slowDriveCoefficent);
-            rotation = MathUtil.clamp(-rotation, -DriveMap.slowDriveCoefficent,
-                    DriveMap.slowDriveCoefficent);
-
-            var gearCoefficient = drivetrain.getShiftedSpeedCoefficient();
-            strafeX = MathUtil.clamp(strafeX, -gearCoefficient, gearCoefficient);
-            forwardY = MathUtil.clamp(forwardY, -gearCoefficient, gearCoefficient);
-            rotation = MathUtil.clamp(rotation, -gearCoefficient, gearCoefficient);
 
             drivetrain.drive(-strafeX, forwardY, -rotation, fieldRelative);
         }, drivetrain);

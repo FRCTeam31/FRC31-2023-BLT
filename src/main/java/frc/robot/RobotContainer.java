@@ -37,52 +37,15 @@ import frc.robot.config.DriveMap;
 public class RobotContainer implements Sendable {
     public CommandJoystick mDriverController;
     public CommandJoystick mOperatorController;
-    public SwerveModule mFrontLeftSwerve;
-    public SwerveModule mFrontRightSwerve;
-    public SwerveModule mRearLeftSwerve;
-    public SwerveModule mRearRightSwerve;
     public Drivetrain mDrivetrain;
     public Shoulder mShoulder;
     public Wrist mWrist;
     public Forearm mForearm;
     public ArduinoSidecar mSidecar;
-    public UsbCamera mCamera;
+    public FrontCamera mFrontCamera;
 
     public RobotContainer() {
-        mFrontLeftSwerve = new SwerveModule(
-                DriveMap.kFrontLeftDrivingMotorId,
-                DriveMap.kFrontLeftSteeringMotorId,
-                DriveMap.kFrontLeftEncoderId,
-                DriveMap.kFrontLeftEncoderOffset,
-                DriveMap.kFrontLeftInverted);
-        SmartDashboard.putData("Front Left Module", mFrontLeftSwerve);
-
-        mFrontRightSwerve = new SwerveModule(
-                DriveMap.kFrontRightDrivingMotorId,
-                DriveMap.kFrontRightSteeringMotorId,
-                DriveMap.kFrontRightEncoderId,
-                DriveMap.kFrontRightEncoderOffset,
-                DriveMap.kFrontRightInverted);
-        SmartDashboard.putData("Front Right Module", mFrontRightSwerve);
-
-        mRearLeftSwerve = new SwerveModule(
-                DriveMap.kRearLeftDrivingMotorId,
-                DriveMap.kRearLeftSteeringMotorId,
-                DriveMap.kRearLeftEncoderId,
-                DriveMap.kRearLeftEncoderOffset,
-                DriveMap.kRearLeftInverted);
-        SmartDashboard.putData("Rear Left Module", mRearLeftSwerve);
-
-        mRearRightSwerve = new SwerveModule(
-                DriveMap.kRearRightDrivingMotorId,
-                DriveMap.kRearRightSteeringMotorId,
-                DriveMap.kRearRightEncoderId,
-                DriveMap.kRearRightEncoderOffset,
-                DriveMap.kRearRightInverted);
-        SmartDashboard.putData("Rear Right Module", mRearRightSwerve);
-
-        mDrivetrain = new Drivetrain(mFrontLeftSwerve, mFrontRightSwerve,
-                mRearLeftSwerve, mRearRightSwerve);
+        mDrivetrain = new Drivetrain();
         SmartDashboard.putData(mDrivetrain);
 
         mShoulder = new Shoulder();
@@ -94,28 +57,13 @@ public class RobotContainer implements Sendable {
         mWrist = new Wrist();
         SmartDashboard.putData(mWrist);
 
-        SmartDashboard.putData(
-                AutoMap.kTranslatePidConstantsName,
-                PathPlannerConverter.fromPPPIDConstants(AutoMap.kTranslatePidConstants));
-
-        SmartDashboard.putData(
-                AutoMap.kRotatePidConstantsName,
-                PathPlannerConverter.fromPPPIDConstants(AutoMap.kRotatePidConstants));
-        SmartDashboard.putData(DriveMap.kDrivePidConstantsName,
-                DriveMap.kDrivePidConstants);
-        SmartDashboard.putData(DriveMap.kSteeringPidConstantsName,
-                DriveMap.kSteeringPidConstants);
+        mFrontCamera = new FrontCamera();
+        SmartDashboard.putData(mFrontCamera);
     }
 
     public void configureBindings() {
         mDriverController = new CommandJoystick(ControlsMap.DRIVER_PORT);
         mOperatorController = new CommandJoystick(ControlsMap.OPERATOR_PORT);
-        SwerveModule[] modules = new SwerveModule[] {
-                mFrontLeftSwerve,
-                mFrontRightSwerve,
-                mRearLeftSwerve,
-                mRearRightSwerve
-        };
 
         // Drive commands
         mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDrivetrain,
@@ -123,12 +71,11 @@ public class RobotContainer implements Sendable {
                         ControlsMap.LEFT_STICK_Y),
                 () -> mDriverController.getRawAxis(
                         ControlsMap.LEFT_STICK_X),
-                () -> mDriverController.getRawAxis(ControlsMap.RIGHT_STICK_X), modules, true));
+                () -> mDriverController.getRawAxis(ControlsMap.RIGHT_STICK_X), mDrivetrain.mSwerveModules, true));
         mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
         mDriverController.button(ControlsMap.Y).onTrue(DriveCommands.toggleShifter(mDrivetrain));
 
         // Shoulder commands
-
         mOperatorController.button(ControlsMap.LOGO_RIGHT).onTrue(ShoulderCommands.togglePID(mShoulder));
         mOperatorController.button(ControlsMap.Y)
                 .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
@@ -148,7 +95,6 @@ public class RobotContainer implements Sendable {
                                                                         // setpoint to the current angle
 
         // Wrist commands
-
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mOperatorController));
         mOperatorController.pov(ControlsMap.up)
                 .onTrue(WristCommands.setWristCommand(mWrist, true));

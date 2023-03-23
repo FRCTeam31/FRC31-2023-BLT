@@ -62,6 +62,8 @@ public class SwerveModule extends PIDSubsystem {
 
         TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
         driveMotorConfig.slot0.kP = DriveMap.kDrivePidConstants.kP;
+        driveMotorConfig.slot0.kI = 0;
+        driveMotorConfig.slot0.kD = 0;
         mDriveMotor.configAllSettings(driveMotorConfig);
 
         // Create a PID controller to calculate steering motor output
@@ -75,6 +77,10 @@ public class SwerveModule extends PIDSubsystem {
         builder.addDoubleProperty("Encoder position", this::getEncoderPosition, this::setEncoderPosition);
         builder.addDoubleProperty("Encoder absolute position", this::getEncoderAbsolutePosition,
                 this::setEncoderPosition);
+        builder.addDoubleProperty("Drive motor velocity error", () -> mDriveMotor.getClosedLoopError(), null);
+        builder.addDoubleProperty("Drive motor velocity setpoint", () -> mDriveMotor.getClosedLoopTarget(), null);
+        builder.addDoubleProperty("Drive motor output voltage", () -> mDriveMotor.getMotorOutputVoltage(), null);
+        builder.addDoubleProperty("Drive motor output percent", () -> mDriveMotor.getMotorOutputPercent(), null);
     }
 
     public SwerveModulePosition getPosition() {
@@ -90,9 +96,18 @@ public class SwerveModule extends PIDSubsystem {
         getController().setSetpoint(MathUtil.angleModulus(angle.getRadians()));
     }
 
-    public void setDesiredSpeed(double speedMetersPerSecond) {
-        mDriveMotor.set(ControlMode.Velocity, CTREConverter.MPSToFalcon(speedMetersPerSecond,
-                DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
+    public void setDesiredSpeed(double speedMetersPerSecond, boolean inHighGear) {
+        // mDriveMotor.set(ControlMode.Velocity,
+        // CTREConverter.MPSToFalcon(speedMetersPerSecond,
+        // DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
+        var percentOutput = speedMetersPerSecond /
+                DriveMap.kDriveMaxSpeedMetersPerSecond;
+
+        if (!inHighGear)
+            percentOutput *= 0.5;
+
+        mDriveMotor.set(ControlMode.PercentOutput, MathUtil.clamp(
+                percentOutput * DriveMap.kDriveMaxSpeedMetersPerSecond, -1, 1));
     }
 
     /**
@@ -101,12 +116,12 @@ public class SwerveModule extends PIDSubsystem {
      * @param desiredState The state of the module that we'd like to be at in this
      *                     period
      */
-    public void setDesiredState(SwerveModuleState desiredState) {
+    public void setDesiredState(SwerveModuleState desiredState, boolean inHighGear) {
         // Optimize the state to avoid turning wheels further than 90 degrees
         var encoderRotation = getAbsoluteRotation2d();
         desiredState = SwerveModuleState.optimize(desiredState, encoderRotation);
 
-        setDesiredSpeed(desiredState.speedMetersPerSecond);
+        setDesiredSpeed(desiredState.speedMetersPerSecond, inHighGear);
         setDesiredAngle(desiredState.angle);
     }
 
