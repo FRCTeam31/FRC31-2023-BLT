@@ -12,7 +12,7 @@ import prime.movers.LazyWPITalonSRX;
 import prime.utilities.CTREConverter;
 
 public class Forearm extends SubsystemBase {
-    public static class ForearmMap {
+    public static class Map {
         // CAN IDs
         public static final int kForearmMotor1Id = 25;
 
@@ -29,6 +29,8 @@ public class Forearm extends SubsystemBase {
 
         public static final double kMaxDistanceOutSensorUnits = 31000;
         public static final double kMinDistanceOutSensorUnits = 3000;
+
+        public static final double pickUpGroundDistance = 0;
     }
 
     private LazyWPITalonSRX forearmMotor;
@@ -36,7 +38,7 @@ public class Forearm extends SubsystemBase {
     private double _lastSetpoint = 0;
 
     public Forearm() {
-        forearmMotor = new LazyWPITalonSRX(ForearmMap.kForearmMotor1Id);
+        forearmMotor = new LazyWPITalonSRX(Map.kForearmMotor1Id);
         forearmMotor.clearStickyFaults();
         forearmMotor.configFactoryDefault();
         forearmMotor.setNeutralMode(NeutralMode.Brake);
@@ -76,11 +78,11 @@ public class Forearm extends SubsystemBase {
     }
 
     public boolean getMaxSoftLimitReached() {
-        return getDistanceSensorUnits() >= ForearmMap.kMaxDistanceOutSensorUnits;
+        return getDistanceSensorUnits() >= Map.kMaxDistanceOutSensorUnits;
     }
 
     public boolean getMinSoftLimitReached() {
-        return getDistanceSensorUnits() <= ForearmMap.kMinDistanceOutSensorUnits;
+        return getDistanceSensorUnits() <= Map.kMinDistanceOutSensorUnits;
     }
 
     @Override

@@ -23,17 +23,17 @@ public class Shoulder extends PIDSubsystem {
         public static final int kUpperLimitSwitchDIOChannel = 0;
 
         // Scoring angles
-        public static final int kTopRowAngle = 55;
+        public static final int kTopRowAngle = 62;
         public static final int kMiddleRowAngle = 40;
         public static final int kGroundLevelAngle = 20;
 
         // PID
-        public static final String kSprocketPidName = "Shoulder PID constants";
         public static final PidConstants kSprocketPid = new PidConstants((1d / 8), 0, 0.0012);
 
         // Constants
         public static final double kOpenLoopRampRate = 0.3;
-        public static final double kLowAngleLimit = 5.5;
+        public static final double kLowerAngleLimit = 5.5;
+        public static final double kUpperAngleLimit = 70;
         public static final double kHorizontalHoldOutput = -0.09 * 2;
         public static final double kMaxVelocityDegreesPer100ms = 2;
         public static final double kMaxAccelerationDegreesPer100ms = 0.25;
@@ -99,8 +99,12 @@ public class Shoulder extends PIDSubsystem {
         return Rotation2d.fromDegrees(mEncoder.getAbsolutePosition());
     }
 
-    public boolean getLowerLimitSwitchReached() {
-        return getMeasurement() < Map.kLowAngleLimit + 5;
+    public boolean isUpperSoftLimitReached() {
+        return getMeasurement() < Map.kUpperAngleLimit - 1;
+    }
+
+    public boolean isLowerLimitSwitchReached() {
+        return getMeasurement() < Map.kLowerAngleLimit + 5;
     }
 
     @Override
@@ -123,7 +127,7 @@ public class Shoulder extends PIDSubsystem {
         builder.addDoubleProperty("Position", () -> getMeasurement(), null);
         builder.addDoubleProperty("Last motor output", () -> _lastOutput, null);
         builder.addBooleanProperty("Upper Limit Switch", mUpperLimitSwitch::get, null);
-        builder.addBooleanProperty("Lower Limit Reached", this::getLowerLimitSwitchReached, null);
+        builder.addBooleanProperty("Lower Limit Reached", this::isLowerLimitSwitchReached, null);
     }
 
     /**
@@ -137,12 +141,16 @@ public class Shoulder extends PIDSubsystem {
         _lastOutput = clampedValue;
 
         // Are we at our forward limit?
-        if (clampedValue > 0 && mUpperLimitSwitch.get())
+        if (clampedValue > 0 && (mUpperLimitSwitch.get() || isUpperSoftLimitReached())) {
+            mShoulderMaster.stopMotor();
             return;
+        }
 
         // Are we at our reverse limit?
-        if (clampedValue < 0 && getLowerLimitSwitchReached())
+        if (clampedValue < 0 && isLowerLimitSwitchReached()) {
+            mShoulderMaster.stopMotor();
             return;
+        }
 
         if (clampedValue < 0)
             clampedValue *= 0.5;
