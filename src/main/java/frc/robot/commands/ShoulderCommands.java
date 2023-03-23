@@ -39,4 +39,14 @@ public class ShoulderCommands {
     // ControlsMap.AXIS_DEADBAND));
     // }, shoulder));
     // }
+
+    public static Command togglePID(Shoulder shoulder) {
+        return Commands.runOnce(() -> {
+            if (shoulder.isEnabled()) {
+                shoulder.disable();
+            } else {
+                shoulder.enable();
+            }
+        });
+    }
 }

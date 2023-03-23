@@ -25,18 +25,18 @@ public class Shoulder extends PIDSubsystem {
         public static final int kUpperLimitSwitchDIOChannel = 0;
 
         // Scoring angles
-        public static final int kTopRowAngle = 120;
-        public static final int kMiddleRowAngle = 50;
+        public static final int kTopRowAngle = 55;
+        public static final int kMiddleRowAngle = 30;
         public static final int kGroundLevelAngle = 10;
 
         // PID
         public static final String kSprocketPidName = "Shoulder PID constants";
-        public static final PidConstants kSprocketPid = new PidConstants((1d / kTopRowAngle), 0, 0.0);
+        public static final PidConstants kSprocketPid = new PidConstants((1d / 8), 0, 0.0012);
 
         // Constants
-        public static final double kOpenLoopRampRate = 1.00;
+        public static final double kOpenLoopRampRate = 0.3;
         public static final double kLowAngleLimit = 5.5;
-        public static final double kHorizontalHoldOutput = -0.09;
+        public static final double kHorizontalHoldOutput = -0.09 * 2;
         public static final double kMaxVelocityDegreesPer100ms = 2;
         public static final double kMaxAccelerationDegreesPer100ms = 0.25;
         public static final double kMaxSpeed = 0.6;
@@ -67,6 +67,7 @@ public class Shoulder extends PIDSubsystem {
         mShoulderMaster.configFactoryDefault();
 
         // Define the motor's behavior
+        mShoulderMaster.configOpenloopRamp(Map.kOpenLoopRampRate);
         mShoulderMaster.setNeutralMode(NeutralMode.Brake);
         mShoulderMaster.setInverted(InvertType.InvertMotorOutput);
         mShoulderMaster.configContinuousCurrentLimit(20);
@@ -143,6 +144,9 @@ public class Shoulder extends PIDSubsystem {
         // Are we at our reverse limit?
         if (clampedValue < 0 && getLowerLimitSwitchReached())
             return;
+
+        if (clampedValue < 0)
+            clampedValue *= 0.5;
 
         mShoulderMaster.set(ControlMode.PercentOutput, clampedValue);
     }

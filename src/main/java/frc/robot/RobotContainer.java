@@ -120,9 +120,12 @@ public class RobotContainer implements Sendable {
         // Drive commands
         mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriverController,
                 mDrivetrain, modules, true));
-        mDriverController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+        mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
+        mDriverController.button(ControlsMap.Y).onTrue(DriveCommands.toggleShifter(mDrivetrain));
 
         // Shoulder commands
+
+        mOperatorController.button(ControlsMap.LOGO_RIGHT).onTrue(ShoulderCommands.togglePID(mShoulder));
         mOperatorController.button(ControlsMap.Y)
                 .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
                         Shoulder.Map.kTopRowAngle));
@@ -141,6 +144,7 @@ public class RobotContainer implements Sendable {
                                                                         // setpoint to the current angle
 
         // Wrist commands
+
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mOperatorController));
         mOperatorController.pov(ControlsMap.up)
                 .onTrue(WristCommands.setWristCommand(mWrist, true));
