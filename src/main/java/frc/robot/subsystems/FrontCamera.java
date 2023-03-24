@@ -19,8 +19,8 @@ public class FrontCamera extends SubsystemBase {
     private CvSource mOutputSource;
 
     public FrontCamera() {
-        cam = CameraServer.startAutomaticCapture();
-        cam.setVideoMode(PixelFormat.kMJPEG, 640, 480, 30);
+        // cam = CameraServer.startAutomaticCapture();
+        // cam.setVideoMode(PixelFormat.kMJPEG, 640, 480, 30);
 
         // mProcessingThread = new Thread(
         // () -> {

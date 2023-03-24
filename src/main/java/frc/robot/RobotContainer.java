@@ -4,6 +4,7 @@ import frc.robot.subsystems.*;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -24,9 +25,18 @@ public class RobotContainer implements Sendable {
     public Wrist mWrist;
     public Forearm mForearm;
     public ArduinoSidecar mSidecar;
-    public FrontCamera mFrontCamera;
+    public PowerDistribution mPdp;
+    // public FrontCamera mFrontCamera;
 
     public RobotContainer() {
+        try {
+            mPdp = new PowerDistribution();
+            SmartDashboard.putData(mPdp);
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initalize Drivetrain subsystem", true);
+            return;
+        }
+
         try {
             mDrivetrain = new Drivetrain();
             SmartDashboard.putData(mDrivetrain);
@@ -59,13 +69,13 @@ public class RobotContainer implements Sendable {
             return;
         }
 
-        try {
-            mFrontCamera = new FrontCamera();
-            SmartDashboard.putData(mFrontCamera);
-        } catch (Exception e) {
-            DriverStation.reportError("Failed to initalize FrontCamera", true);
-            return;
-        }
+        // try {
+        // mFrontCamera = new FrontCamera();
+        // SmartDashboard.putData(mFrontCamera);
+        // } catch (Exception e) {
+        // DriverStation.reportError("Failed to initalize FrontCamera", true);
+        // return;
+        // }
     }
 
     public void configureBindings() {
@@ -93,6 +103,10 @@ public class RobotContainer implements Sendable {
         mDriverController.button(ControlsMap.Y).onTrue(DriveCommands.toggleShifter(mDrivetrain));
 
         // Shoulder commands
+        mOperatorController.button(ControlsMap.RB)
+                .onTrue(Commands.runOnce(() -> mForearm.resetEncoderOffset(), mForearm));
+        mOperatorController.button(ControlsMap.LOGO_LEFT)
+                .onTrue(ForearmCommands.home(mForearm));
         mOperatorController.button(ControlsMap.LOGO_RIGHT)
                 .onTrue(ShoulderCommands.togglePID(mShoulder));
         mOperatorController.button(ControlsMap.Y)

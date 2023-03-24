@@ -33,7 +33,7 @@ public class SwerveModule extends PIDSubsystem {
             int encoderAbsoluteOffset,
             boolean driveInverted) {
         super(new PIDController(DriveMap.kSteeringPidConstants.kP, DriveMap.kSteeringPidConstants.kI,
-                DriveMap.kSteeringPidConstants.kD));
+                DriveMap.kSteeringPidConstants.kD_min));
         mEncoderOffset = encoderAbsoluteOffset;
 
         // Set up the steering motor
@@ -45,7 +45,6 @@ public class SwerveModule extends PIDSubsystem {
         mSteeringMotor.clearStickyFaults();
         mSteeringMotor.setNeutralMode(NeutralMode.Brake);
         mSteeringMotor.setInverted(TalonFXInvertType.CounterClockwise);
-        mSteeringMotor.configOpenloopRamp(0.2);
         // mSteeringMotor.configStatorCurrentLimit(statorCurrentConfig);
         mSteeringMotor.configSupplyCurrentLimit(supplyCurrentConfig);
 
@@ -60,8 +59,6 @@ public class SwerveModule extends PIDSubsystem {
         mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the
                                                                                    // Falcon is the falcon's encoder
         mDriveMotor.configClosedloopRamp(3);
-        mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
-                : TalonFXInvertType.Clockwise);
         mDriveMotor.configOpenloopRamp(3);
         // mSteeringMotor.configStatorCurrentLimit(statorCurrentConfig);
         mSteeringMotor.configSupplyCurrentLimit(supplyCurrentConfig);

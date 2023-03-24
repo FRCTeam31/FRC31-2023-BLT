@@ -10,7 +10,7 @@ public class ForearmCommands {
         return Commands.run(() -> forearm.runSimple(operatorJoystick.getAsDouble()), forearm);
     }
 
-    public static Command setForearmDistance(Forearm forearm, double setpoint) {
-        return Commands.run(() -> forearm.setSetpoint(setpoint));
+    public static Command home(Forearm forearm) {
+        return Commands.runOnce(() -> forearm.home(), forearm);
     }
 }
