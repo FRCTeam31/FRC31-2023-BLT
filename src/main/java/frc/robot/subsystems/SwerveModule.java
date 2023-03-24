@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
@@ -35,12 +37,17 @@ public class SwerveModule extends PIDSubsystem {
         mEncoderOffset = encoderAbsoluteOffset;
 
         // Set up the steering motor
+        // var statorCurrentConfig = new StatorCurrentLimitConfiguration(true, 50, 80,
+        // 0.15);
+        var supplyCurrentConfig = new SupplyCurrentLimitConfiguration(true, 50, 80, 0.15);
         mSteeringMotor = new LazyWPITalonFX(steeringMotorId);
         mSteeringMotor.configFactoryDefault();
         mSteeringMotor.clearStickyFaults();
         mSteeringMotor.setNeutralMode(NeutralMode.Brake);
         mSteeringMotor.setInverted(TalonFXInvertType.CounterClockwise);
         mSteeringMotor.configOpenloopRamp(0.2);
+        // mSteeringMotor.configStatorCurrentLimit(statorCurrentConfig);
+        mSteeringMotor.configSupplyCurrentLimit(supplyCurrentConfig);
 
         // Set up the drive motor
         mDriveMotor = new LazyWPITalonFX(driveMotorId);
@@ -48,12 +55,14 @@ public class SwerveModule extends PIDSubsystem {
         mDriveMotor.configFactoryDefault();
         mDriveMotor.clearStickyFaults();
         mDriveMotor.setNeutralMode(NeutralMode.Brake);
+        mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
+                : TalonFXInvertType.Clockwise);
         mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the
                                                                                    // Falcon is the falcon's encoder
         mDriveMotor.configClosedloopRamp(1);
-        mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
-                : TalonFXInvertType.Clockwise);
         mDriveMotor.configOpenloopRamp(3);
+        // mSteeringMotor.configStatorCurrentLimit(statorCurrentConfig);
+        mSteeringMotor.configSupplyCurrentLimit(supplyCurrentConfig);
 
         // Set up our encoder
         mEncoder = new WPI_CANCoder(encoderId);
