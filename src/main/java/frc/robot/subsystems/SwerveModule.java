@@ -50,7 +50,7 @@ public class SwerveModule extends PIDSubsystem {
         mDriveMotor.setNeutralMode(NeutralMode.Brake);
         mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the
                                                                                    // Falcon is the falcon's encoder
-        mDriveMotor.configClosedloopRamp(1);
+        mDriveMotor.configClosedloopRamp(3);
         mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
                 : TalonFXInvertType.Clockwise);
         mDriveMotor.configOpenloopRamp(3);
@@ -69,7 +69,7 @@ public class SwerveModule extends PIDSubsystem {
 
         // Create a PID controller to calculate steering motor output
         getController().enableContinuousInput(-Math.PI, Math.PI);
-        getController().setTolerance(Math.PI / 180);
+        getController().setTolerance(Math.PI / 1800);
         enable();
     }
 

@@ -162,7 +162,7 @@ public class RobotContainer implements Sendable {
         // driveSpeed) // Back up onto the ramp
         // );
         return new SequentialCommandGroup(
-                Commands.run(() -> mDrivetrain.drive(0, 0.75, 0, true), mDrivetrain).withTimeout(3),
+                Commands.run(() -> mDrivetrain.drive(0, 0.5, 0, true), mDrivetrain).withTimeout(3),
                 Commands.run(() -> mDrivetrain.drive(0, 0, 0, true), mDrivetrain)
 
         );
