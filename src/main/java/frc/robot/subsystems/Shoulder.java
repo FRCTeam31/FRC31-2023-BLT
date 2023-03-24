@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import prime.models.PidConstants;
 import prime.movers.LazyWPITalonSRX;
@@ -23,17 +24,17 @@ public class Shoulder extends PIDSubsystem {
         public static final int kUpperLimitSwitchDIOChannel = 0;
 
         // Scoring angles
-        public static final int kTopRowAngle = 62;
-        public static final int kMiddleRowAngle = 40;
-        public static final int kGroundAngle = 20;
+        public static final double kTopRowAngle = 89.1;
+        public static final double kMiddleRowAngle = 67.1;
+        public static final double kGroundAngle = 47.1;
 
         // PID
         public static final PidConstants kSprocketPid = new PidConstants((1d / 8), 0, 0.0012);
 
         // Constants
         public static final double kOpenLoopRampRate = 0.3;
-        public static final double kLowerAngleLimit = 5.5;
-        public static final double kUpperAngleLimit = 70;
+        public static final double kLowerAngleLimit = 62.6;
+        public static final double kUpperAngleLimit = 99;
         public static final double kHorizontalHoldOutput = -0.09 * 2;
         public static final double kMaxVelocityDegreesPer100ms = 2;
         public static final double kMaxAccelerationDegreesPer100ms = 0.25;
@@ -68,7 +69,7 @@ public class Shoulder extends PIDSubsystem {
         mShoulderMaster.configOpenloopRamp(Map.kOpenLoopRampRate);
         mShoulderMaster.setNeutralMode(NeutralMode.Brake);
         mShoulderMaster.setInverted(InvertType.InvertMotorOutput);
-        mShoulderMaster.enableVoltageCompensation(true);
+        // mShoulderMaster.enableVoltageCompensation(true);
         mShoulderMaster.configContinuousCurrentLimit(20);
         mShoulderMaster.configPeakCurrentLimit(30);
         mShoulderMaster.configPeakCurrentDuration(250);
@@ -100,11 +101,11 @@ public class Shoulder extends PIDSubsystem {
     }
 
     public boolean isUpperSoftLimitReached() {
-        return getMeasurement() < Map.kUpperAngleLimit - 1;
+        return getMeasurement() >= Map.kUpperAngleLimit - 1;
     }
 
     public boolean isLowerLimitSwitchReached() {
-        return getMeasurement() < Map.kLowerAngleLimit + 5;
+        return getMeasurement() <= Map.kLowerAngleLimit + 5;
     }
 
     @Override
@@ -127,6 +128,7 @@ public class Shoulder extends PIDSubsystem {
         builder.addDoubleProperty("Position", () -> getMeasurement(), null);
         builder.addDoubleProperty("Last motor output", () -> _lastOutput, null);
         builder.addBooleanProperty("Upper Limit Switch", mUpperLimitSwitch::get, null);
+        builder.addBooleanProperty("Upper Soft Limit reached", this::isUpperSoftLimitReached, null);
         builder.addBooleanProperty("Lower Limit Reached", this::isLowerLimitSwitchReached, null);
     }
 
@@ -141,16 +143,17 @@ public class Shoulder extends PIDSubsystem {
         _lastOutput = clampedValue;
 
         // Are we at our forward limit?
-        if (clampedValue > 0 && (mUpperLimitSwitch.get() || isUpperSoftLimitReached())) {
-            mShoulderMaster.stopMotor();
-            return;
-        }
+        // if (clampedValue > 0 && (mUpperLimitSwitch.get() ||
+        // isUpperSoftLimitReached())) {
+        // mShoulderMaster.stopMotor();
+        // return;
+        // }
 
         // Are we at our reverse limit?
-        if (clampedValue < 0 && isLowerLimitSwitchReached()) {
-            mShoulderMaster.stopMotor();
-            return;
-        }
+        // if (clampedValue < 0 && isLowerLimitSwitchReached()) {
+        // mShoulderMaster.stopMotor();
+        // return;
+        // }
 
         if (clampedValue < 0)
             clampedValue *= 0.5;

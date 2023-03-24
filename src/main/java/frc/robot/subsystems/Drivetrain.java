@@ -240,17 +240,6 @@ public class Drivetrain extends SubsystemBase {
 
         mField.setRobotPose(robotPose);
 
-        if (_lastDesiredStates[0] != null) {
-            SmartDashboard.putNumber("Drive - FL Speed", _lastDesiredStates[0].speedMetersPerSecond);
-            SmartDashboard.putNumber("Drive - FL Angle", _lastDesiredStates[0].angle.getDegrees());
-            SmartDashboard.putNumber("Drive - RL Speed", _lastDesiredStates[1].speedMetersPerSecond);
-            SmartDashboard.putNumber("Drive - RL Angle", _lastDesiredStates[1].angle.getDegrees());
-            SmartDashboard.putNumber("Drive - RR Speed", _lastDesiredStates[2].speedMetersPerSecond);
-            SmartDashboard.putNumber("Drive - RR Angle", _lastDesiredStates[2].angle.getDegrees());
-            SmartDashboard.putNumber("Drive - FR Speed", _lastDesiredStates[3].speedMetersPerSecond);
-            SmartDashboard.putNumber("Drive - FR Angle", _lastDesiredStates[3].angle.getDegrees());
-        }
-
         var flState = mFrontLeftModule.getPosition();
         var flDesiredState = _lastDesiredStates[0];
         var rlState = mRearLeftModule.getPosition();

@@ -46,8 +46,6 @@ public class Forearm extends SubsystemBase {
         forearmMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute, 0, 20);
         forearmMotor.setInverted(true);
         forearmMotor.setSensorPhase(true);
-
-        SmartDashboard.putData("Motor", forearmMotor);
     }
 
     public void setSetpoint(double distance) {
