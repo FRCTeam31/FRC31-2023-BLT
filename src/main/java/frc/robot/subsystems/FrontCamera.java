@@ -15,21 +15,21 @@ public class FrontCamera extends SubsystemBase {
     private boolean mThreadShouldStop = false;
 
     public FrontCamera() {
-        mProcessingThread = new Thread(
-                () -> {
-                    // Get the UsbCamera from CameraServer and set video mode
-                    var camera = CameraServer.startAutomaticCapture();
-                    camera.setVideoMode(PixelFormat.kMJPEG, 640, 480, 30);
+        // mProcessingThread = new Thread(
+        // () -> {
+        // // Get the UsbCamera from CameraServer and set video mode
+        // var camera = CameraServer.startAutomaticCapture();
+        // camera.setVideoMode(PixelFormat.kMJPEG, 640, 480, 30);
 
-                    // Get a CvSink. This will capture Mats (matrixes) from the camera
-                    var cvSink = CameraServer.getVideo();
+        // // Get a CvSink. This will capture Mats (matrixes) from the camera
+        // var cvSink = CameraServer.getVideo();
 
-                    // Setup a CvSource. This will send images back to the Dashboard
-                    var outputStream = CameraServer.putVideo("Flipped", 640, 480);
+        // // Setup a CvSource. This will send images back to the Dashboard
+        // var outputStream = CameraServer.putVideo("Flipped", 640, 480);
 
-                    // Mats are very memory expensive so we want to re-use these Mats
-                    var inputMat = new Mat();
-                    var flippedOutputMat = new Mat();
+        // // Mats are very memory expensive so we want to re-use these Mats
+        // var inputMat = new Mat();
+        // var flippedOutputMat = new Mat();
 
                     // This cannot be 'true'. The program will never exit if it is. This
                     // lets the robot stop this thread when restarting robot code or
@@ -44,15 +44,15 @@ public class FrontCamera extends SubsystemBase {
                             continue;
                         }
 
-                        // Flip the image
-                        Core.flip(inputMat, flippedOutputMat, 1);
+        // // Flip the image
+        // Core.flip(inputMat, flippedOutputMat, 1);
 
-                        // Give the output stream a new image to display
-                        outputStream.putFrame(flippedOutputMat);
-                    }
-                });
+        // // Give the output stream a new image to display
+        // outputStream.putFrame(flippedOutputMat);
+        // }
+        // });
 
-        mProcessingThread.start();
+        // mProcessingThread.start();
     }
 
     @Override
