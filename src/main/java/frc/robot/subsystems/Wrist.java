@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -11,15 +12,15 @@ import prime.movers.LazySolenoid;
 import frc.robot.config.WristMap;
 
 public class Wrist extends SubsystemBase {
-    private LazyCANSparkMax wrist1;
+    private CANSparkMax mWristMotor;
     private LazySolenoid mOutActuator;
     private LazySolenoid mInActuator;
     private Compressor compressor;
 
     public Wrist() {
-        wrist1 = new LazyCANSparkMax(WristMap.kWrist1Id, MotorType.kBrushless);
-        wrist1.restoreFactoryDefaults();
-        wrist1.setOpenLoopRampRate(0.5);
+        mWristMotor = new CANSparkMax(WristMap.kWrist1Id, MotorType.kBrushless);
+        mWristMotor.restoreFactoryDefaults();
+        mWristMotor.setOpenLoopRampRate(0.2);
 
         compressor = new Compressor(PneumaticsModuleType.CTREPCM);
         compressor.enableDigital();
@@ -29,7 +30,7 @@ public class Wrist extends SubsystemBase {
     }
 
     public void stopIntake() {
-        wrist1.stopMotor();
+        mWristMotor.stopMotor();
 
     }
 
@@ -48,7 +49,7 @@ public class Wrist extends SubsystemBase {
     }
 
     public void runMotors(double speed) {
-        wrist1.set(speed);
+        mWristMotor.set(speed);
     }
 
     @Override

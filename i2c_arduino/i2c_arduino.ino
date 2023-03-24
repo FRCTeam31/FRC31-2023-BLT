@@ -341,8 +341,7 @@ uint8_t ACCENT_STRIP_LED_COUNT = 48;
 // Strip objects
 NeoPatterns frontStrip(FRONT_STRIP_LED_COUNT, FRONT_STRIP_OUTPUT_PIN, NEO_GRB + NEO_KHZ800);
 NeoPatterns indicatorStrip(INDICATOR_STRIP_LED_COUNT, INDICATOR_STRIP_OUTPUT_PIN, NEO_GRB + NEO_KHZ800);
-NeoPatterns accentStripRight(ACCENT_STRIP_LED_COUNT, ACCENT_STRIP_RIGHT_OUTPUT_PIN, NEO_GRB + NEO_KHZ800);
-NeoPatterns accentStripLeft(ACCENT_STRIP_LED_COUNT, ACCENT_STRIP_LEFT_OUTPUT_PIN, NEO_GRB + NEO_KHZ800);
+NeoPatterns accentStrip(ACCENT_STRIP_LED_COUNT, ACCENT_STRIP_RIGHT_OUTPUT_PIN, NEO_GRB + NEO_KHZ800);
 
 // Variable to hold our current LED modes
 byte currentLEDModes[4] = {'0', '0', '0', '0'};
@@ -473,11 +472,14 @@ void setup()
     // ==================================
 
     // LED setup ========================
+    frontStrip.ColorSet(frontStrip.Green());
+    indicatorStrip.Scanner(indicatorStrip.Red(), 1000);
+    accentStrip.Scanner(accentStrip.Red(), 1000);
+
     // Start up the LED strips
     frontStrip.begin();
     indicatorStrip.begin();
-    accentStripRight.begin();
-    accentStripLeft.begin();
+    accentStrip.begin();
 
     // Set strip modes
     setModeToStrip(frontStrip, currentLEDModes[0]);

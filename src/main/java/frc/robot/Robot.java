@@ -55,13 +55,13 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if (!mAutoCommand.isFinished())
+        if (mAutoCommand != null && !mAutoCommand.isFinished())
             mAutoCommand.end(true);
 
         // Kill the PID controllers used for trajectory following in autonomous
-        mRobotContainer.mDrivetrain.mAutoTranslationXController.close();
-        mRobotContainer.mDrivetrain.mAutoTranslationYController.close();
-        mRobotContainer.mDrivetrain.mAutoRotationController.close();
+        // mRobotContainer.mDrivetrain.mAutoTranslationXController.close();
+        // mRobotContainer.mDrivetrain.mAutoTranslationYController.close();
+        // mRobotContainer.mDrivetrain.mAutoRotationController.close();
         // DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
     }
 

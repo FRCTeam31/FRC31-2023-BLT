@@ -11,7 +11,7 @@ public class WristMap {
     // Motor speeds
     public static final double kIntakeConeSpeed = -0.6;
     public static final double kEjectConeSpeed = 0.6;
-    public static final double kIntakeCubeSpeed = 0.6;
+    public static final double kIntakeCubeSpeed = 0.4;
     public static final double kEjectCubeSpeed = -0.6;
     public static final double triggerDeadBand = 0.4;
 }

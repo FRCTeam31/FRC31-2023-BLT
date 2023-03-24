@@ -1,21 +1,22 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.config.ControlsMap;
 import frc.robot.config.WristMap;
 import frc.robot.models.IntakeDirection;
 import frc.robot.subsystems.Wrist;
 
 public class WristCommands {
-    public static Command runIntake(Wrist wrist, CommandJoystick operatorController) {
+    public static Command runIntake(Wrist wrist, BooleanSupplier leftTriggerPressed,
+            BooleanSupplier rightTriggerPressed) {
         return Commands.run(() -> {
-            if (operatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand) {
+            if (leftTriggerPressed.getAsBoolean()) {
                 wrist.runMotors(WristMap.kEjectConeSpeed);
                 return;
-            } else if (operatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > WristMap.triggerDeadBand) {
+            } else if (rightTriggerPressed.getAsBoolean()) {
                 wrist.runMotors(WristMap.kIntakeConeSpeed);
                 return;
             } else {

@@ -1,23 +1,22 @@
 package frc.robot;
 
 import frc.robot.subsystems.*;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.ForearmCommands;
 import frc.robot.commands.ShoulderCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.config.ControlsMap;
-import frc.robot.config.DriveMap;
+import frc.robot.config.WristMap;
 import frc.robot.models.IntakeDirection;
 
-public class RobotContainer {
+public class RobotContainer implements Sendable {
     public CommandJoystick mDriverController;
     public CommandJoystick mOperatorController;
     public Drivetrain mDrivetrain;
@@ -33,6 +32,7 @@ public class RobotContainer {
             SmartDashboard.putData(mDrivetrain);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Drivetrain subsystem", true);
+            return;
         }
 
         try {
@@ -40,6 +40,7 @@ public class RobotContainer {
             SmartDashboard.putData(mShoulder);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Shoulder subsystem", true);
+            return;
         }
 
         try {
@@ -47,6 +48,7 @@ public class RobotContainer {
             SmartDashboard.putData(mForearm);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Forearm subsystem", true);
+            return;
         }
 
         try {
@@ -54,6 +56,7 @@ public class RobotContainer {
             SmartDashboard.putData(mWrist);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Wrist subsystem", true);
+            return;
         }
 
         try {
@@ -61,6 +64,7 @@ public class RobotContainer {
             SmartDashboard.putData(mFrontCamera);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize FrontCamera", true);
+            return;
         }
     }
 
@@ -72,13 +76,17 @@ public class RobotContainer {
         // Default commands
         mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDrivetrain,
                 () -> mDriverController.getRawAxis(
-                        ControlsMap.LEFT_STICK_Y),
+                        ControlsMap.RIGHT_STICK_Y),
                 () -> mDriverController.getRawAxis(
-                        ControlsMap.LEFT_STICK_X),
-                () -> mDriverController.getRawAxis(ControlsMap.RIGHT_STICK_X), mDrivetrain.mSwerveModules, true));
-        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mOperatorController));
+                        ControlsMap.RIGHT_STICK_X),
+                () -> mDriverController.getRawAxis(ControlsMap.LEFT_STICK_X),
+                mDrivetrain.mSwerveModules,
+                true));
+        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist,
+                () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand,
+                () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > WristMap.triggerDeadBand));
         mForearm.setDefaultCommand(ForearmCommands.controlWithJoystick(mForearm,
-                () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_STICK_Y)));
+                () -> -mOperatorController.getRawAxis(ControlsMap.RIGHT_STICK_Y)));
 
         // Drive commands
         mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
@@ -96,13 +104,20 @@ public class RobotContainer {
         mOperatorController.button(ControlsMap.A)
                 .onTrue(ShoulderCommands.setAngle(mShoulder,
                         Shoulder.Map.kGroundAngle));
+        // mOperatorController.button(ControlsMap.LB)
+        // .whileTrue(EndEffectorCommands.raiseEffectorManually(mShoulder, // While LB
+        // is held, control the arm
+        // // speed with the left stick Y axis
+        // () -> mForearm.getMinSoftLimitReached(),
+        // () -> mOperatorController.getRawAxis(ControlsMap.LEFT_STICK_Y)))
+        // .onFalse(ShoulderCommands.lockCurrentAngle(mShoulder)); // When LB is
+        // released, set the shoulder
+
         mOperatorController.button(ControlsMap.LB)
-                .whileTrue(EndEffectorCommands.raiseEffectorManually(mShoulder, // While LB is held, control the arm
-                                                                                // speed with the left stick Y axis
-                        () -> mForearm.getMinSoftLimitReached(),
+                .whileTrue(ShoulderCommands.runWithJoystick(mShoulder, // While LB is held, control the arm
+                                                                       // speed with the left stick Y axis
                         () -> mOperatorController.getRawAxis(ControlsMap.LEFT_STICK_Y)))
                 .onFalse(ShoulderCommands.lockCurrentAngle(mShoulder)); // When LB is released, set the shoulder
-                                                                        // setpoint to the current angle
 
         // Wrist commands
         mOperatorController.pov(ControlsMap.up)
@@ -120,28 +135,42 @@ public class RobotContainer {
     }
 
     public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {
-        mDrivetrain.mAutoTranslationXController = new PIDController(
-                DriveMap.kAutoTranslationPID_kP,
-                DriveMap.kAutoTranslationPID_kI,
-                DriveMap.kAutoTranslationPID_kD);
-        mDrivetrain.mAutoTranslationYController = new PIDController(
-                DriveMap.kAutoTranslationPID_kP,
-                DriveMap.kAutoTranslationPID_kI,
-                DriveMap.kAutoTranslationPID_kD);
-        mDrivetrain.mAutoRotationController = new PIDController(
-                DriveMap.kAutoRotationPID_kP,
-                DriveMap.kAutoRotationPID_kI,
-                DriveMap.kAutoRotationPID_kD);
+        // mDrivetrain.mAutoTranslationXController = new PIDController(
+        // DriveMap.kAutoTranslationPID_kP,
+        // DriveMap.kAutoTranslationPID_kI,
+        // DriveMap.kAutoTranslationPID_kD);
+        // mDrivetrain.mAutoTranslationYController = new PIDController(
+        // DriveMap.kAutoTranslationPID_kP,
+        // DriveMap.kAutoTranslationPID_kI,
+        // DriveMap.kAutoTranslationPID_kD);
+        // mDrivetrain.mAutoRotationController = new PIDController(
+        // DriveMap.kAutoRotationPID_kP,
+        // DriveMap.kAutoRotationPID_kI,
+        // DriveMap.kAutoRotationPID_kD);
 
-        SmartDashboard.putData("Auto TranslationX PID", mDrivetrain.mAutoTranslationXController);
-        SmartDashboard.putData("Auto TranslationY PID", mDrivetrain.mAutoTranslationYController);
-        SmartDashboard.putData("Auto Rotation PID", mDrivetrain.mAutoRotationController);
+        // SmartDashboard.putData("Auto TranslationX PID",
+        // mDrivetrain.mAutoTranslationXController);
+        // SmartDashboard.putData("Auto TranslationY PID",
+        // mDrivetrain.mAutoTranslationYController);
+        // SmartDashboard.putData("Auto Rotation PID",
+        // mDrivetrain.mAutoRotationController);
 
+        // return new SequentialCommandGroup(
+        // AutoCommands.translateYMeters(mDrivetrain, 0.48,
+        // driveSpeed), // Push cube forward
+        // AutoCommands.translateYMeters(mDrivetrain, -2,
+        // driveSpeed) // Back up onto the ramp
+        // );
         return new SequentialCommandGroup(
-                AutoCommands.translateYMeters(mDrivetrain, 0.48,
-                        driveSpeed), // Push cube forward
-                AutoCommands.translateYMeters(mDrivetrain, -2,
-                        driveSpeed) // Back up onto the ramp
+                Commands.run(() -> mDrivetrain.drive(0, 0.75, 0, true), mDrivetrain).withTimeout(3),
+                Commands.run(() -> mDrivetrain.drive(0, 0, 0, true), mDrivetrain)
+
         );
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        // TODO Auto-generated method stub
+
     }
 }

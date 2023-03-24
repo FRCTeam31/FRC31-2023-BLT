@@ -72,8 +72,8 @@ public class DriveMap {
     public static int falconTotalSensorUnits = 2048;
     // public static final double kDriveMaxSpeedMetersPerSecond = 4.938; // 16.2ft
     // per second in meters per second
-    public static final double kDriveMaxSpeedMetersPerSecond = 8; // TODO: Fix this outrageous value
-    public static final double kDriveMaxAngularSpeed = DriveMap.kRobotWheelBaseCircumferenceMeters
+    public static final double kDriveMaxSpeedMetersPerSecond = 8; // TODO: Fix this outrageous value when we get home
+    public static final double kDriveMaxAngularSpeed = (DriveMap.kRobotWheelBaseCircumferenceMeters / 2)
             / kDriveMaxSpeedMetersPerSecond;
     public static final double kHighGearCoefficient = 0.7;
     public static final double kLowGearCoefficient = 0.15;

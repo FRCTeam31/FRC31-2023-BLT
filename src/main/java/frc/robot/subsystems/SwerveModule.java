@@ -53,6 +53,7 @@ public class SwerveModule extends PIDSubsystem {
         mDriveMotor.configClosedloopRamp(1);
         mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
                 : TalonFXInvertType.Clockwise);
+        mDriveMotor.configOpenloopRamp(3);
 
         // Set up our encoder
         mEncoder = new WPI_CANCoder(encoderId);

@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import prime.models.PidConstants;
 import prime.movers.LazyWPITalonSRX;
-import prime.utilities.CTREConverter;
 
 public class Forearm extends SubsystemBase {
     public static class Map {
@@ -41,7 +40,7 @@ public class Forearm extends SubsystemBase {
         forearmMotor = new LazyWPITalonSRX(Map.kForearmMotor1Id);
         forearmMotor.clearStickyFaults();
         forearmMotor.configFactoryDefault();
-        forearmMotor.setNeutralMode(NeutralMode.Brake);
+        forearmMotor.setNeutralMode(NeutralMode.Coast);
         // forearmMotor.configOpenloopRamp(ForearmMap.kOpenLoopRampRate);
         forearmMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Absolute, 0, 20);
         forearmMotor.setInverted(true);

@@ -24,17 +24,17 @@ public class Shoulder extends PIDSubsystem {
         public static final int kUpperLimitSwitchDIOChannel = 0;
 
         // Scoring angles
-        public static final int kTopRowAngle = 62;
-        public static final int kMiddleRowAngle = 40;
-        public static final int kGroundAngle = 20;
+        public static final int kTopRowAngle = 68;
+        public static final int kMiddleRowAngle = 42;
+        public static final int kGroundAngle = 28;
 
         // PID
         public static final PidConstants kSprocketPid = new PidConstants((1d / 8), 0, 0.0012);
 
         // Constants
         public static final double kOpenLoopRampRate = 0.3;
-        public static final double kLowerAngleLimit = 5.5;
-        public static final double kUpperAngleLimit = 70;
+        public static final double kLowerAngleLimit = 25;
+        public static final double kUpperAngleLimit = 95;
         public static final double kHorizontalHoldOutput = -0.09 * 2;
         public static final double kMaxVelocityDegreesPer100ms = 2;
         public static final double kMaxAccelerationDegreesPer100ms = 0.25;
@@ -69,7 +69,7 @@ public class Shoulder extends PIDSubsystem {
         mShoulderMaster.configOpenloopRamp(Map.kOpenLoopRampRate);
         mShoulderMaster.setNeutralMode(NeutralMode.Brake);
         mShoulderMaster.setInverted(InvertType.InvertMotorOutput);
-        mShoulderMaster.enableVoltageCompensation(true);
+        // mShoulderMaster.enableVoltageCompensation(true);
         mShoulderMaster.configContinuousCurrentLimit(20);
         mShoulderMaster.configPeakCurrentLimit(30);
         mShoulderMaster.configPeakCurrentDuration(250);
@@ -117,7 +117,7 @@ public class Shoulder extends PIDSubsystem {
     }
 
     public boolean isUpperSoftLimitReached() {
-        return getMeasurement() < Map.kUpperAngleLimit - 1;
+        return getMeasurement() >= Map.kUpperAngleLimit - 1;
     }
 
     public boolean isLowerLimitSwitchReached() {
@@ -141,6 +141,7 @@ public class Shoulder extends PIDSubsystem {
 
     @Override
     public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
         builder.addDoubleProperty("Position", () -> getMeasurement(), null);
         builder.addDoubleProperty("Last motor output", () -> _lastOutput, null);
         builder.addBooleanProperty("Upper Limit Switch", mUpperLimitSwitch::get, null);
@@ -158,7 +159,9 @@ public class Shoulder extends PIDSubsystem {
         _lastOutput = clampedValue;
 
         // Are we at our forward limit?
-        if (clampedValue > 0 && (mUpperLimitSwitch.get() || isUpperSoftLimitReached())) {
+        var atSoftLimit = isUpperSoftLimitReached();
+        var atHardLimit = mUpperLimitSwitch.get();
+        if (clampedValue > 0 && (atSoftLimit || atHardLimit)) {
             mShoulderMaster.stopMotor();
             return;
         }
