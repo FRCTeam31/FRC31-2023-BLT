@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.config.ControlsMap;
 import frc.robot.config.WristMap;
+import frc.robot.models.IntakeDirection;
 import frc.robot.subsystems.Wrist;
 
 public class WristCommands {
@@ -24,37 +25,24 @@ public class WristCommands {
         }, wrist);
     }
 
-    public static Command setWristCommand(Wrist wrist, boolean out) {
+    public static Command setWristAngle(Wrist wrist, IntakeDirection intakeDirection) {
         return Commands.runOnce(() -> {
-            wrist.setWrist(out);
+            wrist.setWrist(intakeDirection == IntakeDirection.kCone);
         });
     }
 
-    public static Command runIntakeFallenConeCommand(Wrist wrist, boolean out) {
+    public static Command runIntakeFallenConeCommand(Wrist wrist) {
         return new SequentialCommandGroup(new Command[] {
                 Commands.runOnce(() -> wrist.setWrist(false), wrist),
                 Commands.run(() -> wrist.runMotors(-WristMap.kIntakeConeSpeed), wrist)
         });
     }
 
-    public static Command stopIntakeCommand(Wrist wrist) {
+    public static Command stopIntake(Wrist wrist) {
         return Commands.runOnce(() -> wrist.stopIntake(), wrist);
     }
 
-    // Test commands
-    public static Command runMotorSimpleCommand(Wrist wrist) {
-        return Commands.runOnce(() -> wrist.runMotors(1), wrist);
-    }
-
-    public static Command toggleActuatorCommand(Wrist wrist) {
-        return Commands.runOnce(() -> wrist.setWrist(!wrist.getWristOut()), wrist);
-    }
-
-    public static Command controlWithJoystickCommand(Wrist wrist, CommandJoystick joystick) {
-        return Commands.run(() -> wrist.runMotors(-joystick.getRawAxis(ControlsMap.RIGHT_STICK_Y)), wrist);
-    }
-
-    public static Command runWristForTimeCommand(Wrist wrist, double seconds, double speed) {
+    public static Command runUntilTimeout(Wrist wrist, double seconds, double speed) {
         return Commands.run(() -> {
             wrist.runMotors(speed);
         }).withTimeout(seconds);

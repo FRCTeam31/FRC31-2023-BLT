@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class FrontCamera extends SubsystemBase {
     public Thread mProcessingThread;
+    private boolean mThreadShouldStop = false;
 
     public FrontCamera() {
         mProcessingThread = new Thread(
@@ -33,7 +34,7 @@ public class FrontCamera extends SubsystemBase {
                     // This cannot be 'true'. The program will never exit if it is. This
                     // lets the robot stop this thread when restarting robot code or
                     // deploying.
-                    while (!Thread.interrupted()) {
+                    while (!Thread.interrupted() && !mThreadShouldStop) {
                         // Tell the CvSink to grab a frame from the camera and put it
                         // in the source mat. If there is an error notify the output.
                         if (cvSink.grabFrame(inputMat) == 0) {
@@ -58,5 +59,6 @@ public class FrontCamera extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
         builder.addBooleanProperty("Flipped thread is alive", () -> mProcessingThread.isAlive(), null);
+        builder.addBooleanProperty("Disable flipped thread", () -> mThreadShouldStop, (b) -> mThreadShouldStop = b);
     }
 }

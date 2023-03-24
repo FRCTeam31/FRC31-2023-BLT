@@ -7,10 +7,14 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.DriveCommands;
+import frc.robot.config.DriveMap;
 
 public class Robot extends TimedRobot {
     private RobotContainer mRobotContainer;
+    private Command mAutoCommand;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -21,15 +25,17 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         DataLogManager.start();
         DriverStation.startDataLog(DataLogManager.getLog());
+
+        // Create the robot's objects and subsystems and map user controls
         mRobotContainer = new RobotContainer();
         mRobotContainer.configureBindings();
     }
 
     @Override
     public void autonomousInit() {
-        // var mAutoCommand = mRobotContainer.getAutonomousCommand();
-        // DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain);
-        // mAutoCommand.schedule();
+        mAutoCommand = mRobotContainer.getAutonomousCommand(DriveMap.kDriveMaxSpeedMetersPerSecond / 4);
+        DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
+        mAutoCommand.schedule();
     }
 
     /**
@@ -49,6 +55,13 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        if (!mAutoCommand.isFinished())
+            mAutoCommand.end(true);
+
+        // Kill the PID controllers used for trajectory following in autonomous
+        mRobotContainer.mDrivetrain.mAutoTranslationXController.close();
+        mRobotContainer.mDrivetrain.mAutoTranslationYController.close();
+        mRobotContainer.mDrivetrain.mAutoRotationController.close();
         // DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
     }
 

@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import frc.robot.models.ShoulderLevels;
 import prime.models.PidConstants;
 import prime.movers.LazyWPITalonSRX;
 
@@ -86,6 +87,22 @@ public class Shoulder extends PIDSubsystem {
             enable();
 
         setSetpoint(angleInDegrees);
+    }
+
+    public void setAngle(ShoulderLevels level) {
+        if (!isEnabled())
+            enable();
+
+        switch (level) {
+            default:
+                setSetpoint(Shoulder.Map.kGroundAngle);
+                break;
+            case kSCORE_MIDDLE:
+                setSetpoint(Shoulder.Map.kMiddleRowAngle);
+                break;
+            case kSCORE_HIGH:
+                setSetpoint(Shoulder.Map.kTopRowAngle);
+        }
     }
 
     public void setSpeed(double speed) {

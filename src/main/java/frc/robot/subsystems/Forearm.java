@@ -30,7 +30,7 @@ public class Forearm extends SubsystemBase {
         public static final double kMaxDistanceOutSensorUnits = 31000;
         public static final double kMinDistanceOutSensorUnits = 3000;
 
-        public static final double pickUpGroundDistance = 0;
+        public static final double kPickUpGroundDistance = 0;
     }
 
     private LazyWPITalonSRX forearmMotor;

@@ -15,8 +15,9 @@ public class DriveMap {
     // Calculated values
     public static final double kDriveGearRatio = kDriveMotorDrivenGearTeeth / kDriveMotorOutputTeeth;
     public static final double kDriveWheelCircumference = Math.PI * kDriveWheelDiameterMeters;
-    // Initialize locations of each wheel in terms of x, y translation in meters
-    // from the origin (middle of the robot)
+
+    // Locations of each wheel in terms of x, y translation in meters from the
+    // middle of the robot
     static final double halfWheelBase = DriveMap.kRobotWheelBaseMeters / 2;
     static final double halfTrackWidth = DriveMap.kRobotTrackWidthMeters / 2;
     public static final Translation2d kFrontLeftLocation = new Translation2d(-halfTrackWidth, halfWheelBase);
@@ -32,8 +33,6 @@ public class DriveMap {
     public static PidConstants kDrivePidConstants = new PidConstants(0.016983, 1);
     public static final String kSteeringPidConstantsName = "SwerveModule steering PID Constants";
     public static PidConstants kSteeringPidConstants = new PidConstants(0.2);
-    // public static final PidConstants kSteeringPidConstants = new
-    // PidConstants(0.18);
 
     // Pigeon
     public static final int kPigeonId = 10;
@@ -73,22 +72,18 @@ public class DriveMap {
     public static int falconTotalSensorUnits = 2048;
     // public static final double kDriveMaxSpeedMetersPerSecond = 4.938; // 16.2ft
     // per second in meters per second
-    public static final double kDriveMaxSpeedMetersPerSecond = 8; // 16.2ft per second in meters per second
+    public static final double kDriveMaxSpeedMetersPerSecond = 8; // TODO: Fix this outrageous value
     public static final double kDriveMaxAngularSpeed = DriveMap.kRobotWheelBaseCircumferenceMeters
             / kDriveMaxSpeedMetersPerSecond;
     public static final double kHighGearCoefficient = 0.7;
     public static final double kLowGearCoefficient = 0.15;
 
     // Drive Auton PID values
-    public static final double kAutonDriveXKp = 2.01;
-    public static final byte kAutonDriveXKi = 0;
-    public static final byte kAutonDriveXKd = 1;
+    public static final double kAutoTranslationPID_kP = 2.01;
+    public static final double kAutoTranslationPID_kI = 0;
+    public static final double kAutoTranslationPID_kD = 1;
 
-    public static final byte kAutonDriveYKp = 1;
-    public static final byte kAutonDriveYKi = 0;
-    public static final byte kAutonDriveYKd = 1;
-
-    public static final byte kAutonRotationKp = 1;
-    public static final byte kAutonRotationKi = 0;
-    public static final byte kAutonRotationKd = 0;
+    public static final double kAutoRotationPID_kP = 1;
+    public static final double kAutoRotationPID_kI = 0;
+    public static final double kAutoRotationPID_kD = 0;
 }
