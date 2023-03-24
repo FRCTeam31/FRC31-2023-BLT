@@ -70,9 +70,9 @@ public class Shoulder extends PIDSubsystem {
         mShoulderMaster.setNeutralMode(NeutralMode.Brake);
         mShoulderMaster.setInverted(InvertType.InvertMotorOutput);
         // mShoulderMaster.enableVoltageCompensation(true);
-        mShoulderMaster.configContinuousCurrentLimit(20);
-        mShoulderMaster.configPeakCurrentLimit(30);
-        mShoulderMaster.configPeakCurrentDuration(250);
+        mShoulderMaster.configContinuousCurrentLimit(50);
+        mShoulderMaster.configPeakCurrentLimit(80);
+        mShoulderMaster.configPeakCurrentDuration(150);
 
         shoulder2 = new LazyWPITalonSRX(Map.kShoulder2Id);
         shoulder2.clearStickyFaults();
