@@ -134,6 +134,11 @@ public class SwerveModule extends PIDSubsystem {
         mEncoder.setPosition(newPosition);
     }
 
+    public void stopMotors() {
+        mDriveMotor.stopMotor();
+        mSteeringMotor.stopMotor();
+    }
+
     public double getEncoderPosition() {
         return mEncoder.getPosition();
     }

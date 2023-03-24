@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class FrontCamera extends SubsystemBase {
     public Thread mProcessingThread;
+    private boolean mThreadShouldStop = false;
 
     public FrontCamera() {
         // mProcessingThread = new Thread(
@@ -30,18 +31,18 @@ public class FrontCamera extends SubsystemBase {
         // var inputMat = new Mat();
         // var flippedOutputMat = new Mat();
 
-        // // This cannot be 'true'. The program will never exit if it is. This
-        // // lets the robot stop this thread when restarting robot code or
-        // // deploying.
-        // while (!Thread.interrupted()) {
-        // // Tell the CvSink to grab a frame from the camera and put it
-        // // in the source mat. If there is an error notify the output.
-        // if (cvSink.grabFrame(inputMat) == 0) {
-        // // Send the output the error.
-        // outputStream.notifyError(cvSink.getError());
-        // // skip the rest of the current iteration
-        // continue;
-        // }
+                    // This cannot be 'true'. The program will never exit if it is. This
+                    // lets the robot stop this thread when restarting robot code or
+                    // deploying.
+                    while (!Thread.interrupted() && !mThreadShouldStop) {
+                        // Tell the CvSink to grab a frame from the camera and put it
+                        // in the source mat. If there is an error notify the output.
+                        if (cvSink.grabFrame(inputMat) == 0) {
+                            // Send the output the error.
+                            outputStream.notifyError(cvSink.getError());
+                            // skip the rest of the current iteration
+                            continue;
+                        }
 
         // // Flip the image
         // Core.flip(inputMat, flippedOutputMat, 1);
@@ -57,7 +58,7 @@ public class FrontCamera extends SubsystemBase {
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        // builder.addBooleanProperty("Flipped thread is alive", () ->
-        // mProcessingThread.isAlive(), null);
+        builder.addBooleanProperty("Flipped thread is alive", () -> mProcessingThread.isAlive(), null);
+        builder.addBooleanProperty("Disable flipped thread", () -> mThreadShouldStop, (b) -> mThreadShouldStop = b);
     }
 }

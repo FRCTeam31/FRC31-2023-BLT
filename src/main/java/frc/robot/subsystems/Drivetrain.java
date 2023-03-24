@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.DriveMap;
 
 public class Drivetrain extends SubsystemBase {
-
     // Build a gyro and a kinematics class for calculating our drive
     boolean mInHighGear = true;
     public WPI_Pigeon2 mGyro;
@@ -36,9 +37,14 @@ public class Drivetrain extends SubsystemBase {
     // Swerve Modules
     SwerveModule mFrontLeftModule, mFrontRightModule, mRearLeftModule, mRearRightModule;
     public SwerveModule[] mSwerveModules;
-    public SwerveModulePosition[] kSwerveModulePositions = new SwerveModulePosition[4];
+    public SwerveModulePosition[] mSwerveModulePositions = new SwerveModulePosition[4];
     SwerveDriveOdometry mOdometry;
     Field2d mField;
+
+    // PID controllers for autonomous
+    public PIDController mAutoTranslationXController;
+    public PIDController mAutoTranslationYController;
+    public PIDController mAutoRotationController;
 
     // Log entries for module data
     DoubleLogEntry frontLeftSpeedLog, frontRightSpeedLog, rearLeftSpeedLog, rearRightSpeedLog;
@@ -156,12 +162,12 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        kSwerveModulePositions[0] = mFrontLeftModule.getPosition();
-        kSwerveModulePositions[1] = mRearLeftModule.getPosition();
-        kSwerveModulePositions[2] = mRearRightModule.getPosition();
-        kSwerveModulePositions[3] = mFrontRightModule.getPosition();
+        mSwerveModulePositions[0] = mFrontLeftModule.getPosition();
+        mSwerveModulePositions[1] = mRearLeftModule.getPosition();
+        mSwerveModulePositions[2] = mRearRightModule.getPosition();
+        mSwerveModulePositions[3] = mFrontRightModule.getPosition();
 
-        mOdometry.resetPosition(getRotation2d(), kSwerveModulePositions, pose);
+        mOdometry.resetPosition(getRotation2d(), mSwerveModulePositions, pose);
     }
 
     public Rotation2d getRotation2d() {
@@ -184,22 +190,19 @@ public class Drivetrain extends SubsystemBase {
         return mInHighGear ? DriveMap.kHighGearCoefficient : DriveMap.kLowGearCoefficient;
     }
 
+    public void stopMotors() {
+        mFrontLeftModule.stopMotors();
+        mRearLeftModule.stopMotors();
+        mRearRightModule.stopMotors();
+        mFrontRightModule.stopMotors();
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
 
         if (_lastDesiredStates.length > 0) {
             builder.addDoubleProperty("Heading", this::getRotationDegrees, null);
-
-            // builder.addStringProperty("Active Command", () -> {
-            // if (this.getCurrentCommand() != null) {
-            // return this.getCurrentCommand().getName();
-            // } else {
-            // return "";
-            // }
-            // }, null);
-            // builder.addStringProperty("Default Command", () ->
-            // this.getDefaultCommand().getName(), null);
 
             if (_lastDesiredStates[0] != null) {
                 builder.addDoubleProperty("Drive - FL Speed", () -> _lastDesiredStates[0].speedMetersPerSecond,
