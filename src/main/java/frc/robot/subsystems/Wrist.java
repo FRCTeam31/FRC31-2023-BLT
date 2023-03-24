@@ -12,8 +12,8 @@ import frc.robot.config.WristMap;
 
 public class Wrist extends SubsystemBase {
     private LazyCANSparkMax wrist1;
-    private LazySolenoid mOutActuator = new LazySolenoid(PneumaticsModuleType.CTREPCM, WristMap.kWristActuatorId);
-    private LazySolenoid mInActuator = new LazySolenoid(PneumaticsModuleType.CTREPCM, WristMap.kWristActuatorId + 1);
+    private LazySolenoid mOutActuator;
+    private LazySolenoid mInActuator;
     private Compressor compressor;
 
     public Wrist() {
@@ -23,6 +23,8 @@ public class Wrist extends SubsystemBase {
 
         compressor = new Compressor(PneumaticsModuleType.CTREPCM);
         compressor.enableDigital();
+        mOutActuator = new LazySolenoid(PneumaticsModuleType.CTREPCM, WristMap.kWristActuatorId);
+        mInActuator = new LazySolenoid(PneumaticsModuleType.CTREPCM, WristMap.kWristActuatorId + 1);
         setWrist(false);
     }
 
@@ -49,12 +51,11 @@ public class Wrist extends SubsystemBase {
         wrist1.set(speed);
     }
 
-    // @Override
-    // public void initSendable(SendableBuilder builder) {
-    // super.initSendable(builder);
-    // builder.addBooleanProperty("Actuated", this::getWristOut, this::setWrist);
-    // builder.addBooleanProperty("Pressure switch",
-    // compressor::getPressureSwitchValue, null);
-    // }
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+        builder.addBooleanProperty("Actuated", this::getWristOut, this::setWrist);
+        builder.addBooleanProperty("Pressure switch", compressor::getPressureSwitchValue, null);
+    }
 
 }
