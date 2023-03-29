@@ -10,7 +10,7 @@ public class PathPlannerConverter {
     }
 
     public static PIDConstants fromPidConstants(PidConstants p) {
-        return new PIDConstants(p.kP, p.kI, p.kD);
+        return new PIDConstants(p.kP, p.kI, p.kD_min);
     }
 
     public static PidConstants toPIDConstants(PIDConstants p) {
@@ -18,6 +18,6 @@ public class PathPlannerConverter {
     }
 
     public static PIDConstants toPPPidConstants(PidConstants p) {
-        return new PIDConstants(p.kP, p.kI, p.kD);
+        return new PIDConstants(p.kP, p.kI, p.kD_min);
     }
 }

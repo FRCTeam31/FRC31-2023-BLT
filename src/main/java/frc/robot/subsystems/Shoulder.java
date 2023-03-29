@@ -8,14 +8,16 @@ import com.ctre.phoenix.sensors.WPI_CANCoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.util.InterpolatingTreeMap;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import frc.robot.config.WristMap;
 import frc.robot.models.ShoulderLevels;
 import prime.models.PidConstants;
 import prime.movers.LazyWPITalonSRX;
 
-public class Shoulder extends PIDSubsystem {
+public class Shoulder<K extends Number, V extends Number> extends PIDSubsystem {
     public static class Map {
         // CAN IDs & Channels
         public static final int kShoulder1Id = 21;
@@ -45,13 +47,19 @@ public class Shoulder extends PIDSubsystem {
     private LazyWPITalonSRX shoulder2;
     private WPI_CANCoder mEncoder;
     private DigitalInput mUpperLimitSwitch;
+    private Forearm _mForearm;
+    private InterpolatingTreeMap<K, V> _mInterpolatedDMap;
     private double _lastOutput = 0;
     private double _lastFeedForward = 0;
     private double _lastFinalOutput = 0;
 
-    public Shoulder() {
-        super(new PIDController(Map.kSprocketPid.kP, Map.kSprocketPid.kI, Map.kSprocketPid.kD));
+    public Shoulder(Forearm forearm) {
+        super(new PIDController(Map.kSprocketPid.kP, Map.kSprocketPid.kI, Map.kSprocketPid.kD_min));
         getController().setTolerance(1);
+        _mForearm = forearm;
+        _mInterpolatedDMap.put(0, Map.kSprocketPid.kD_min);
+        // _mInterpolatedDMap.put(Forearm.Map.kMaxDistanceOutSensorUnits,
+        // Map.kSprocketPid.kD_max);
 
         mUpperLimitSwitch = new DigitalInput(Map.kUpperLimitSwitchDIOChannel);
 
@@ -130,6 +138,12 @@ public class Shoulder extends PIDSubsystem {
         _lastOutput = output;
         _lastFeedForward = gravCompensation * Map.kHorizontalHoldOutput;
         _lastFinalOutput = MathUtil.clamp(output + _lastFeedForward, -1, 1);
+
+        if (isEnabled()) {
+            // adjust the D value based on how far extended the forearm is
+            // _mForearm.getDistanceSensorUnits();
+            // getController().setD();
+        }
 
         runShoulderWithLimits(_lastFinalOutput);
     }
