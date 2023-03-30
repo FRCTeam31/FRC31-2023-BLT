@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         mAutoCommand = mRobotContainer.getAutonomousCommand(DriveMap.kDriveMaxSpeedMetersPerSecond / 4);
         DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
-        ForearmCommands.home(mRobotContainer.mForearm).schedule();
+        ForearmCommands.extendForearm(mRobotContainer.mForearm);
         mAutoCommand.schedule();
     }
 

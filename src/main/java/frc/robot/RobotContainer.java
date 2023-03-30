@@ -95,29 +95,20 @@ public class RobotContainer implements Sendable {
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist,
                 () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand,
                 () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > WristMap.triggerDeadBand));
-        mForearm.setDefaultCommand(ForearmCommands.controlWithJoystick(mForearm,
-                () -> -mOperatorController.getRawAxis(ControlsMap.RIGHT_STICK_Y)));
 
         // Drive commands
         mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro(), mDrivetrain));
         mDriverController.button(ControlsMap.Y).onTrue(DriveCommands.toggleShifter(mDrivetrain));
 
         // Shoulder commands
-        mOperatorController.button(ControlsMap.RB)
-                .onTrue(Commands.runOnce(() -> mForearm.resetEncoderOffset(), mForearm));
-        mOperatorController.button(ControlsMap.LOGO_LEFT)
-                .onTrue(ForearmCommands.home(mForearm));
-        mOperatorController.button(ControlsMap.LOGO_RIGHT)
-                .onTrue(ShoulderCommands.togglePID(mShoulder));
-        mOperatorController.button(ControlsMap.Y)
-                .onTrue(ShoulderCommands.setAngle(mShoulder,
-                        Shoulder.Map.kTopRowAngle));
-        mOperatorController.button(ControlsMap.B)
-                .onTrue(ShoulderCommands.setAngle(mShoulder,
-                        Shoulder.Map.kMiddleRowAngle));
-        mOperatorController.button(ControlsMap.A)
-                .onTrue(ShoulderCommands.setAngle(mShoulder,
-                        Shoulder.Map.kGroundAngle));
+        mOperatorController.button(ControlsMap.Y).onTrue(ShoulderCommands.setHighGoal(mShoulder));
+        mOperatorController.button(ControlsMap.B).onTrue(ShoulderCommands.setMiddleGoal(mShoulder));
+        mOperatorController.button(ControlsMap.A).onTrue(ShoulderCommands.setLowGoal(mShoulder));
+
+        // Forearm commands
+        mOperatorController.button(ControlsMap.X).toggleOnTrue(ForearmCommands.extendForearm(mForearm))
+                .toggleOnFalse(ForearmCommands.retractForearm(mForearm));
+
         // mOperatorController.button(ControlsMap.LB)
         // .whileTrue(EndEffectorCommands.raiseEffectorManually(mShoulder, // While LB
         // is held, control the arm
@@ -126,12 +117,6 @@ public class RobotContainer implements Sendable {
         // () -> mOperatorController.getRawAxis(ControlsMap.LEFT_STICK_Y)))
         // .onFalse(ShoulderCommands.lockCurrentAngle(mShoulder)); // When LB is
         // released, set the shoulder
-
-        mOperatorController.button(ControlsMap.LB)
-                .whileTrue(ShoulderCommands.runWithJoystick(mShoulder, // While LB is held, control the arm
-                                                                       // speed with the left stick Y axis
-                        () -> mOperatorController.getRawAxis(ControlsMap.LEFT_STICK_Y)))
-                .onFalse(ShoulderCommands.lockCurrentAngle(mShoulder)); // When LB is released, set the shoulder
 
         // Wrist commands
         mOperatorController.pov(ControlsMap.up)

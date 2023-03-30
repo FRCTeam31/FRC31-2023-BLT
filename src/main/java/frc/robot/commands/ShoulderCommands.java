@@ -8,41 +8,24 @@ import frc.robot.models.ShoulderLevels;
 import frc.robot.subsystems.Shoulder;
 
 public class ShoulderCommands {
-    public static Command setAngle(Shoulder shoulder, double angle) {
-        return Commands.runOnce(() -> shoulder.setAngle(angle));
+    public static Command setHighGoal(Shoulder shoulder) {
+        return Commands.run(() -> {
+            shoulder.extendShortSolenoid(true);
+            shoulder.extendLongSolenoid(true);
+        }, shoulder);
     }
 
-    public static Command setAngle(Shoulder shoulder, ShoulderLevels level) {
-        return Commands.runOnce(() -> shoulder.setAngle(level));
+    public static Command setMiddleGoal(Shoulder shoulder) {
+        return Commands.run(() -> {
+            shoulder.extendShortSolenoid(false);
+            shoulder.extendLongSolenoid(true);
+        }, shoulder);
     }
 
-    public static Command runWithJoystick(Shoulder shoulder, DoubleSupplier joystickSupplier) {
-        return Commands.run(() -> shoulder.setSpeed(joystickSupplier.getAsDouble()), shoulder);
-    }
-
-    public static Command lockCurrentAngle(Shoulder shoulder) {
-        return Commands.runOnce(() -> shoulder.setAngle(shoulder.getRotation().getDegrees()), shoulder);
-    }
-
-    // public static Command controlWithJoystick(Shoulder shoulder, CommandJoystick
-    // operatorController) {
-    // return new SequentialCommandGroup(
-    // Commands.run(() -> {
-    // var joystickInput = operatorController.getRawAxis(ControlsMap.LEFT_STICK_Y);
-
-    // if (Math.abs(joystickInput) > ControlsMap.Driver)
-    // shoulder.setShoulderSpeed(MathUtil.applyDeadband(joystickInput,
-    // ControlsMap.AXIS_DEADBAND));
-    // }, shoulder));
-    // }
-
-    public static Command togglePID(Shoulder shoulder) {
-        return Commands.runOnce(() -> {
-            if (shoulder.isEnabled()) {
-                shoulder.disable();
-            } else {
-                shoulder.enable();
-            }
-        });
+    public static Command setLowGoal(Shoulder shoulder) {
+        return Commands.run(() -> {
+            shoulder.extendLongSolenoid(false);
+            shoulder.extendShortSolenoid(false);
+        }, shoulder);
     }
 }

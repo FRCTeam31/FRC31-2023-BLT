@@ -6,11 +6,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Forearm;
 
 public class ForearmCommands {
-    public static Command controlWithJoystick(Forearm forearm, DoubleSupplier operatorJoystick) {
-        return Commands.run(() -> forearm.runSimple(operatorJoystick.getAsDouble()), forearm);
+    public static Command extendForearm(Forearm forearm) {
+        return Commands.run(() -> {
+            forearm.extendForearmSolenoid(true);
+        }, forearm);
     }
 
-    public static Command home(Forearm forearm) {
-        return Commands.runOnce(() -> forearm.home(), forearm);
+    public static Command retractForearm(Forearm forearm) {
+        return Commands.run(() -> {
+            forearm.extendForearmSolenoid(false);
+        }, forearm);
     }
+
 }

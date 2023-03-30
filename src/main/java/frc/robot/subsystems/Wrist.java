@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -12,51 +14,29 @@ import prime.movers.LazySolenoid;
 import frc.robot.config.WristMap;
 
 public class Wrist extends SubsystemBase {
-    private CANSparkMax mWristMotor;
-    private LazySolenoid mOutActuator;
-    private LazySolenoid mInActuator;
-    private Compressor compressor;
+
+    public WPI_TalonFX wrist1;
+    public WPI_TalonFX wrist2;
+
+    public class Map {
+        public static final int wrist1CanId = 0;
+        public static final int wrist2CanId = 0;
+        public static final double wristEjectCubeSpeed = -0.6;
+    }
 
     public Wrist() {
-        mWristMotor = new CANSparkMax(WristMap.kWrist1Id, MotorType.kBrushless);
-        mWristMotor.restoreFactoryDefaults();
-        mWristMotor.setOpenLoopRampRate(0.2);
-
-        compressor = new Compressor(PneumaticsModuleType.CTREPCM);
-        compressor.enableDigital();
-        mOutActuator = new LazySolenoid(PneumaticsModuleType.CTREPCM, WristMap.kWristActuatorId);
-        mInActuator = new LazySolenoid(PneumaticsModuleType.CTREPCM, WristMap.kWristActuatorId + 1);
-        setWrist(false);
+        wrist1 = new WPI_TalonFX(Map.wrist1CanId);
+        wrist2 = new WPI_TalonFX(Map.wrist2CanId);
     }
 
-    public void stopIntake() {
-        mWristMotor.stopMotor();
-
-    }
-
-    public void toggleWrist() {
-        mOutActuator.toggle();
-        mInActuator.toggle();
-    }
-
-    public void setWrist(boolean out) {
-        mOutActuator.set(out);
-        mInActuator.set(!out);
-    }
-
-    public boolean getWristOut() {
-        return mOutActuator.get();
-    }
-
-    public void runMotors(double speed) {
-        mWristMotor.set(speed);
+    public void ejectCube() {
+        wrist1.set(ControlMode.PercentOutput, Map.wristEjectCubeSpeed);
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        builder.addBooleanProperty("Actuated", this::getWristOut, this::setWrist);
-        builder.addBooleanProperty("Pressure switch", compressor::getPressureSwitchValue, null);
+
     }
 
 }
