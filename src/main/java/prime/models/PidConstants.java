@@ -3,11 +3,12 @@ package prime.models;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
-public class PidConstants implements Sendable {
+public class PidConstants<V> implements Sendable {
     public double kP = 0;
     public double kI = 0;
     public double kD_min = 0;
     public double kF = 0;
+    public V kD_max;
 
     public PidConstants(double p) {
         kP = p;

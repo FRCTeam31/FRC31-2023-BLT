@@ -57,7 +57,7 @@ public class Shoulder<K extends Number, V extends Number> extends PIDSubsystem {
         super(new PIDController(Map.kSprocketPid.kP, Map.kSprocketPid.kI, Map.kSprocketPid.kD_min));
         getController().setTolerance(1);
         _mForearm = forearm;
-        _mInterpolatedDMap.put(0, Map.kSprocketPid.kD_min);
+        // _mInterpolatedDMap.put(0, Map.kSprocketPid.kD_min);
         // _mInterpolatedDMap.put(Forearm.Map.kMaxDistanceOutSensorUnits,
         // Map.kSprocketPid.kD_max);
 

@@ -7,6 +7,20 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drivetrain;
 
+/**
+ * 1
+ * i what to move the robot frod 18 ft. 8inZ xcvfd SFZGHJJHDFS to grab a cub.
+ * thin trn baKWRD to scor the cub.
+ * 
+ * 2
+ * if posibl move on the chring bord
+ * 
+ * 
+ * 3
+ * i what to move the robot frod 18 ft. 8in to grab a cub.
+ * thin trn baKWRD to scor the cub.
+ * 
+ */
 public class AutoCommands {
     public static Command moveForwardOneMeter(Drivetrain drivetrain) {
         return new SequentialCommandGroup(
