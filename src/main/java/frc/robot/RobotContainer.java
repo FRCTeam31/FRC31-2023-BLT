@@ -3,7 +3,9 @@ package frc.robot;
 import frc.robot.subsystems.*;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -22,6 +24,8 @@ public class RobotContainer implements Sendable {
     public CommandJoystick mOperatorController;
     public Drivetrain mDrivetrain;
     public Shoulder mShoulder;
+    public Compressor mCompressor;
+
     public Wrist mWrist;
     public Forearm mForearm;
     public ArduinoSidecar mSidecar;
@@ -69,6 +73,9 @@ public class RobotContainer implements Sendable {
             return;
         }
 
+        mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
+        mCompressor.enableDigital();
+
         // try {
         // mFrontCamera = new FrontCamera();
         // SmartDashboard.putData(mFrontCamera);
@@ -92,9 +99,10 @@ public class RobotContainer implements Sendable {
                 () -> mDriverController.getRawAxis(ControlsMap.LEFT_STICK_X),
                 mDrivetrain.mSwerveModules,
                 true));
-        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist,
-                () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.triggerDeadBand,
-                () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > WristMap.triggerDeadBand));
+
+        mWrist.setDefaultCommand(WristCommands.runIntakeWithJoystickCommand(mWrist,
+                () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > Wrist.Map.kTriggerDeadband,
+                () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > Wrist.Map.kTriggerDeadband));
 
         // Drive commands
         mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro(), mDrivetrain));
@@ -119,11 +127,6 @@ public class RobotContainer implements Sendable {
         // released, set the shoulder
 
         // Wrist commands
-        mOperatorController.pov(ControlsMap.up)
-                .onTrue(WristCommands.setWristAngle(mWrist, IntakeDirection.kCone));
-
-        mOperatorController.pov(ControlsMap.down)
-                .onTrue(WristCommands.setWristAngle(mWrist, IntakeDirection.kCube));
 
         // Auto testing commands, only enabled when we're not on the field
         if (!DriverStation.isFMSAttached()) {

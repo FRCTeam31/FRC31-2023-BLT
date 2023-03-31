@@ -17,15 +17,26 @@ public class Forearm extends SubsystemBase {
 
     public LazySolenoid forearmSolenoid;
 
+    /***
+     * Contains constants for the Forearm.
+     */
     public static class Map {
         public static final int forearmSolenoidChannel = 0;
     }
 
+    /***
+     * Forearm.
+     */
     public Forearm() {
         forearmSolenoid = new LazySolenoid(PneumaticsModuleType.CTREPCM, Map.forearmSolenoidChannel);
 
     }
 
+    /***
+     * Extends the Forearm.
+     * 
+     * @param extended
+     */
     public void extendForearmSolenoid(boolean extended) {
         forearmSolenoid.set(extended);
     }

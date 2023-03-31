@@ -8,6 +8,13 @@ import frc.robot.models.ShoulderLevels;
 import frc.robot.subsystems.Shoulder;
 
 public class ShoulderCommands {
+
+    /***
+     * Sets the Height of the Forearm to the High Goal.
+     * 
+     * @param shoulder
+     * @return
+     */
     public static Command setHighGoal(Shoulder shoulder) {
         return Commands.run(() -> {
             shoulder.extendShortSolenoid(true);
@@ -15,6 +22,12 @@ public class ShoulderCommands {
         }, shoulder);
     }
 
+    /***
+     * Sets the Height of the Forearm to the Middle Goal.
+     * 
+     * @param shoulder
+     * @return
+     */
     public static Command setMiddleGoal(Shoulder shoulder) {
         return Commands.run(() -> {
             shoulder.extendShortSolenoid(false);
@@ -22,6 +35,13 @@ public class ShoulderCommands {
         }, shoulder);
     }
 
+    /***
+     * Turns on the Robots autonomous kill mode. Erm, I mean, sets the forearm to
+     * the Low Goal.
+     * 
+     * @param shoulder
+     * @return
+     */
     public static Command setLowGoal(Shoulder shoulder) {
         return Commands.run(() -> {
             shoulder.extendLongSolenoid(false);

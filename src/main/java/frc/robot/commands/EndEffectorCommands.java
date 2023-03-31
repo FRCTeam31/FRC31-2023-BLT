@@ -17,16 +17,76 @@ import frc.robot.subsystems.Wrist;
  * perform effector actions
  */
 public class EndEffectorCommands {
-
-    public Command scoreCubeMidGoal(Shoulder shoulder, Forearm forearm){
+    /***
+     * Scores a Cube on the Bottom row of the grid.
+     * 
+     * @param shoulder
+     * @param forearm
+     * @param wrist
+     * @return
+     */
+    public static Command scoreCubeLowGoal(Shoulder shoulder, Forearm forearm, Wrist wrist) {
         return new SequentialCommandGroup(
-            ShoulderCommands.setMiddleGoal(shoulder), 
-            ForearmCommands.extendForearm(forearm), 
-
-
-
-        );
+                ShoulderCommands.setLowGoal(shoulder),
+                ForearmCommands.extendForearm(forearm),
+                WristCommands.ejectCubeCommand(wrist).withTimeout(Wrist.Map.kEjectCubeTime),
+                WristCommands.stopMotorsCommand(wrist),
+                ForearmCommands.retractForearm(forearm));
     }
+
+    /***
+     * Scores a Cube on the middle row of the grid.
+     * 
+     * @param shoulder
+     * @param forearm
+     * @param wrist
+     * @return
+     */
+    public static Command scoreCubeMidGoal(Shoulder shoulder, Forearm forearm, Wrist wrist) {
+
+        return new SequentialCommandGroup(
+                ShoulderCommands.setMiddleGoal(shoulder),
+                ForearmCommands.extendForearm(forearm),
+                WristCommands.ejectCubeCommand(wrist).withTimeout(Wrist.Map.kEjectCubeTime),
+                WristCommands.stopMotorsCommand(wrist),
+                ForearmCommands.retractForearm(forearm));
+
+    }
+
+    /***
+     * Scores a Cube on the highest row of the grid.
+     * 
+     * @param shoulder
+     * @param forearm
+     * @param wrist
+     * @return
+     */
+    public static Command scoreCubeHighGoal(Shoulder shoulder, Forearm forearm, Wrist wrist) {
+        return new SequentialCommandGroup(
+                ShoulderCommands.setHighGoal(shoulder),
+                ForearmCommands.extendForearm(forearm),
+                WristCommands.shootCubeCommand(wrist).withTimeout(Wrist.Map.kEjectCubeTime),
+                WristCommands.stopMotorsCommand(wrist),
+                ForearmCommands.retractForearm(forearm));
+    }
+
+    /***
+     * Picks up a Cube.
+     * 
+     * @param shoulder
+     * @param forearm
+     * @param wrist
+     * @return
+     */
+    public static Command pickUpCube(Shoulder shoulder, Forearm forearm, Wrist wrist) {
+        return new SequentialCommandGroup(
+                ShoulderCommands.setLowGoal(shoulder),
+                ForearmCommands.extendForearm(forearm),
+                WristCommands.intakeCubeCommand(wrist).withTimeout(Wrist.Map.kIntakeCubeTime),
+                WristCommands.stopMotorsCommand(wrist),
+                ForearmCommands.retractForearm(forearm));
+    }
+
     // /**
     // * Intakes a game piece using the shoulder, wrist, and forearm.
     // *
