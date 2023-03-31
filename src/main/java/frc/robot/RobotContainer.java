@@ -117,6 +117,9 @@ public class RobotContainer implements Sendable {
         mOperatorController.button(ControlsMap.X).toggleOnTrue(ForearmCommands.extendForearm(mForearm))
                 .toggleOnFalse(ForearmCommands.retractForearm(mForearm));
 
+        // mOperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.extendForearm(mForearm));
+        // mOperatorController.button(ControlsMap.RB).onTrue(ForearmCommands.retractForearm(mForearm));
+
         // mOperatorController.button(ControlsMap.LB)
         // .whileTrue(EndEffectorCommands.raiseEffectorManually(mShoulder, // While LB
         // is held, control the arm
