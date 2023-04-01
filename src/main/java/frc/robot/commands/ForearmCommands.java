@@ -14,7 +14,7 @@ public class ForearmCommands {
      * @return
      */
     public static Command extendForearm(Forearm forearm) {
-        return Commands.run(() -> {
+        return Commands.runOnce(() -> {
             forearm.extendForearmSolenoid(true);
         }, forearm);
     }
@@ -26,7 +26,7 @@ public class ForearmCommands {
      * @return
      */
     public static Command retractForearm(Forearm forearm) {
-        return Commands.run(() -> {
+        return Commands.runOnce(() -> {
             forearm.extendForearmSolenoid(false);
         }, forearm);
     }

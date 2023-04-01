@@ -23,8 +23,8 @@ public class Forearm extends SubsystemBase {
      * Contains constants for the Forearm.
      */
     public static class Map {
-        public static final int forearmSolenoidForwardChannel = 1;
-        public static final int forearmSolenoidReverseChannel = 0;
+        public static final int forearmSolenoidForwardChannel = 0;
+        public static final int forearmSolenoidReverseChannel = 1;
     }
 
     /***
@@ -43,8 +43,17 @@ public class Forearm extends SubsystemBase {
     public void extendForearmSolenoid(boolean extended) {
         if (extended) {
             forearmSolenoid.set(Value.kForward);
-        } else if (!extended) {
+        } else {
             forearmSolenoid.set(Value.kReverse);
         }
+    }
+
+    public boolean forearmIsExtended() {
+        if (forearmSolenoid.get() == Value.kReverse) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
 }

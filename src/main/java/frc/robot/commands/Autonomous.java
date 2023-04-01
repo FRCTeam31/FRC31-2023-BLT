@@ -34,9 +34,9 @@ public class Autonomous {
         HashMap<String, Command> eventMap = new HashMap<>();
         eventMap.put("test event", new PrintCommand("test event"));
 
-        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(drivetrain::getPose,
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+                drivetrain::getPose,
                 drivetrain::resetOdometry,
-
                 new PIDConstants(0, 0, 0),
                 new PIDConstants(0, 0, 0),
                 drivetrain::drive,

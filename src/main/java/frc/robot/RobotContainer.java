@@ -1,6 +1,9 @@
 package frc.robot;
 
 import frc.robot.subsystems.*;
+
+import java.util.HashMap;
+
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Compressor;
@@ -8,11 +11,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.commands.Autonomous;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.ForearmCommands;
 import frc.robot.commands.ShoulderCommands;
 import frc.robot.commands.WristCommands;
@@ -75,6 +80,13 @@ public class RobotContainer implements Sendable {
             return;
         }
 
+        try {
+            mPdp = new PowerDistribution();
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initalize Powerboard", true);
+            return;
+        }
+
         // try {
         // mAuto = new Autonomous();
         // } catch (Exception e) {
@@ -109,11 +121,9 @@ public class RobotContainer implements Sendable {
                 mDrivetrain.mSwerveModules,
                 true));
 
-        // mWrist.setDefaultCommand(WristCommands.runIntakeWithJoystickCommand(mWrist,
-        // () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) >
-        // Wrist.Map.kTriggerDeadband,
-        // () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) >
-        // Wrist.Map.kTriggerDeadband));
+        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist,
+                () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > Wrist.Map.kTriggerDeadband,
+                () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > Wrist.Map.kTriggerDeadband));
 
         // Drive commands
         mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro(), mDrivetrain));
@@ -123,13 +133,16 @@ public class RobotContainer implements Sendable {
         mOperatorController.button(ControlsMap.Y).onTrue(ShoulderCommands.setHighGoal(mShoulder));
         mOperatorController.button(ControlsMap.B).onTrue(ShoulderCommands.setMiddleGoal(mShoulder));
         mOperatorController.button(ControlsMap.A).onTrue(ShoulderCommands.setLowGoal(mShoulder));
+        mOperatorController.button(ControlsMap.X).onTrue(ShoulderCommands.setGround(mShoulder));
 
         // Forearm commands
-        mOperatorController.button(ControlsMap.X).toggleOnTrue(ForearmCommands.extendForearm(mForearm))
-                .toggleOnFalse(ForearmCommands.retractForearm(mForearm));
 
-        // mOperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.extendForearm(mForearm));
-        // mOperatorController.button(ControlsMap.RB).onTrue(ForearmCommands.retractForearm(mForearm));
+        mOperatorController.button(ControlsMap.RB).onTrue(ForearmCommands.extendForearm(mForearm));
+        mOperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.retractForearm(mForearm));
+
+        // End efector Commands
+        // mOperatorController.button(ControlsMap.LOGO_RIGHT).onTrue(EndEffectorCommands.setGround(mShoulder,
+        // mForearm));
 
         // mOperatorController.button(ControlsMap.LB)
         // .whileTrue(EndEffectorCommands.raiseEffectorManually(mShoulder, // While LB
@@ -140,8 +153,6 @@ public class RobotContainer implements Sendable {
         // .onFalse(ShoulderCommands.lockCurrentAngle(mShoulder)); // When LB is
         // released, set the shoulder
 
-        // Wrist commands
-
         // Auto testing commands, only enabled when we're not on the field
         // if (!DriverStation.isFMSAttached()) {
         // var autoDriveSpeed = 1 / 4d;
@@ -151,38 +162,9 @@ public class RobotContainer implements Sendable {
     }
 
     // public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {
-    // // mDrivetrain.mAutoTranslationXController = new PIDController(
-    // // DriveMap.kAutoTranslationPID_kP,
-    // // DriveMap.kAutoTranslationPID_kI,
-    // // DriveMap.kAutoTranslationPID_kD);
-    // // mDrivetrain.mAutoTranslationYController = new PIDController(
-    // // DriveMap.kAutoTranslationPID_kP,
-    // // DriveMap.kAutoTranslationPID_kI,
-    // // DriveMap.kAutoTranslationPID_kD);
-    // // mDrivetrain.mAutoRotationController = new PIDController(
-    // // DriveMap.kAutoRotationPID_kP,
-    // // DriveMap.kAutoRotationPID_kI,
-    // // DriveMap.kAutoRotationPID_kD);
+    // var eventMap = new HashMap<String, Command>();
+    // eventMap.putAll(WristCommands.getEvents(mWrist));
 
-    // // SmartDashboard.putData("Auto TranslationX PID",
-    // // mDrivetrain.mAutoTranslationXController);
-    // // SmartDashboard.putData("Auto TranslationY PID",
-    // // mDrivetrain.mAutoTranslationYController);
-    // // SmartDashboard.putData("Auto Rotation PID",
-    // // mDrivetrain.mAutoRotationController);
-
-    // // return new SequentialCommandGroup(
-    // // AutoCommands.translateYMeters(mDrivetrain, 0.48,
-    // // driveSpeed), // Push cube forward
-    // // AutoCommands.translateYMeters(mDrivetrain, -2,
-    // // driveSpeed) // Back up onto the ramp
-    // // );
-    // return new SequentialCommandGroup(
-    // Commands.run(() -> mDrivetrain.drive(0, 0.5, 0, true),
-    // mDrivetrain).withTimeout(3),
-    // Commands.run(() -> mDrivetrain.drive(0, 0, 0, true), mDrivetrain)
-
-    // );
     // }
 
     @Override

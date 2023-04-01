@@ -42,7 +42,7 @@ public class Shoulder extends SubsystemBase {
     public void extendShortSolenoid(boolean extended) {
         if (extended) {
             shortSolenoid.set(Value.kForward);
-        } else if (!extended) {
+        } else {
             shortSolenoid.set(Value.kReverse);
         }
     }
@@ -55,8 +55,25 @@ public class Shoulder extends SubsystemBase {
     public void extendLongSolenoid(boolean extended) {
         if (extended) {
             longSolenoid.set(Value.kForward);
-        } else if (!extended) {
+        } else {
             longSolenoid.set(Value.kReverse);
         }
+    }
+
+    public boolean isFullyRetracted() {
+
+        if (shortSolenoid.get() == Value.kReverse && longSolenoid.get() == Value.kReverse) {
+            return true;
+        }
+        return false;
+
+    }
+
+    // This is added becuase we were seeing loop overun errors coming from the base
+    // method
+
+    @Override
+    public void periodic() {
+
     }
 }

@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -7,6 +8,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.config.ControlsMap;
 import frc.robot.config.WristMap;
@@ -14,6 +16,14 @@ import frc.robot.models.IntakeDirection;
 import frc.robot.subsystems.Wrist;
 
 public class WristCommands {
+    public static HashMap<String, Command> getEvents(Subsystem wrist) {
+        return new HashMap<>() {
+            {
+                put("IntakeCube", runIntake((Wrist) wrist, () -> true, () -> false));
+                // put("RunIntake", runIntake((Wrist) wrist, , null));
+            }
+        };
+    }
 
     /***
      * Runs the intake depending on which trigger is pressed.
@@ -23,17 +33,18 @@ public class WristCommands {
      * @param rightTriggerPressed
      * @return
      */
-    public static Command runIntakeWithJoystickCommand(Wrist wrist, BooleanSupplier leftTriggerPressed,
-            BooleanSupplier rightTriggerPressed) {
+    public static Command runIntake(Wrist wrist, BooleanSupplier eject,
+            BooleanSupplier intake) {
         return Commands.run(() -> {
 
-            if (rightTriggerPressed.getAsBoolean()) {
-                wrist.runMotors(Wrist.Map.kWristSpeed);
+            if (intake.getAsBoolean()) {
+                wrist.runMotors(Wrist.Map.kIntakeSpeed);
+            } else if (eject.getAsBoolean()) {
+                wrist.runMotors(-Wrist.Map.kEjectSpeed);
+            } else {
+                wrist.stopMotors();
             }
 
-            if (leftTriggerPressed.getAsBoolean()) {
-                wrist.runMotors(-Wrist.Map.kWristSpeed);
-            }
         }, wrist);
     }
 
@@ -63,9 +74,6 @@ public class WristCommands {
      * @param wrist
      * @return
      */
-    public static Command stopMotorsCommand(Wrist wrist) {
-        return Commands.run(() -> wrist.runMotors(0));
-    }
 
     /***
      * Command for shooting a Cube.
@@ -74,7 +82,13 @@ public class WristCommands {
      * @return
      */
     public static Command shootCubeCommand(Wrist wrist) {
-        return Commands.run(() -> wrist.runMotors(Wrist.Map.kShootCubeSpeed));
+        return Commands.run(() -> wrist.runMotors(Wrist.Map.kEjectSpeed));
+    }
+
+    public static Command stopMotorsCommand(Wrist wrist) {
+        return Commands.run(() -> {
+            wrist.stopMotors();
+        });
     }
 
 }

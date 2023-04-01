@@ -87,6 +87,16 @@ public class EndEffectorCommands {
                 ForearmCommands.retractForearm(forearm));
     }
 
+    public static Command retractArm(Shoulder shoulder, Forearm forearm) {
+        return new SequentialCommandGroup(ShoulderCommands.setMiddleGoal(shoulder),
+                ForearmCommands.retractForearm(forearm));
+    }
+
+    // public static Command setLowGaol(Shoulder shoulder, Forearm forearm) {
+    // return new SequentialCommandGroup(ShoulderCommands.setLowGoal(shoulder),
+    // ForearmCommands.extendForearm(forearm));
+    // }
+
     // /**
     // * Intakes a game piece using the shoulder, wrist, and forearm.
     // *
