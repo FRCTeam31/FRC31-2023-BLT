@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -28,20 +29,20 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
  * 
  */
 
-
 public class pathPlanner {
     // This will load the file "Example Path.path" and generate it with a max
     // velocity of 4 m/s and a max acceleration of 3 m/s^2
     private static final Drivetrain drivetrain;
 
-    public pathPlanner(Drivetrain drivetrain){
+    public pathPlanner(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
 
     }
 
-    public 
+    public
 
-    PathPlannerTrajectory DriveForwardOneMeter = PathPlanner.loadPath("DriveForwardOneMeter", new PathConstraints(0, 0));
+    PathPlannerTrajectory DriveForwardOneMeter = PathPlanner.loadPath("DriveForwardOneMeter",
+            new PathConstraints(0, 0));
 
     // This trajectory can then be passed to a path follower such as a
     // PPSwerveControllerCommand
@@ -64,48 +65,37 @@ public class pathPlanner {
             new PathConstraints(2, 2),
             new PathConstraints(3, 3));
 
-    
-    // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
-// for every path in the group
-ArrayList<PathPlannerTrajectory> pathGroup = (ArrayList<PathPlannerTrajectory>) PathPlanner.loadPathGroup("FullAuto", new PathConstraints(4, 3));
+    // This will load the file "FullAuto.path" and generate it with a max velocity
+    // of 4 m/s and a max acceleration of 3 m/s^2
+    // for every path in the group
+    ArrayList<PathPlannerTrajectory> pathGroup = (ArrayList<PathPlannerTrajectory>) PathPlanner
+            .loadPathGroup("FullAuto", new PathConstraints(4, 3));
 
-// This is just an example event map. It would be better to have a constant, global event map
-// in your code that will be used by all path following commands.
-HashMap<String, Command> eventMap = new HashMap<>();
-eventMap.put("marker1", new PrintCommand("Passed marker 1"));
-eventMap.put("intakeDown", new IntakeDown());
+    private Map<String, Command> DriveMap;
 
-// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
-SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-    drivetrain::getPose, // Pose2d supplier
-    drivetrain::resetPose, // Pose2d consumer, used to reset odometry at the beginning of auto
-    drivetrain.mKinematics, // SwerveDriveKinematics
-    new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-    new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
-    Drivetrain::setModuleStates, // Module states consumer used to output to the drive subsystem
-    eventMap,
-    true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
-    drivetrain // The drive subsystem. Used to properly set the requirements of path following commands
-);
+    // This is just an example event map. It would be better to have a constant,
+    // global event map
+    // in your code that will be used by all path following commands.
 
-Command fullAuto = autoBuilder.fullAuto(pathGroup);
+    // Create the AutoBuilder. This only needs to be created once when robot code
+    // starts, not every time you want to create an auto command. A good place to
+    // put this is in RobotContainer along with your subsystems.
+    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+            drivetrain::getPose, // Pose2d supplier
+            drivetrain::resetPose, // Pose2d consumer, used to reset odometry at the beginning of auto
+            drivetrain.mKinematics, // SwerveDriveKinematics
+            new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and
+                                             // Y PID controllers)
+            new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation
+                                             // controller)
+            drivetrain::setModuleStates, // Module states consumer used to output to the drive subsystem
+            DriveMap,
+            true, // Should the path be automatically mirrored depending on alliance color.
+                  // Optional, defaults to true
+            Drivetrain // The drive subsystem. Used to properly set the requirements of path following
+                       // commands
+    );
 
-// This will load the file "Example Path.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
-PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path", new PathConstraints(4, 3));
-
-// This is just an example event map. It would be better to have a constant, global event map
-// in your code that will be used by all path following commands.
-HashMap<String, Command> drivHashMap = new HashMap<>();
-eventMap.put("marker1", new PrintCommand("Passed marker 1"));
-eventMap.put("intakeDown", new IntakeDown());
-
-FollowPathWithEvents command = new FollowPathWithEvents(
-    PathPlanner(DriveForwardOneMeter),
-    examplePath.getMarkers(),
-    eventMap
-);
-private Command PathPlanner(PathPlannerTrajectory driveForwardOneMeter2) {
-    return null;
-}
+    Command fullAuto = autoBuilder.fullAuto(pathGroup);
 
 }
