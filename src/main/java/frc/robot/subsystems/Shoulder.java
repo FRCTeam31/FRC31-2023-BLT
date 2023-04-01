@@ -23,11 +23,15 @@ public class Shoulder extends SubsystemBase {
         public static final int longSolenoidReverseChannel = 3;
     }
 
+    /***
+     * Shoulder Constructor
+     */
     public Shoulder() {
         shortSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Map.shortSolenoidForwardChannel,
                 Map.shortSolenoidReverseChannel);
         longSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Map.longSolenoidForwardChannel,
                 Map.longSolenoidReverseChannel);
+        shortSolenoid.set(Value.kForward);
     }
 
     /***
