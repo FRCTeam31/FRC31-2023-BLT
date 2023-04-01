@@ -24,11 +24,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.DriveMap;
 
 public class Drivetrain extends SubsystemBase {
-    public static SwerveDriveKinematics kinematics;
+    public SwerveDriveKinematics kinematics;
     // Build a gyro and a kinematics class for calculating our drive
     boolean mInHighGear = true;
     public WPI_Pigeon2 mGyro;
-    public SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
+    public static SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
             DriveMap.kFrontLeftLocation,
             DriveMap.kRearLeftLocation,
             DriveMap.kRearRightLocation,

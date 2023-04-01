@@ -1,10 +1,21 @@
 package frc.robot;
 
 import frc.robot.subsystems.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
+
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -25,6 +36,7 @@ public class RobotContainer implements Sendable {
     public Forearm mForearm;
     public ArduinoSidecar mSidecar;
     public FrontCamera mFrontCamera;
+    public pathPlanner mpathPlanner;
 
     public RobotContainer() {
         try {
@@ -165,6 +177,7 @@ public class RobotContainer implements Sendable {
                 Commands.run(() -> mDrivetrain.drive(0, 0, 0, true), mDrivetrain)
 
         );
+
     }
 
     @Override
@@ -172,4 +185,5 @@ public class RobotContainer implements Sendable {
         // TODO Auto-generated method stub
 
     }
+
 }
