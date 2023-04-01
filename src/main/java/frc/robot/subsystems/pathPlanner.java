@@ -42,7 +42,7 @@ public class pathPlanner {
     public
 
     PathPlannerTrajectory DriveForwardOneMeter = PathPlanner.loadPath("DriveForwardOneMeter",
-            new PathConstraints(5, 5));
+            new PathConstraints(0, 0));
 
     // This trajectory can then be passed to a path follower such as a
     // PPSwerveControllerCommand
