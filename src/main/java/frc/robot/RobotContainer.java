@@ -25,6 +25,7 @@ public class RobotContainer implements Sendable {
     public Drivetrain mDrivetrain;
     public Shoulder mShoulder;
     public Compressor mCompressor;
+    public Autonomous mAuto;
 
     public Wrist mWrist;
     public Forearm mForearm;
@@ -71,6 +72,12 @@ public class RobotContainer implements Sendable {
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Wrist subsystem", true);
             return;
+        }
+
+        try {
+            mAuto = new Autonomous();
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initialize Autonomous subsystem", false);
         }
 
         mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
@@ -135,43 +142,44 @@ public class RobotContainer implements Sendable {
         if (!DriverStation.isFMSAttached()) {
             var autoDriveSpeed = 1 / 4d;
             mDriverController.button(ControlsMap.LB)
-                    .onTrue(getAutonomousCommand(autoDriveSpeed));
+                    .onTrue(mAuto.getAutonomousCommand(mDrivetrain));
         }
     }
 
-    public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {
-        // mDrivetrain.mAutoTranslationXController = new PIDController(
-        // DriveMap.kAutoTranslationPID_kP,
-        // DriveMap.kAutoTranslationPID_kI,
-        // DriveMap.kAutoTranslationPID_kD);
-        // mDrivetrain.mAutoTranslationYController = new PIDController(
-        // DriveMap.kAutoTranslationPID_kP,
-        // DriveMap.kAutoTranslationPID_kI,
-        // DriveMap.kAutoTranslationPID_kD);
-        // mDrivetrain.mAutoRotationController = new PIDController(
-        // DriveMap.kAutoRotationPID_kP,
-        // DriveMap.kAutoRotationPID_kI,
-        // DriveMap.kAutoRotationPID_kD);
+    // public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {
+    // // mDrivetrain.mAutoTranslationXController = new PIDController(
+    // // DriveMap.kAutoTranslationPID_kP,
+    // // DriveMap.kAutoTranslationPID_kI,
+    // // DriveMap.kAutoTranslationPID_kD);
+    // // mDrivetrain.mAutoTranslationYController = new PIDController(
+    // // DriveMap.kAutoTranslationPID_kP,
+    // // DriveMap.kAutoTranslationPID_kI,
+    // // DriveMap.kAutoTranslationPID_kD);
+    // // mDrivetrain.mAutoRotationController = new PIDController(
+    // // DriveMap.kAutoRotationPID_kP,
+    // // DriveMap.kAutoRotationPID_kI,
+    // // DriveMap.kAutoRotationPID_kD);
 
-        // SmartDashboard.putData("Auto TranslationX PID",
-        // mDrivetrain.mAutoTranslationXController);
-        // SmartDashboard.putData("Auto TranslationY PID",
-        // mDrivetrain.mAutoTranslationYController);
-        // SmartDashboard.putData("Auto Rotation PID",
-        // mDrivetrain.mAutoRotationController);
+    // // SmartDashboard.putData("Auto TranslationX PID",
+    // // mDrivetrain.mAutoTranslationXController);
+    // // SmartDashboard.putData("Auto TranslationY PID",
+    // // mDrivetrain.mAutoTranslationYController);
+    // // SmartDashboard.putData("Auto Rotation PID",
+    // // mDrivetrain.mAutoRotationController);
 
-        // return new SequentialCommandGroup(
-        // AutoCommands.translateYMeters(mDrivetrain, 0.48,
-        // driveSpeed), // Push cube forward
-        // AutoCommands.translateYMeters(mDrivetrain, -2,
-        // driveSpeed) // Back up onto the ramp
-        // );
-        return new SequentialCommandGroup(
-                Commands.run(() -> mDrivetrain.drive(0, 0.5, 0, true), mDrivetrain).withTimeout(3),
-                Commands.run(() -> mDrivetrain.drive(0, 0, 0, true), mDrivetrain)
+    // // return new SequentialCommandGroup(
+    // // AutoCommands.translateYMeters(mDrivetrain, 0.48,
+    // // driveSpeed), // Push cube forward
+    // // AutoCommands.translateYMeters(mDrivetrain, -2,
+    // // driveSpeed) // Back up onto the ramp
+    // // );
+    // return new SequentialCommandGroup(
+    // Commands.run(() -> mDrivetrain.drive(0, 0.5, 0, true),
+    // mDrivetrain).withTimeout(3),
+    // Commands.run(() -> mDrivetrain.drive(0, 0, 0, true), mDrivetrain)
 
-        );
-    }
+    // );
+    // }
 
     @Override
     public void initSendable(SendableBuilder builder) {
