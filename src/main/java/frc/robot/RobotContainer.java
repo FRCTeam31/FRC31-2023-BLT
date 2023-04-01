@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.commands.Autonomous;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ForearmCommands;
 import frc.robot.commands.ShoulderCommands;
@@ -25,7 +26,7 @@ public class RobotContainer implements Sendable {
     public Drivetrain mDrivetrain;
     public Shoulder mShoulder;
     public Compressor mCompressor;
-    public Autonomous mAuto;
+    // public Autonomous mAuto;
 
     public Wrist mWrist;
     public Forearm mForearm;
@@ -74,11 +75,12 @@ public class RobotContainer implements Sendable {
             return;
         }
 
-        try {
-            mAuto = new Autonomous();
-        } catch (Exception e) {
-            DriverStation.reportError("Failed to initialize Autonomous subsystem", false);
-        }
+        // try {
+        // mAuto = new Autonomous();
+        // } catch (Exception e) {
+        // DriverStation.reportError("Failed to initialize Autonomous subsystem",
+        // false);
+        // }
 
         mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
         mCompressor.enableDigital();
@@ -107,9 +109,11 @@ public class RobotContainer implements Sendable {
                 mDrivetrain.mSwerveModules,
                 true));
 
-        mWrist.setDefaultCommand(WristCommands.runIntakeWithJoystickCommand(mWrist,
-                () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > Wrist.Map.kTriggerDeadband,
-                () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > Wrist.Map.kTriggerDeadband));
+        // mWrist.setDefaultCommand(WristCommands.runIntakeWithJoystickCommand(mWrist,
+        // () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) >
+        // Wrist.Map.kTriggerDeadband,
+        // () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) >
+        // Wrist.Map.kTriggerDeadband));
 
         // Drive commands
         mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro(), mDrivetrain));
@@ -139,11 +143,11 @@ public class RobotContainer implements Sendable {
         // Wrist commands
 
         // Auto testing commands, only enabled when we're not on the field
-        if (!DriverStation.isFMSAttached()) {
-            var autoDriveSpeed = 1 / 4d;
-            mDriverController.button(ControlsMap.LB)
-                    .onTrue(mAuto.getAutonomousCommand(mDrivetrain));
-        }
+        // if (!DriverStation.isFMSAttached()) {
+        // var autoDriveSpeed = 1 / 4d;
+        // mDriverController.button(ControlsMap.LB)
+        // .onTrue(mAuto.getAutonomousCommand(mDrivetrain));
+        // }
     }
 
     // public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {

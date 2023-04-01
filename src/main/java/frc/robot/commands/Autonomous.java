@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.commands;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +11,8 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import frc.robot.subsystems.Drivetrain;
 
 public class Autonomous {
     // public Command getAutonomousCommand(){
@@ -30,6 +32,7 @@ public class Autonomous {
         ArrayList<PathPlannerTrajectory> fullAutoArrayList = new ArrayList<>(fullAuto);
 
         HashMap<String, Command> eventMap = new HashMap<>();
+        eventMap.put("test event", new PrintCommand("test event"));
 
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(drivetrain::getPose,
                 drivetrain::resetOdometry,
