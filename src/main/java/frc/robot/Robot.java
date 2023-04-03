@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
         // mAutoCommand =
         // mRobotContainer.mAuto.getAutonomousCommand(mRobotContainer.mDrivetrain);
         DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
-        mAutoCommand.schedule();
+        // mAutoCommand.schedule();
     }
 
     /**

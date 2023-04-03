@@ -23,7 +23,7 @@ public class DriveCommands {
             var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.1);
             var rotation = MathUtil.applyDeadband(rotationSupplier.getAsDouble(), 0.1);
 
-            drivetrain.drive(-strafeX, forwardY, -rotation, fieldRelative);
+            drivetrain.drive(-strafeX, forwardY, rotation, fieldRelative);
         }, drivetrain);
     }
 

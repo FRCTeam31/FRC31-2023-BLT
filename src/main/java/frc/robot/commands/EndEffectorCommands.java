@@ -17,6 +17,9 @@ import frc.robot.subsystems.Wrist;
  * perform effector actions
  */
 public class EndEffectorCommands {
+
+    public String previousArmState;
+
     /***
      * Scores a Cube on the Bottom row of the grid.
      * 
@@ -88,7 +91,8 @@ public class EndEffectorCommands {
     }
 
     public static Command retractArm(Shoulder shoulder, Forearm forearm) {
-        return new SequentialCommandGroup(ShoulderCommands.setMiddleGoal(shoulder),
+        return new SequentialCommandGroup(
+                ShoulderCommands.setMiddleGoal(shoulder),
                 ForearmCommands.retractForearm(forearm));
     }
 
@@ -96,6 +100,15 @@ public class EndEffectorCommands {
     // return new SequentialCommandGroup(ShoulderCommands.setLowGoal(shoulder),
     // ForearmCommands.extendForearm(forearm));
     // }
+
+    public static Command fancyIntake(Shoulder shoulder, Forearm forearm, Wrist wrist) {
+
+        return new SequentialCommandGroup(
+
+                ShoulderCommands.setLowGoal(shoulder),
+                ForearmCommands.extendForearm(forearm),
+                WristCommands.intakeCubeCommand(wrist));
+    }
 
     // /**
     // * Intakes a game piece using the shoulder, wrist, and forearm.

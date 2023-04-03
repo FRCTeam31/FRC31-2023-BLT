@@ -69,6 +69,16 @@ public class Shoulder extends SubsystemBase {
 
     }
 
+    public String detectCurrentArmPosition() {
+
+        if (longSolenoid.get() == Value.kForward && shortSolenoid.get() == Value.kForward) {
+            return "High Goal";
+        } else if (longSolenoid.get() == Value.kReverse && shortSolenoid.get() == Value.kForward) {
+            return "Low Goal";
+        } else {
+            return "Middle Goal";
+        }
+    }
     // This is added becuase we were seeing loop overun errors coming from the base
     // method
 

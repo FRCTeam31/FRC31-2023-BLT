@@ -17,8 +17,8 @@ public class Wrist extends SubsystemBase {
      */
     public class Map {
         public static final int kWrist1CanId = 22;
-        public static final int kWrist2CanId = 24;
-        public static final double kIntakeSpeed = 0.4;
+        public static final int kWrist2CanId = 7;
+        public static final double kIntakeSpeed = 0.6;
         public static final double kEjectSpeed = 1;
         public static final double kTriggerDeadband = 0.1;
         public static final double kEjectCubeTime = 1;
@@ -41,7 +41,7 @@ public class Wrist extends SubsystemBase {
      */
     public void runMotors(double motorSpeed) {
         wrist1.set(motorSpeed);
-        wrist2.set(-motorSpeed);
+        wrist2.set(motorSpeed);
     }
 
     @Override

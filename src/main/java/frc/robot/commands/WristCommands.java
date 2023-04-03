@@ -65,7 +65,7 @@ public class WristCommands {
      * @return
      */
     public static Command intakeCubeCommand(Wrist wrist) {
-        return Commands.run(() -> wrist.runMotors(1));
+        return Commands.runOnce(() -> wrist.runMotors(1));
     }
 
     /***

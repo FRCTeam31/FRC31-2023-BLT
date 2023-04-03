@@ -89,12 +89,13 @@ public class RobotContainer implements Sendable {
 
         // try {
         // mAuto = new Autonomous();
+
         // } catch (Exception e) {
         // DriverStation.reportError("Failed to initialize Autonomous subsystem",
         // false);
         // }
 
-        mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
+        // mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
         mCompressor.enableDigital();
 
         // try {
@@ -159,13 +160,13 @@ public class RobotContainer implements Sendable {
         // mDriverController.button(ControlsMap.LB)
         // .onTrue(mAuto.getAutonomousCommand(mDrivetrain));
         // }
+        // }
+
+        // public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {
+        // var eventMap = new HashMap<String, Command>();
+        // eventMap.putAll(WristCommands.getEvents(mWrist));
+
     }
-
-    // public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {
-    // var eventMap = new HashMap<String, Command>();
-    // eventMap.putAll(WristCommands.getEvents(mWrist));
-
-    // }
 
     @Override
     public void initSendable(SendableBuilder builder) {
