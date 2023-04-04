@@ -18,7 +18,7 @@ import frc.robot.subsystems.Wrist;
  */
 public class EndEffectorCommands {
 
-    public String previousArmState;
+    public static String previousArmState;
 
     /***
      * Scores a Cube on the Bottom row of the grid.
@@ -90,6 +90,13 @@ public class EndEffectorCommands {
                 ForearmCommands.retractForearm(forearm));
     }
 
+    /***
+     * Retracts the arm.
+     * 
+     * @param shoulder
+     * @param forearm
+     * @return
+     */
     public static Command retractArm(Shoulder shoulder, Forearm forearm) {
         return new SequentialCommandGroup(
                 ShoulderCommands.setMiddleGoal(shoulder),
@@ -101,15 +108,53 @@ public class EndEffectorCommands {
     // ForearmCommands.extendForearm(forearm));
     // }
 
+    /***
+     * Creates a simpler way of lowering the arm and intaking the cube all with one
+     * button.
+     * 
+     * @param shoulder
+     * @param forearm
+     * @param wrist
+     * @return
+     */
     public static Command fancyIntake(Shoulder shoulder, Forearm forearm, Wrist wrist) {
+        previousArmState = shoulder.detectCurrentArmPosition();
 
         return new SequentialCommandGroup(
-
                 ShoulderCommands.setLowGoal(shoulder),
                 ForearmCommands.extendForearm(forearm),
                 WristCommands.intakeCubeCommand(wrist));
     }
 
+    /***
+     * Resets the arm position after the fancy intake command has been used.
+     * 
+     * @param shoulder
+     * @return
+     */
+    public static Command resetArmPosition(Shoulder shoulder) {
+        if (previousArmState == "High Goal") {
+            return ShoulderCommands.setHighGoal(shoulder);
+        } else if (previousArmState == "Low Goal") {
+            return ShoulderCommands.setMiddleGoal(shoulder);
+        } else {
+            return ShoulderCommands.setLowGoal(shoulder);
+        }
+    }
+
+    /***
+     * Resets the arm Position and retracts the arm.
+     * 
+     * @param shoulder
+     * @param forearm
+     * @param wrist
+     * @return
+     */
+    public static Command resetArmState(Shoulder shoulder, Forearm forearm, Wrist wrist) {
+        return new SequentialCommandGroup(
+                resetArmPosition(shoulder),
+                ForearmCommands.retractForearm(forearm));
+    }
     // /**
     // * Intakes a game piece using the shoulder, wrist, and forearm.
     // *
@@ -124,7 +169,7 @@ public class EndEffectorCommands {
     // return new SequentialCommandGroup(
     // WristCommands.setWristAngle(wrist, direction),
     // ShoulderCommands.setAngle(shoulder, Shoulder.Map.kGroundAngle),
-    // // TODO: set forearm extend distance
+    // TODO: set forearm extend distance
     // WristCommands.runUntilTimeout(wrist, 3, direction == IntakeDirection.kCone
     // ? WristMap.kIntakeConeSpeed
     // : WristMap.kIntakeCubeSpeed));
