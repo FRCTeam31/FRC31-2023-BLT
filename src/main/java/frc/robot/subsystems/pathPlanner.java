@@ -41,33 +41,33 @@ public class pathPlanner {
 
     public
 
-    PathPlannerTrajectory DriveForwardOneMeter = PathPlanner.loadPath("DriveForwardOneMeter",
-            new PathConstraints(0, 0));
+    PathPlannerTrajectory AdvisPath = PathPlanner.loadPath("AdvisPath",
+            new PathConstraints(5, 5));
 
     // This trajectory can then be passed to a path follower such as a
     // PPSwerveControllerCommand
     // Or the path can be sampled at a given point in time for custom path following
 
     // Sample the state of the path at 1.2 seconds
-    PathPlannerState exampleState = (PathPlannerState) DriveForwardOneMeter.sample(1.2);
+    PathPlannerState exampleState = (PathPlannerState) AdvisPath.sample(1.2);
 
     // This will load the file "Example Path Group.path" and generate it with a max
     // velocity of 4 m/s and a max acceleration of 3 m/s^2
     // for every path in the group
     ArrayList<PathPlannerTrajectory> pathGroup1 = (ArrayList<PathPlannerTrajectory>) PathPlanner
-            .loadPathGroup("DriveForwardOneMeter", new PathConstraints(4, 3));
+            .loadPathGroup("AdvisPath", new PathConstraints(4, 3));
 
     // This will load the file "Example Path Group.path" and generate it with
     // different path constraints for each segment
     ArrayList<PathPlannerTrajectory> pathGroup2 = (ArrayList<PathPlannerTrajectory>) PathPlanner.loadPathGroup(
-            "DriveForwardOneMeter",
+            "AdvisPath",
             new PathConstraints(4, 3),
             new PathConstraints(2, 2),
             new PathConstraints(3, 3));
 
     // This will load the file "Example Path.path" and generate it with a max
     // velocity of 4 m/s and a max acceleration of 3 m/s^2
-    PathPlannerTrajectory examplePath = PathPlanner.loadPath("DriveForwardOneMeter", new PathConstraints(4, 3));
+    PathPlannerTrajectory examplePath = PathPlanner.loadPath("AdvisPath", new PathConstraints(4, 3));
 
     // This is just an example event map. It would be better to have a constant,
     // global event map
@@ -75,11 +75,11 @@ public class pathPlanner {
     HashMap<String, Command> eventMap = new HashMap<>();
 
     FollowPathWithEvents command = new FollowPathWithEvents(
-            getPathFollowingCommand(DriveForwardOneMeter),
-            DriveForwardOneMeter.getMarkers(),
+            getPathFollowingCommand(AdvisPath),
+            AdvisPath.getMarkers(),
             eventMap);
 
-    private Command getPathFollowingCommand(PathPlannerTrajectory driveForwardOneMeter) {
+    private Command getPathFollowingCommand(PathPlannerTrajectory AdvisPath) {
         return null;
     }
 
