@@ -124,7 +124,7 @@ public class RobotContainer implements Sendable {
 
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist,
                 () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > Wrist.Map.kTriggerDeadband,
-                () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > Wrist.Map.kTriggerDeadband));
+                () -> false));
 
         // Drive commands
         mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro(), mDrivetrain));
@@ -142,6 +142,7 @@ public class RobotContainer implements Sendable {
         mOperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.retractForearm(mForearm));
 
         // End efector Commands
+
         // mOperatorController.button(ControlsMap.LOGO_RIGHT).onTrue(EndEffectorCommands.setGround(mShoulder,
         // mForearm));
 

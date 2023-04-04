@@ -35,12 +35,20 @@ public class Wrist extends SubsystemBase {
     }
 
     /***
-     * Sets the motorspeed for the wrists.
+     * Sets the motorspeed for wrist 1.
      * 
      * @param motorSpeed
      */
-    public void runMotors(double motorSpeed) {
+    public void runWrist1(double motorSpeed) {
         wrist1.set(motorSpeed);
+    }
+
+    /***
+     * Sets the motorspeed for wrist 2.
+     * 
+     * @param motorSpeed
+     */
+    public void runWrist2(double motorSpeed) {
         wrist2.set(motorSpeed);
     }
 
@@ -53,6 +61,9 @@ public class Wrist extends SubsystemBase {
 
     }
 
+    /***
+     * Stops the motors (crazy)
+     */
     public void stopMotors() {
         wrist1.stopMotor();
         wrist2.stopMotor();

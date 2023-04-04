@@ -14,8 +14,10 @@ import frc.robot.config.ControlsMap;
 import frc.robot.config.WristMap;
 import frc.robot.models.IntakeDirection;
 import frc.robot.subsystems.Wrist;
+import frc.robot.subsystems.Wrist.Map;
 
 public class WristCommands {
+
     public static HashMap<String, Command> getEvents(Subsystem wrist) {
         return new HashMap<>() {
             {
@@ -38,14 +40,22 @@ public class WristCommands {
         return Commands.run(() -> {
 
             if (intake.getAsBoolean()) {
-                wrist.runMotors(Wrist.Map.kIntakeSpeed);
+                wrist.runWrist1(Wrist.Map.kIntakeSpeed);
+                wrist.runWrist2(Wrist.Map.kIntakeSpeed);
             } else if (eject.getAsBoolean()) {
-                wrist.runMotors(-Wrist.Map.kEjectSpeed);
+                wrist.runWrist1(-Wrist.Map.kEjectSpeed);
+                wrist.runWrist2(-Wrist.Map.kEjectSpeed);
             } else {
                 wrist.stopMotors();
             }
 
         }, wrist);
+    }
+
+    public static Command wristDefaultCommand(DoubleSupplier leftTrigger, DoubleSubscriber rightTrigger){
+        if(leftTrigger() - > Map.kTriggerDeadband){
+
+        }
     }
 
     /***
@@ -55,7 +65,11 @@ public class WristCommands {
      * @return
      */
     public static Command ejectCubeCommand(Wrist wrist) {
-        return Commands.run(() -> wrist.runMotors(-1));
+        return Commands.runOnce(() -> {
+            wrist.runWrist1(-1);
+            wrist.runWrist2(-1);
+        }, wrist);
+
     }
 
     /***
@@ -65,7 +79,10 @@ public class WristCommands {
      * @return
      */
     public static Command intakeCubeCommand(Wrist wrist) {
-        return Commands.runOnce(() -> wrist.runMotors(1));
+        return Commands.runOnce(() -> {
+            wrist.runWrist1(1);
+            wrist.runWrist2(1);
+        }, wrist);
     }
 
     /***
@@ -82,7 +99,10 @@ public class WristCommands {
      * @return
      */
     public static Command shootCubeCommand(Wrist wrist) {
-        return Commands.run(() -> wrist.runMotors(Wrist.Map.kEjectSpeed));
+        return Commands.run(() -> {
+            wrist.runWrist1(Wrist.Map.kEjectSpeed);
+            wrist.runWrist2(Wrist.Map.kEjectSpeed);
+        }, wrist);
     }
 
     public static Command stopMotorsCommand(Wrist wrist) {
