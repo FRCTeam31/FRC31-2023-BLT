@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import prime.movers.LazyCANSparkMax;
 
 public class Wrist extends SubsystemBase {
-
     public LazyCANSparkMax wrist1;
     public LazyCANSparkMax wrist2;
 
