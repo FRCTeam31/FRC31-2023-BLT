@@ -5,7 +5,6 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.config.WristMap;
 import frc.robot.models.IntakeDirection;
 import frc.robot.models.ShoulderLevels;
 import frc.robot.subsystems.Forearm;

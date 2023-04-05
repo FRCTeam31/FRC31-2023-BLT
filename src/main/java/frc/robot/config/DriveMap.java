@@ -54,7 +54,7 @@ public class DriveMap {
     public static boolean kFrontLeftInverted = false;
 
     // RR
-    public static int kRearRightSteeringMotorId = 24;
+    public static int kRearRightSteeringMotorId = 7;
     public static int kRearRightDrivingMotorId = 8;
     public static int kRearRightEncoderId = 14;
     public static short kRearRightEncoderOffset = 43 - 90;

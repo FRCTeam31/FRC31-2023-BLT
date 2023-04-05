@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.config.ControlsMap;
-import frc.robot.config.WristMap;
 import frc.robot.models.IntakeDirection;
 import frc.robot.subsystems.Forearm;
 import frc.robot.subsystems.Shoulder;
@@ -24,6 +23,8 @@ public class WristCommands {
             {
                 put("IntakeCube", runIntake(wrist, () -> true, () -> false));
                 put("Eject", runIntake(wrist, () -> false, () -> true));
+                put("intakeForTime", intakeForTimeCommand(wrist));
+                put("ejectForTime", EjectForTimeCommand(wrist));
             }
         };
     }
@@ -94,6 +95,14 @@ public class WristCommands {
         return Commands.run(() -> {
             wrist.stopMotors();
         });
+    }
+
+    public static Command intakeForTimeCommand(Wrist wrist) {
+        return Commands.run(() -> wrist.runMotors(0.6), wrist).withTimeout(0.5);
+    }
+
+    public static Command EjectForTimeCommand(Wrist wrist) {
+        return Commands.run(() -> wrist.runMotors(1), wrist).withTimeout(0.5);
     }
 
 }

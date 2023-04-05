@@ -30,9 +30,10 @@ public class Autonomous {
      * 
      * @param drivetrain
      * @return
+     * 
      */
     public Command getAutonomousCommand(Drivetrain drivetrain, Shoulder shoulder, Forearm forearm, Wrist wrist) {
-        List<PathPlannerTrajectory> fullAuto = PathPlanner.loadPathGroup("DriveForwardOneMeter", 1, 1);
+        List<PathPlannerTrajectory> fullAuto = PathPlanner.loadPathGroup("DriveForwardOneMeter", 0.1, 0.1);
         ArrayList<PathPlannerTrajectory> fullAutoArrayList = new ArrayList<>(fullAuto);
 
         HashMap<String, Command> shoulderEvents = ShoulderCommands.getEvents(shoulder);

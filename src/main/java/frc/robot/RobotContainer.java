@@ -20,9 +20,9 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.ForearmCommands;
 import frc.robot.commands.ShoulderCommands;
+import frc.robot.commands.SketchyAuto;
 import frc.robot.commands.WristCommands;
 import frc.robot.config.ControlsMap;
-import frc.robot.config.WristMap;
 import frc.robot.models.IntakeDirection;
 
 public class RobotContainer implements Sendable {
@@ -31,7 +31,7 @@ public class RobotContainer implements Sendable {
     public Drivetrain mDrivetrain;
     public Shoulder mShoulder;
     public Compressor mCompressor;
-    public Autonomous mAuto;
+    public SketchyAuto mSketchyAuto;
 
     public Wrist mWrist;
     public Forearm mForearm;
@@ -88,7 +88,7 @@ public class RobotContainer implements Sendable {
         }
 
         try {
-            mAuto = new Autonomous();
+            mSketchyAuto = new SketchyAuto();
 
         } catch (Exception e) {
             DriverStation.reportError("Failed to initialize Autonomous subsystem",
@@ -156,11 +156,12 @@ public class RobotContainer implements Sendable {
         // released, set the shoulder
 
         // Auto testing commands, only enabled when we're not on the field
-        if (!DriverStation.isFMSAttached()) {
-            var autoDriveSpeed = 1 / 4d;
-            mDriverController.button(ControlsMap.LB)
-                    .onTrue(mAuto.getAutonomousCommand(mDrivetrain, mShoulder, mForearm, mWrist));
-        }
+        // if (!DriverStation.isFMSAttached()) {
+        // var autoDriveSpeed = 1 / 4d;
+        // mDriverController.button(ControlsMap.LB)
+        // .onTrue(mAuto.getAutonomousCommand(mDrivetrain, mShoulder, mForearm,
+        // mWrist));
+        // }
     }
 
     // public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {

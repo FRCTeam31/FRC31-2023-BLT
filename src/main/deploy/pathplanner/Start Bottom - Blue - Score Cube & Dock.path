@@ -43,7 +43,9 @@
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "intakeForTime"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -68,7 +70,9 @@
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "ejectForTime"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -147,5 +151,45 @@
       }
     }
   ],
-  "markers": []
+  "maxVelocity": 1.0,
+  "maxAcceleration": 1.0,
+  "isReversed": null,
+  "markers": [
+    {
+      "position": 0.22727272727272527,
+      "names": [
+        "setHighGoal"
+      ]
+    },
+    {
+      "position": 0.4545454545454546,
+      "names": [
+        "extendForearm"
+      ]
+    },
+    {
+      "position": 0.5909090909090909,
+      "names": [
+        "setLowGoal"
+      ]
+    },
+    {
+      "position": 1.0909090909090944,
+      "names": [
+        "setHighGoal"
+      ]
+    },
+    {
+      "position": 1.2272727272727275,
+      "names": [
+        "retractForearm"
+      ]
+    },
+    {
+      "position": 1.7272727272727275,
+      "names": [
+        "extendForearm"
+      ]
+    }
+  ]
 }

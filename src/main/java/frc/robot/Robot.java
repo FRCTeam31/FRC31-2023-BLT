@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.*;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
@@ -14,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ForearmCommands;
+import frc.robot.commands.SketchyAuto;
 import frc.robot.config.DriveMap;
 
 public class Robot extends TimedRobot {
@@ -40,9 +43,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        mAutoCommand = mRobotContainer.mAuto.getAutonomousCommand(mRobotContainer.mDrivetrain,
-                mRobotContainer.mShoulder, mRobotContainer.mForearm, mRobotContainer.mWrist);
-        DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
+
+        mAutoCommand = SketchyAuto.getAutonomousCommand(mRobotContainer.mShoulder, mRobotContainer.mWrist);
+        DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain);
+
         mAutoCommand.schedule();
     }
 

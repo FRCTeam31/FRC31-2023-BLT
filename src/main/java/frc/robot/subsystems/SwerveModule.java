@@ -72,21 +72,19 @@ public class SwerveModule extends PIDSubsystem {
         mDriveMotor.configFactoryDefault();
         mDriveMotor.clearStickyFaults();
         TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
-        driveMotorConfig.slot0.kP = 0.01;
-        driveMotorConfig.slot0.kF = 0.48;
-        driveMotorConfig.slot0.closedLoopPeriod = 100;
-        driveMotorConfig.slot0.allowableClosedloopError = 250;
+        driveMotorConfig.slot0.kP = DriveMap.kDrivePidConstants.kP;
+        driveMotorConfig.slot0.kI = 0;
+        driveMotorConfig.slot0.kD = 0;
 
+        driveMotorConfig.slot0.allowableClosedloopError = 250;
         mDriveMotor.configAllSettings(driveMotorConfig);
         mDriveMotor.setNeutralMode(NeutralMode.Brake);
         mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
                 : TalonFXInvertType.Clockwise);
         mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the
                                                                                    // Falcon is the falcon's encoder
-
         mDriveMotor.configClosedloopRamp(0.5);
         mDriveMotor.configOpenloopRamp(0.5);
-
     }
 
     @Override
@@ -115,19 +113,17 @@ public class SwerveModule extends PIDSubsystem {
 
     public void setDesiredSpeed(double speedMetersPerSecond, boolean inHighGear) {
 
-        var desiredVelocity = CTREConverter.MPSToFalcon(speedMetersPerSecond,
-                DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio);
-        mDriveMotor.set(ControlMode.Velocity,
-                CTREConverter.MPSToFalcon(speedMetersPerSecond,
-                        DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
-        // var percentOutput = speedMetersPerSecond /
-        // DriveMap.kDriveMaxSpeedMetersPerSecond;
+        // mDriveMotor.set(ControlMode.Velocity,
+        // CTREConverter.MPSToFalcon(speedMetersPerSecond,
+        // DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
+        var percentOutput = speedMetersPerSecond /
+                DriveMap.kDriveMaxSpeedMetersPerSecond;
 
         // if (!inHighGear)
         // percentOutput *= 0.5;
 
-        // mDriveMotor.set(ControlMode.PercentOutput, MathUtil.clamp(
-        // percentOutput * DriveMap.kDriveMaxSpeedMetersPerSecond, -1, 1));
+        mDriveMotor.set(ControlMode.PercentOutput, MathUtil.clamp(
+                percentOutput * DriveMap.kDriveMaxSpeedMetersPerSecond, -1, 1));
     }
 
     /**
