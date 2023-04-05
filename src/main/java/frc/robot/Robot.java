@@ -13,13 +13,12 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ForearmCommands;
-import frc.robot.config.DriveMap;
+import frc.robot.subsystems.ArduinoSidecar.LEDMode;
 
 public class Robot extends TimedRobot {
-    private RobotContainer mRobotContainer;
-    private Command mAutoCommand;
-    private UsbCamera cam;
+    private RobotContainer _robotContainer;
+    // private Command mAutoCommand;
+    // private UsbCamera cam;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -30,20 +29,24 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         DataLogManager.start();
         DriverStation.startDataLog(DataLogManager.getLog());
-        cam = CameraServer.startAutomaticCapture();
-        cam.setVideoMode(PixelFormat.kMJPEG, 640, 480, 30);
 
         // Create the robot's objects and subsystems and map user controls
-        mRobotContainer = new RobotContainer();
-        mRobotContainer.configureBindings();
+        _robotContainer = new RobotContainer();
+        _robotContainer.configureBindings();
+        _robotContainer.setLEDMode(LEDMode.SCAN_UP);
+    }
+
+    @Override
+    public void disabledInit() {
+        _robotContainer.setLEDMode(LEDMode.SCAN_DOWN);
     }
 
     @Override
     public void autonomousInit() {
-        // mAutoCommand =
-        // mRobotContainer.mAuto.getAutonomousCommand(mRobotContainer.mDrivetrain);
-        DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
+        // mAutoCommand = _robotContainer.getAutonomousCommand();
+        // DriveCommands.resetGyroComamand(_robotContainer.mDrivetrain).schedule();
         // mAutoCommand.schedule();
+        _robotContainer.setLEDMode(LEDMode.AUTO);
     }
 
     /**
@@ -63,19 +66,25 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if (mAutoCommand != null && !mAutoCommand.isFinished())
-            mAutoCommand.end(true);
+        // if (mAutoCommand != null && !mAutoCommand.isFinished())
+        // mAutoCommand.end(true);
 
         // Kill the PID controllers used for trajectory following in autonomous
-        // mRobotContainer.mDrivetrain.mAutoTranslationXController.close();
-        // mRobotContainer.mDrivetrain.mAutoTranslationYController.close();
-        // mRobotContainer.mDrivetrain.mAutoRotationController.close();
-        // DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
+        // _robotContainer.mDrivetrain.mAutoTranslationXController.close();
+        // _robotContainer.mDrivetrain.mAutoTranslationYController.close();
+        // _robotContainer.mDrivetrain.mAutoRotationController.close();
+
+        // _robotContainer.Drivetrain.resetGyro();
+        _robotContainer.setLEDMode(LEDMode.TELEOP);
     }
 
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
-
+        if (DriverStation.isFMSAttached() &&
+                DriverStation.getMatchTime() <= 30 &&
+                _robotContainer.Sidecar.getMode() != LEDMode.SCAN_OUT) {
+            _robotContainer.setLEDMode(LEDMode.SCAN_OUT);
+        }
     }
 }

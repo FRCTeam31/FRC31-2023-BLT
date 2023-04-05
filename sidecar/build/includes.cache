@@ -1,0 +1,82 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\prime\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\prime\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega"
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Projects\\FRC31-2023\\sidecar\\build\\sketch\\sidecar.ino.cpp",
+    "Include": "Adafruit_NeoPixel.h",
+    "Includepath": "C:\\Users\\prime\\Documents\\Arduino\\libraries\\Adafruit_NeoPixel"
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Projects\\FRC31-2023\\sidecar\\build\\sketch\\sidecar.ino.cpp",
+    "Include": "Wire.h",
+    "Includepath": "C:\\Users\\prime\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Projects\\FRC31-2023\\sidecar\\build\\sketch\\sidecar.ino.cpp",
+    "Include": "NeoPatterns.hpp",
+    "Includepath": "C:\\Users\\prime\\Documents\\Arduino\\libraries\\NeoPatterns\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Projects\\FRC31-2023\\sidecar\\build\\sketch\\sidecar.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Arduino\\libraries\\Adafruit_NeoPixel\\Adafruit_NeoPixel.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Arduino\\libraries\\Adafruit_NeoPixel\\esp.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Arduino\\libraries\\Adafruit_NeoPixel\\esp8266.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Arduino\\libraries\\Adafruit_NeoPixel\\kendyte_k210.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src\\Wire.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src\\utility\\twi.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Arduino\\libraries\\NeoPatterns\\src\\utility\\font_4x6.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Arduino\\libraries\\NeoPatterns\\src\\utility\\font_5x8.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Arduino\\libraries\\NeoPatterns\\src\\utility\\font_6x8.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\prime\\Documents\\Arduino\\libraries\\NeoPatterns\\src\\utility\\font_8x8.c",
+    "Include": "",
+    "Includepath": null
+  }
+]

@@ -31,5 +31,6 @@
   "wpilib.autoStartRioLog": false,
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
-  "editor.detectIndentation": false
+"editor.detectIndentation": false,
+"editor.inlayHints.enabled": "offUnlessPressed"
 }
