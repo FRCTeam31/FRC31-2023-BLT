@@ -33,9 +33,9 @@ public class WristCommands {
         return Commands.run(() -> {
 
             if (eject.getAsBoolean()) {
-                wrist.runMotors(-Wrist.Map.kIntakeSpeed);
+                wrist.runMotors(-1);
             } else if (intake.getAsBoolean()) {
-                wrist.runMotors(Wrist.Map.kIntakeSpeed);
+                wrist.runMotors(0.6);
 
             } else {
                 wrist.stopMotors();

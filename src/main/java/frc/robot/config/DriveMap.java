@@ -2,6 +2,7 @@ package frc.robot.config;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import prime.models.PidConstants;
+import prime.utilities.CTREConverter;
 
 public class DriveMap {
     // Physical measurements
@@ -70,9 +71,10 @@ public class DriveMap {
     public static byte driveMotorOutputTeeth = 13;
     public static byte driveMotorDriveGearTeeth = 42;
     public static int falconTotalSensorUnits = 2048;
-    // public static final double kDriveMaxSpeedMetersPerSecond = 4.938; // 16.2ft
+    public static final double kDriveMaxSpeedMetersPerSecond = CTREConverter.falconToMPS(22000,
+            kDriveWheelCircumference, kDriveGearRatio); // 16.2ft
+
     // per second in meters per second
-    public static final double kDriveMaxSpeedMetersPerSecond = 8; // TODO: Fix this outrageous value when we get home
     public static final double kDriveMaxAngularSpeed = (DriveMap.kRobotWheelBaseCircumferenceMeters / 2)
             / kDriveMaxSpeedMetersPerSecond;
     public static final double kHighGearCoefficient = 0.7;

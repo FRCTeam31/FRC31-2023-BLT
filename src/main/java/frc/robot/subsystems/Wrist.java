@@ -36,7 +36,7 @@ public class Wrist extends SubsystemBase {
 
     public void runMotors(double speed) {
         wrist1.set(speed);
-        wrist2.set(speed);
+        wrist2.follow(wrist1);
     }
 
     @Override
