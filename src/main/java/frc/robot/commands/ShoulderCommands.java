@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.HashMap;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -11,6 +12,18 @@ import frc.robot.subsystems.Forearm;
 import frc.robot.subsystems.Shoulder;
 
 public class ShoulderCommands {
+
+    public static HashMap<String, Command> getEvents(Shoulder shoulder) {
+        return new HashMap<>() {
+            {
+                put("setHighGoal", setHighGoal(shoulder));
+                put("setMidGoal", setMiddleGoal(shoulder));
+                put("setLowGoal", setLowGoal(shoulder));
+                put("setGround", setGround(shoulder));
+
+            }
+        };
+    }
 
     /***
      * Sets the Height of the Forearm to the High Goal.

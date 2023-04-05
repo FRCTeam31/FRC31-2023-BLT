@@ -25,6 +25,8 @@ public class SwerveModule extends PIDSubsystem {
     private LazyWPITalonFX mDriveMotor;
     private WPI_CANCoder mEncoder;
     private int mEncoderOffset;
+    private SupplyCurrentLimitConfiguration mSupplyCurrentConfig = new SupplyCurrentLimitConfiguration(true, 50, 80,
+            0.15);
 
     public SwerveModule(
             int driveMotorId,
@@ -37,31 +39,10 @@ public class SwerveModule extends PIDSubsystem {
         mEncoderOffset = encoderAbsoluteOffset;
 
         // Set up the steering motor
-        // var statorCurrentConfig = new StatorCurrentLimitConfiguration(true, 50, 80,
-        // 0.15);
-        var supplyCurrentConfig = new SupplyCurrentLimitConfiguration(true, 50, 80, 0.15);
-        mSteeringMotor = new LazyWPITalonFX(steeringMotorId);
-        mSteeringMotor.configFactoryDefault();
-        mSteeringMotor.clearStickyFaults();
-        mSteeringMotor.setNeutralMode(NeutralMode.Brake);
-        mSteeringMotor.setInverted(TalonFXInvertType.CounterClockwise);
-        // mSteeringMotor.configStatorCurrentLimit(statorCurrentConfig);
-        mSteeringMotor.configSupplyCurrentLimit(supplyCurrentConfig);
+        setupSteeringMotor(steeringMotorId);
 
         // Set up the drive motor
-        mDriveMotor = new LazyWPITalonFX(driveMotorId);
-
-        mDriveMotor.configFactoryDefault();
-        mDriveMotor.clearStickyFaults();
-        mDriveMotor.setNeutralMode(NeutralMode.Brake);
-        mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
-                : TalonFXInvertType.Clockwise);
-        mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the
-                                                                                   // Falcon is the falcon's encoder
-        mDriveMotor.configClosedloopRamp(3);
-        mDriveMotor.configOpenloopRamp(3);
-        // mSteeringMotor.configStatorCurrentLimit(statorCurrentConfig);
-        mSteeringMotor.configSupplyCurrentLimit(supplyCurrentConfig);
+        setupDriveMotor(driveMotorId, driveInverted);
 
         // Set up our encoder
         mEncoder = new WPI_CANCoder(encoderId);
@@ -69,16 +50,39 @@ public class SwerveModule extends PIDSubsystem {
         mEncoder.configFactoryDefault();
         mEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
+        // Create a PID controller to calculate steering motor output
+        getController().enableContinuousInput(-Math.PI, Math.PI);
+        getController().setTolerance(Math.PI / 1800);
+        enable();
+    }
+
+    private void setupSteeringMotor(int steeringId) {
+        mSteeringMotor = new LazyWPITalonFX(steeringId);
+        mSteeringMotor.configFactoryDefault();
+        mSteeringMotor.clearStickyFaults();
+        mSteeringMotor.setNeutralMode(NeutralMode.Brake);
+        mSteeringMotor.setInverted(TalonFXInvertType.CounterClockwise);
+        // mSteeringMotor.configStatorCurrentLimit(statorCurrentConfig);
+        mSteeringMotor.configSupplyCurrentLimit(mSupplyCurrentConfig);
+    }
+
+    public void setupDriveMotor(int driveMotorId, boolean driveInverted) {
+        mDriveMotor = new LazyWPITalonFX(driveMotorId);
+
+        mDriveMotor.configFactoryDefault();
+        mDriveMotor.clearStickyFaults();
         TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
         driveMotorConfig.slot0.kP = DriveMap.kDrivePidConstants.kP;
         driveMotorConfig.slot0.kI = 0;
         driveMotorConfig.slot0.kD = 0;
         mDriveMotor.configAllSettings(driveMotorConfig);
-
-        // Create a PID controller to calculate steering motor output
-        getController().enableContinuousInput(-Math.PI, Math.PI);
-        getController().setTolerance(Math.PI / 1800);
-        enable();
+        mDriveMotor.setNeutralMode(NeutralMode.Brake);
+        mDriveMotor.setInverted(driveInverted ? TalonFXInvertType.CounterClockwise
+                : TalonFXInvertType.Clockwise);
+        mDriveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor); // The integrated sensor in the
+                                                                                   // Falcon is the falcon's encoder
+        mDriveMotor.configClosedloopRamp(3);
+        mDriveMotor.configOpenloopRamp(3);
     }
 
     @Override
@@ -106,17 +110,17 @@ public class SwerveModule extends PIDSubsystem {
     }
 
     public void setDesiredSpeed(double speedMetersPerSecond, boolean inHighGear) {
-        // mDriveMotor.set(ControlMode.Velocity,
-        // CTREConverter.MPSToFalcon(speedMetersPerSecond,
-        // DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
-        var percentOutput = speedMetersPerSecond /
-                DriveMap.kDriveMaxSpeedMetersPerSecond;
+        mDriveMotor.set(ControlMode.Velocity,
+                CTREConverter.MPSToFalcon(speedMetersPerSecond,
+                        DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
+        // var percentOutput = speedMetersPerSecond /
+        // DriveMap.kDriveMaxSpeedMetersPerSecond;
 
-        if (!inHighGear)
-            percentOutput *= 0.5;
+        // if (!inHighGear)
+        // percentOutput *= 0.5;
 
-        mDriveMotor.set(ControlMode.PercentOutput, MathUtil.clamp(
-                percentOutput * DriveMap.kDriveMaxSpeedMetersPerSecond, -1, 1));
+        // mDriveMotor.set(ControlMode.PercentOutput, MathUtil.clamp(
+        // percentOutput * DriveMap.kDriveMaxSpeedMetersPerSecond, -1, 1));
     }
 
     /**

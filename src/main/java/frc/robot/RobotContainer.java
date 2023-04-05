@@ -31,7 +31,7 @@ public class RobotContainer implements Sendable {
     public Drivetrain mDrivetrain;
     public Shoulder mShoulder;
     public Compressor mCompressor;
-    // public Autonomous mAuto;
+    public Autonomous mAuto;
 
     public Wrist mWrist;
     public Forearm mForearm;
@@ -87,15 +87,15 @@ public class RobotContainer implements Sendable {
             return;
         }
 
-        // try {
-        // mAuto = new Autonomous();
+        try {
+            mAuto = new Autonomous();
 
-        // } catch (Exception e) {
-        // DriverStation.reportError("Failed to initialize Autonomous subsystem",
-        // false);
-        // }
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initialize Autonomous subsystem",
+                    false);
+        }
 
-        // mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
+        mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
         mCompressor.enableDigital();
 
         // try {
@@ -124,7 +124,7 @@ public class RobotContainer implements Sendable {
 
         mWrist.setDefaultCommand(WristCommands.runIntake(mWrist,
                 () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > Wrist.Map.kTriggerDeadband,
-                () -> false));
+                () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > Wrist.Map.kTriggerDeadband));
 
         // Drive commands
         mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro(), mDrivetrain));
@@ -156,18 +156,18 @@ public class RobotContainer implements Sendable {
         // released, set the shoulder
 
         // Auto testing commands, only enabled when we're not on the field
-        // if (!DriverStation.isFMSAttached()) {
-        // var autoDriveSpeed = 1 / 4d;
-        // mDriverController.button(ControlsMap.LB)
-        // .onTrue(mAuto.getAutonomousCommand(mDrivetrain));
-        // }
-        // }
-
-        // public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {
-        // var eventMap = new HashMap<String, Command>();
-        // eventMap.putAll(WristCommands.getEvents(mWrist));
-
+        if (!DriverStation.isFMSAttached()) {
+            var autoDriveSpeed = 1 / 4d;
+            mDriverController.button(ControlsMap.LB)
+                    .onTrue(mAuto.getAutonomousCommand(mDrivetrain, mShoulder, mForearm, mWrist));
+        }
     }
+
+    // public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {
+    // var eventMap = new HashMap<String, Command>();
+    // eventMap.putAll(WristCommands.getEvents(mWrist));
+
+    // }
 
     @Override
     public void initSendable(SendableBuilder builder) {
