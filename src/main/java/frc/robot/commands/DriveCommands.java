@@ -31,8 +31,8 @@ public class DriveCommands {
         return Commands.runOnce(() -> driveTrain.resetGyro(), driveTrain);
     }
 
-    public static Command resetOdometry(Drivetrain driveTrain) {
-        return Commands.runOnce(() -> driveTrain.resetOdometry(new Pose2d()), driveTrain);
+    public static Command resetOdometry(Drivetrain driveTrain, Pose2d pose) {
+        return Commands.runOnce(() -> driveTrain.resetOdometry(pose), driveTrain);
     }
 
     public static Command toggleShifter(Drivetrain drive) {

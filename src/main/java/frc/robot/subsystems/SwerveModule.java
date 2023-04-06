@@ -72,9 +72,8 @@ public class SwerveModule extends PIDSubsystem {
         mDriveMotor.configFactoryDefault();
         mDriveMotor.clearStickyFaults();
         TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
-        driveMotorConfig.slot0.kP = DriveMap.kDrivePidConstants.kP;
-        driveMotorConfig.slot0.kI = 0;
-        driveMotorConfig.slot0.kD = 0;
+        driveMotorConfig.slot0.kP = 0.48;
+        driveMotorConfig.slot0.kF = 0.01;
 
         driveMotorConfig.slot0.allowableClosedloopError = 250;
         mDriveMotor.configAllSettings(driveMotorConfig);

@@ -2,18 +2,8 @@ package frc.robot.commands;
 
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.config.ControlsMap;
-import frc.robot.models.IntakeDirection;
-import frc.robot.subsystems.Forearm;
-import frc.robot.subsystems.Shoulder;
 import frc.robot.subsystems.Wrist;
 
 public class WristCommands {
@@ -24,7 +14,7 @@ public class WristCommands {
                 put("IntakeCube", runIntake(wrist, () -> true, () -> false));
                 put("Eject", runIntake(wrist, () -> false, () -> true));
                 put("intakeForTime", intakeForTimeCommand(wrist));
-                put("ejectForTime", EjectForTimeCommand(wrist));
+                put("ejectForTime", EjectForTimeCommand(wrist, 1));
             }
         };
     }
@@ -101,8 +91,8 @@ public class WristCommands {
         return Commands.run(() -> wrist.runMotors(0.6), wrist).withTimeout(0.5);
     }
 
-    public static Command EjectForTimeCommand(Wrist wrist) {
-        return Commands.run(() -> wrist.runMotors(1), wrist).withTimeout(0.5);
+    public static Command EjectForTimeCommand(Wrist wrist, double timeSeconds) {
+        return Commands.run(() -> wrist.runMotors(1), wrist).withTimeout(timeSeconds);
     }
 
 }

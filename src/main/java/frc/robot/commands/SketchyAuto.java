@@ -13,7 +13,7 @@ public class SketchyAuto {
     public static Command getAutonomousCommand(Shoulder shoulder, Wrist wrist) {
         return new SequentialCommandGroup(
                 ShoulderCommands.setHighGoal(shoulder),
-                WristCommands.EjectForTimeCommand(wrist)
+                WristCommands.EjectForTimeCommand(wrist, 1)
 
         );
     }

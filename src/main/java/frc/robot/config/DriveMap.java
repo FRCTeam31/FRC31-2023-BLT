@@ -34,6 +34,7 @@ public class DriveMap {
     public static PidConstants kDrivePidConstants = new PidConstants(0.016983, 1);
     public static final String kSteeringPidConstantsName = "SwerveModule steering PID Constants";
     public static PidConstants kSteeringPidConstants = new PidConstants(0.2);
+    public static double kSteeringGearRatio = 12.8 / 1;
 
     // Pigeon
     public static final int kPigeonId = 10;
