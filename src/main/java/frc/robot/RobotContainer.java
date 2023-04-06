@@ -4,6 +4,9 @@ import frc.robot.subsystems.*;
 
 import java.util.HashMap;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Compressor;
@@ -97,14 +100,6 @@ public class RobotContainer implements Sendable {
 
         mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
         mCompressor.enableDigital();
-
-        // try {
-        // mFrontCamera = new FrontCamera();
-        // SmartDashboard.putData(mFrontCamera);
-        // } catch (Exception e) {
-        // DriverStation.reportError("Failed to initalize FrontCamera", true);
-        // return;
-        // }
     }
 
     public void configureBindings() {
@@ -137,38 +132,18 @@ public class RobotContainer implements Sendable {
         mOperatorController.button(ControlsMap.X).onTrue(ShoulderCommands.setGround(mShoulder));
 
         // Forearm commands
-
         mOperatorController.button(ControlsMap.RB).onTrue(ForearmCommands.extendForearm(mForearm));
         mOperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.retractForearm(mForearm));
-
-        // End efector Commands
-
-        // mOperatorController.button(ControlsMap.LOGO_RIGHT).onTrue(EndEffectorCommands.setGround(mShoulder,
-        // mForearm));
-
-        // mOperatorController.button(ControlsMap.LB)
-        // .whileTrue(EndEffectorCommands.raiseEffectorManually(mShoulder, // While LB
-        // is held, control the arm
-        // // speed with the left stick Y axis
-        // () -> mForearm.getMinSoftLimitReached(),
-        // () -> mOperatorController.getRawAxis(ControlsMap.LEFT_STICK_Y)))
-        // .onFalse(ShoulderCommands.lockCurrentAngle(mShoulder)); // When LB is
-        // released, set the shoulder
-
-        // Auto testing commands, only enabled when we're not on the field
-        // if (!DriverStation.isFMSAttached()) {
-        // var autoDriveSpeed = 1 / 4d;
-        // mDriverController.button(ControlsMap.LB)
-        // .onTrue(mAuto.getAutonomousCommand(mDrivetrain, mShoulder, mForearm,
-        // mWrist));
-        // }
     }
 
-    // public SequentialCommandGroup getAutonomousCommand(double driveSpeed) {
-    // var eventMap = new HashMap<String, Command>();
-    // eventMap.putAll(WristCommands.getEvents(mWrist));
+    public Command getAutonomousCommand(double driveSpeed) {
+        var eventMap = new HashMap<String, Command>();
+        eventMap.putAll(WristCommands.getEvents(mWrist));
 
-    // }
+        return new SequentialCommandGroup(
+                DriveCommands.resetOdometry(mDrivetrain, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90))),
+                SketchyAuto.getAutonomousCommand(mShoulder, mWrist));
+    }
 
     @Override
     public void initSendable(SendableBuilder builder) {
