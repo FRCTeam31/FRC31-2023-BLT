@@ -4,19 +4,12 @@
 
 package frc.robot;
 
-import frc.robot.subsystems.*;
-
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.ArduinoSidecar.LEDMode;
-import frc.robot.commands.SketchyAuto;
 
 public class Robot extends TimedRobot {
     private RobotContainer _robotContainer;
@@ -51,8 +44,7 @@ public class Robot extends TimedRobot {
         // mAutoCommand.schedule();
         _robotContainer.setLEDMode(LEDMode.AUTO);
 
-        _autoCommand = SketchyAuto.getAutonomousCommand(_robotContainer.mShoulder, _robotContainer.Wrist);
-        DriveCommands.resetGyroComamand(_robotContainer.mDrivetrain);
+        _autoCommand = _robotContainer.getAutonomousCommand();
 
         _autoCommand.schedule();
     }
@@ -74,13 +66,13 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        // if (mAutoCommand != null && !mAutoCommand.isFinished())
-        // mAutoCommand.end(true);
+        if (_autoCommand != null && !_autoCommand.isFinished())
+            _autoCommand.end(true);
 
         // Kill the PID controllers used for trajectory following in autonomous
         // _robotContainer.mDrivetrain.mAutoTranslationXController.close();
         // _robotContainer.mDrivetrain.mAutoTranslationYController.close();
-        // _robotContainer.mDrivetrain.mAutoRotationController.close();
+        // _robotCo$ntainer.mDrivetrain.mAutoRotationController.close();
 
         // _robotContainer.Drivetrain.resetGyro();
         _robotContainer.setLEDMode(LEDMode.TELEOP);

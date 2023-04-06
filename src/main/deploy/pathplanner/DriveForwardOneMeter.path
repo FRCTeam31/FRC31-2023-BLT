@@ -2,49 +2,52 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 3.0167458906346387,
-        "y": 3.9079248158496322
+        "x": 1.8861988601170188,
+        "y": 4.443404676283037
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0167458906346387,
-        "y": 5.907924815849636
+        "x": 2.7662410360165093,
+        "y": 4.443404676283037
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "setHighGoal"
+          "setHighGoal",
+          "extendForearm",
+          "waitOneSecond",
+          "ejectCube"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "after",
+        "waitTime": 0.5
       }
     },
     {
       "anchorPoint": {
-        "x": 3,
-        "y": 5
+        "x": 2.89,
+        "y": 4.443404676283037
       },
       "prevControl": {
-        "x": 3.0310606335498385,
-        "y": 3.363964585072028
+        "x": 1.645531534147421,
+        "y": 4.443404676283037
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "test event"
+          "setGround"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
+        "waitBehavior": "after",
         "waitTime": 0
       }
     }

@@ -166,7 +166,7 @@ public class Drivetrain extends SubsystemBase {
         mSwerveModulePositions[2] = mRearRightModule.getPosition();
         mSwerveModulePositions[3] = mFrontRightModule.getPosition();
 
-        mOdometry.resetPosition(getRotation2d(), mSwerveModulePositions, pose);
+        mOdometry.resetPosition(getRotation2d().plus(Rotation2d.fromDegrees(-90)), mSwerveModulePositions, pose);
     }
 
     public Rotation2d getRotation2d() {

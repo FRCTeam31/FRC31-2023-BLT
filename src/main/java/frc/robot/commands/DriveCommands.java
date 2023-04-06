@@ -27,7 +27,7 @@ public class DriveCommands {
         }, drivetrain);
     }
 
-    public static Command resetGyroComamand(Drivetrain driveTrain) {
+    public static Command resetGyroCommand(Drivetrain driveTrain) {
         return Commands.runOnce(() -> driveTrain.resetGyro(), driveTrain);
     }
 
@@ -61,4 +61,8 @@ public class DriveCommands {
                         drivetrain::drive,
                         drivetrain));
     }
+
+    // public static Command homeSteeringForwardCommand(){
+    // retu
+    // }
 }

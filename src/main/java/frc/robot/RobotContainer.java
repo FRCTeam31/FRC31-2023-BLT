@@ -2,8 +2,7 @@ package frc.robot;
 
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ArduinoSidecar.LEDMode;
-
-import java.util.HashMap;
+import frc.robot.subsystems.Wrist.WristMap;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,17 +18,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ForearmCommands;
-import frc.robot.commands.ShoulderCommands;
-import frc.robot.commands.SketchyAuto;
-import frc.robot.commands.WristCommands;
+import frc.robot.commands.*;
 import frc.robot.config.ControlsMap;
-import frc.robot.models.IntakeDirection;
 
 public class RobotContainer implements Sendable {
-    public CommandJoystick DriverController;
-    public CommandJoystick OperatorController;
     public Drivetrain Drivetrain;
     public Shoulder Shoulder;
     public Compressor Compressor;
@@ -37,15 +29,8 @@ public class RobotContainer implements Sendable {
     public Forearm Forearm;
     public ArduinoSidecar Sidecar;
     public PowerDistribution Pdp;
-    public CommandJoystick mDriverController;
-    public CommandJoystick mOperatorController;
-    public Drivetrain mDrivetrain;
-    public Shoulder mShoulder;
-    public Compressor mCompressor;
-    public SketchyAuto mSketchyAuto;
-    public ArduinoSidecar mSidecar;
-    public PowerDistribution mPdp;
-    // public FrontCamera mFrontCamera;
+    public CommandJoystick DriverController;
+    public CommandJoystick OperatorController;
 
     public RobotContainer() {
         try {
@@ -97,16 +82,8 @@ public class RobotContainer implements Sendable {
             return;
         }
 
-        try {
-            mSketchyAuto = new SketchyAuto();
-
-        } catch (Exception e) {
-            DriverStation.reportError("Failed to initialize Autonomous subsystem",
-                    false);
-        }
-
-        mCompressor = new Compressor(PneumaticsModuleType.CTREPCM);
-        mCompressor.enableDigital();
+        Compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+        Compressor.enableDigital();
     }
 
     public void configureBindings() {
@@ -125,8 +102,8 @@ public class RobotContainer implements Sendable {
                 true));
 
         Wrist.setDefaultCommand(WristCommands.runIntake(Wrist,
-                () -> OperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > Wrist.Map.kTriggerDeadband,
-                () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > Wrist.Map.kTriggerDeadband));
+                () -> OperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.kTriggerDeadband,
+                () -> OperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER)));
 
         // Drive commands
         DriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> Drivetrain.resetGyro(), Drivetrain));
@@ -143,17 +120,11 @@ public class RobotContainer implements Sendable {
         OperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.retractForearm(Forearm));
     }
 
-    public Command getAutonomousCommand(double driveSpeed) {
-        var eventMap = new HashMap<String, Command>();
-        eventMap.putAll(WristCommands.getEvents(Wrist));
-
-        return new SequentialCommandGroup(
-                DriveCommands.resetOdometry(mDrivetrain, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90))),
-                SketchyAuto.getAutonomousCommand(mShoulder, mWrist));
-    }
-
     public Command getAutonomousCommand() {
-        return null;
+        return new SequentialCommandGroup(
+                DriveCommands.resetOdometry(Drivetrain, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90))),
+                DriveCommands.resetGyroCommand(Drivetrain),
+                Autonomous.getAutonomousCommand(Drivetrain, Shoulder, Forearm, Wrist));
     }
 
     public void setLEDMode(LEDMode mode) {

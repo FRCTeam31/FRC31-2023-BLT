@@ -14,7 +14,7 @@ public class Wrist extends SubsystemBase {
     /***
      * Contains the constants for the wrist.
      */
-    public class Map {
+    public static class WristMap {
         public static final int kWrist1CanId = 22;
         public static final int kWrist2CanId = 24;
         public static final double kIntakeSpeed = 0.6;
@@ -28,22 +28,13 @@ public class Wrist extends SubsystemBase {
      * Wrist.
      */
     public Wrist() {
-        wrist1 = new LazyCANSparkMax(Map.kWrist1CanId, MotorType.kBrushless);
-        wrist2 = new LazyCANSparkMax(Map.kWrist2CanId, MotorType.kBrushless);
-
+        wrist1 = new LazyCANSparkMax(WristMap.kWrist1CanId, MotorType.kBrushless);
+        wrist2 = new LazyCANSparkMax(WristMap.kWrist2CanId, MotorType.kBrushless);
     }
 
     public void runMotors(double speed) {
         wrist1.set(speed);
         wrist2.follow(wrist1);
-    }
-
-    @Override
-    /***
-     * Smart Dashboard so smart. and Dashboard.
-     */
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
 
     }
 
@@ -55,4 +46,11 @@ public class Wrist extends SubsystemBase {
         wrist2.stopMotor();
     }
 
+    /***
+     * Smart Dashboard so smart. and Dashboard.
+     */
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+    }
 }
