@@ -29,7 +29,7 @@ public class ShoulderCommands {
         return Commands.runOnce(() -> {
             shoulder.extendShortSolenoid(true);
             shoulder.extendLongSolenoid(true);
-        }, shoulder);
+        }, shoulder).andThen(Commands.waitSeconds(0.75));
     }
 
     /***
@@ -42,7 +42,7 @@ public class ShoulderCommands {
         return Commands.runOnce(() -> {
             shoulder.extendShortSolenoid(false);
             shoulder.extendLongSolenoid(true);
-        }, shoulder);
+        }, shoulder).andThen(Commands.waitSeconds(0.75));
     }
 
     /***
@@ -58,26 +58,14 @@ public class ShoulderCommands {
             shoulder.extendLongSolenoid(false);
             shoulder.extendShortSolenoid(true);
 
-        }, shoulder);
+        }, shoulder).andThen(Commands.waitSeconds(0.75));
 
     }
-
-    // public static Command setGroundRetractedCommand(Shoulder shoulder, Forearm
-    // forearm) {
-
-    // if(forearm.forearmIsExtended() == Value.kReverse){
-    // return new SequentialCommandGroup(
-    // Commands.runOnce(() -> shoulder.extendLongSolenoid(false), null)
-    // );
-    // }
-
-    // }
 
     public static Command setGround(Shoulder shoulder) {
         return Commands.runOnce(() -> {
             shoulder.extendLongSolenoid(false);
             shoulder.extendShortSolenoid(false);
-        }, shoulder);
+        }, shoulder).andThen(Commands.waitSeconds(0.75));
     }
-
 }

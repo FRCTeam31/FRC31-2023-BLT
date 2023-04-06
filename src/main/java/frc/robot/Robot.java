@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -14,7 +17,7 @@ import frc.robot.subsystems.ArduinoSidecar.LEDMode;
 public class Robot extends TimedRobot {
     private RobotContainer _robotContainer;
     private Command _autoCommand;
-    // private UsbCamera cam;
+    private UsbCamera cam;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -29,23 +32,21 @@ public class Robot extends TimedRobot {
         // Create the robot's objects and subsystems and map user controls
         _robotContainer = new RobotContainer();
         _robotContainer.configureBindings();
+        cam = CameraServer.startAutomaticCapture();
+        cam.setVideoMode(PixelFormat.kMJPEG, 640, 480, 30);
+
         _robotContainer.setLEDMode(LEDMode.SCAN_UP);
     }
 
     @Override
     public void disabledInit() {
-        _robotContainer.setLEDMode(LEDMode.SCAN_DOWN);
+        _robotContainer.setLEDMode(LEDMode.SCAN_UP);
     }
 
     @Override
     public void autonomousInit() {
-        // mAutoCommand = _robotContainer.getAutonomousCommand();
-        // DriveCommands.resetGyroComamand(_robotContainer.mDrivetrain).schedule();
-        // mAutoCommand.schedule();
         _robotContainer.setLEDMode(LEDMode.AUTO);
-
         _autoCommand = _robotContainer.getAutonomousCommand();
-
         _autoCommand.schedule();
     }
 

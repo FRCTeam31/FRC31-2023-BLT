@@ -242,41 +242,54 @@ public class Drivetrain extends SubsystemBase {
 
         mField.setRobotPose(robotPose);
 
-        if (_lastDesiredStates[0] != null) {
-            SmartDashboard.putNumber("Drive - FL Speed", _lastDesiredStates[0].speedMetersPerSecond);
-            SmartDashboard.putNumber("Drive - FL Angle", _lastDesiredStates[0].angle.getDegrees());
-            SmartDashboard.putNumber("Drive - RL Speed", _lastDesiredStates[1].speedMetersPerSecond);
-            SmartDashboard.putNumber("Drive - RL Angle", _lastDesiredStates[1].angle.getDegrees());
-            SmartDashboard.putNumber("Drive - RR Speed", _lastDesiredStates[2].speedMetersPerSecond);
-            SmartDashboard.putNumber("Drive - RR Angle", _lastDesiredStates[2].angle.getDegrees());
-            SmartDashboard.putNumber("Drive - FR Speed", _lastDesiredStates[3].speedMetersPerSecond);
-            SmartDashboard.putNumber("Drive - FR Angle", _lastDesiredStates[3].angle.getDegrees());
-        }
+        // if (_lastDesiredStates[0] != null) {
+        // SmartDashboard.putNumber("Drive - FL Speed",
+        // _lastDesiredStates[0].speedMetersPerSecond);
+        // SmartDashboard.putNumber("Drive - FL Angle",
+        // _lastDesiredStates[0].angle.getDegrees());
+        // SmartDashboard.putNumber("Drive - RL Speed",
+        // _lastDesiredStates[1].speedMetersPerSecond);
+        // SmartDashboard.putNumber("Drive - RL Angle",
+        // _lastDesiredStates[1].angle.getDegrees());
+        // SmartDashboard.putNumber("Drive - RR Speed",
+        // _lastDesiredStates[2].speedMetersPerSecond);
+        // SmartDashboard.putNumber("Drive - RR Angle",
+        // _lastDesiredStates[2].angle.getDegrees());
+        // SmartDashboard.putNumber("Drive - FR Speed",
+        // _lastDesiredStates[3].speedMetersPerSecond);
+        // SmartDashboard.putNumber("Drive - FR Angle",
+        // _lastDesiredStates[3].angle.getDegrees());
+        // }
 
-        var flState = mFrontLeftModule.getPosition();
-        var flDesiredState = _lastDesiredStates[0];
-        var rlState = mRearLeftModule.getPosition();
-        var rlDesiredState = _lastDesiredStates[0];
-        var rrState = mRearRightModule.getPosition();
-        var rrDesiredState = _lastDesiredStates[0];
-        var frState = mFrontRightModule.getPosition();
-        var frDesiredState = _lastDesiredStates[0];
+        // var flState = mFrontLeftModule.getPosition();
+        // var flDesiredState = _lastDesiredStates[0];
+        // var rlState = mRearLeftModule.getPosition();
+        // var rlDesiredState = _lastDesiredStates[0];
+        // var rrState = mRearRightModule.getPosition();
+        // var rrDesiredState = _lastDesiredStates[0];
+        // var frState = mFrontRightModule.getPosition();
+        // var frDesiredState = _lastDesiredStates[0];
 
-        if (flDesiredState != null) {
-            logCurrentStates.append(new double[] {
-                    flState.angle.getDegrees(), mFrontLeftModule.getVelocityMetersPerSecond(),
-                    rlState.angle.getDegrees(), mRearLeftModule.getVelocityMetersPerSecond(),
-                    rrState.angle.getDegrees(), mRearRightModule.getVelocityMetersPerSecond(),
-                    frState.angle.getDegrees(), mFrontRightModule.getVelocityMetersPerSecond(),
-            });
+        // if (flDesiredState != null) {
+        // logCurrentStates.append(new double[] {
+        // flState.angle.getDegrees(), mFrontLeftModule.getVelocityMetersPerSecond(),
+        // rlState.angle.getDegrees(), mRearLeftModule.getVelocityMetersPerSecond(),
+        // rrState.angle.getDegrees(), mRearRightModule.getVelocityMetersPerSecond(),
+        // frState.angle.getDegrees(), mFrontRightModule.getVelocityMetersPerSecond(),
+        // });
 
-            logDesiredStates.append(new double[] {
-                    flDesiredState.angle.getDegrees(), flDesiredState.speedMetersPerSecond,
-                    rlDesiredState.angle.getDegrees(), rlDesiredState.speedMetersPerSecond,
-                    rrDesiredState.angle.getDegrees(), rrDesiredState.speedMetersPerSecond,
-                    frDesiredState.angle.getDegrees(), frDesiredState.speedMetersPerSecond,
-            });
-        }
+        // logDesiredStates.append(new double[] {
+        // flDesiredState.angle.getDegrees(), flDesiredState.speedMetersPerSecond,
+        // rlDesiredState.angle.getDegrees(), rlDesiredState.speedMetersPerSecond,
+        // rrDesiredState.angle.getDegrees(), rrDesiredState.speedMetersPerSecond,
+        // frDesiredState.angle.getDegrees(), frDesiredState.speedMetersPerSecond,
+        // });
+        // }
+
+        SmartDashboard.putNumber("FL Encoder pos", mFrontLeftModule.getEncoderAbsolutePosition());
+        SmartDashboard.putNumber("FR Encoder pos", mFrontRightModule.getEncoderAbsolutePosition());
+        SmartDashboard.putNumber("RL Encoder pos", mRearLeftModule.getEncoderAbsolutePosition());
+        SmartDashboard.putNumber("RR Encoder pos", mRearRightModule.getEncoderAbsolutePosition());
     }
 
     public void setUpModuleLoggers() {
@@ -294,5 +307,13 @@ public class Drivetrain extends SubsystemBase {
 
         logCurrentStates = new DoubleArrayLogEntry(DataLogManager.getLog(), "/drive/currentStates");
         logDesiredStates = new DoubleArrayLogEntry(DataLogManager.getLog(), "/drive/desiredStates");
+    }
+
+    public void setWheelAngles(Rotation2d angle) {
+
+        mFrontLeftModule.setDesiredAngle(angle);
+        mFrontRightModule.setDesiredAngle(angle);
+        mRearLeftModule.setDesiredAngle(angle);
+        mRearRightModule.setDesiredAngle(angle);
     }
 }

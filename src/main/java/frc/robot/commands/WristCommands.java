@@ -28,7 +28,8 @@ public class WristCommands {
             if (eject.getAsBoolean()) {
                 wrist.runMotors(-1);
             } else {
-                wrist.runMotors(intake.getAsDouble());
+                var intakeSpeed = intake.getAsDouble();
+                wrist.runMotors(intakeSpeed);
             }
 
         }, wrist);

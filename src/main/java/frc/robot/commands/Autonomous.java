@@ -26,7 +26,7 @@ public class Autonomous {
      * 
      */
     public static Command getAutonomousCommand(Drivetrain drivetrain, Shoulder shoulder, Forearm forearm, Wrist wrist) {
-        List<PathPlannerTrajectory> fullAuto = PathPlanner.loadPathGroup("DriveForwardOneMeter", 0.2, 0.2);
+        List<PathPlannerTrajectory> fullAuto = PathPlanner.loadPathGroup("DriveForwardOneMeter", 0.5, 1);
         ArrayList<PathPlannerTrajectory> fullAutoArrayList = new ArrayList<>(fullAuto);
 
         HashMap<String, Command> eventMap = new HashMap<>();
@@ -39,7 +39,7 @@ public class Autonomous {
                 drivetrain::getPose,
                 drivetrain::resetOdometry,
                 new PIDConstants(0, 0, 0),
-                new PIDConstants(0.02, 0, 0),
+                new PIDConstants(0, 0, 0),
                 drivetrain::drive,
                 eventMap,
                 drivetrain);
