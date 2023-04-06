@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ArduinoSidecar.LEDMode;
 
 import java.util.HashMap;
 
@@ -15,12 +16,10 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.commands.Autonomous;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.ForearmCommands;
 import frc.robot.commands.ShoulderCommands;
 import frc.robot.commands.SketchyAuto;
@@ -29,64 +28,72 @@ import frc.robot.config.ControlsMap;
 import frc.robot.models.IntakeDirection;
 
 public class RobotContainer implements Sendable {
+    public CommandJoystick DriverController;
+    public CommandJoystick OperatorController;
+    public Drivetrain Drivetrain;
+    public Shoulder Shoulder;
+    public Compressor Compressor;
+    public Wrist Wrist;
+    public Forearm Forearm;
+    public ArduinoSidecar Sidecar;
+    public PowerDistribution Pdp;
     public CommandJoystick mDriverController;
     public CommandJoystick mOperatorController;
     public Drivetrain mDrivetrain;
     public Shoulder mShoulder;
     public Compressor mCompressor;
     public SketchyAuto mSketchyAuto;
-
-    public Wrist mWrist;
-    public Forearm mForearm;
     public ArduinoSidecar mSidecar;
     public PowerDistribution mPdp;
     // public FrontCamera mFrontCamera;
 
     public RobotContainer() {
         try {
-            mPdp = new PowerDistribution();
-            SmartDashboard.putData(mPdp);
+            Pdp = new PowerDistribution();
+            SmartDashboard.putData(Pdp);
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initalize PowerDistribution subsystem",
+                    true);
+            return;
+        }
+
+        try {
+            Drivetrain = new Drivetrain();
+            SmartDashboard.putData(Drivetrain);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Drivetrain subsystem", true);
             return;
         }
 
         try {
-            mDrivetrain = new Drivetrain();
-            SmartDashboard.putData(mDrivetrain);
-        } catch (Exception e) {
-            DriverStation.reportError("Failed to initalize Drivetrain subsystem", true);
-            return;
-        }
-
-        try {
-            mShoulder = new Shoulder();
-            SmartDashboard.putData(mShoulder);
+            Shoulder = new Shoulder();
+            SmartDashboard.putData(Shoulder);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Shoulder subsystem", true);
             return;
         }
 
         try {
-            mForearm = new Forearm();
-            SmartDashboard.putData(mForearm);
+            Forearm = new Forearm();
+            SmartDashboard.putData(Forearm);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Forearm subsystem", true);
             return;
         }
 
         try {
-            mWrist = new Wrist();
-            SmartDashboard.putData(mWrist);
+            Wrist = new Wrist();
+            SmartDashboard.putData(Wrist);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Wrist subsystem", true);
             return;
         }
 
         try {
-            mPdp = new PowerDistribution();
+            Sidecar = new ArduinoSidecar();
+            SmartDashboard.putData(Sidecar);
         } catch (Exception e) {
-            DriverStation.reportError("Failed to initalize Powerboard", true);
+            DriverStation.reportError("Failed to initalize Wrist subsystem", true);
             return;
         }
 
@@ -104,50 +111,60 @@ public class RobotContainer implements Sendable {
 
     public void configureBindings() {
         // Set up controllers
-        mDriverController = new CommandJoystick(ControlsMap.DRIVER_PORT);
-        mOperatorController = new CommandJoystick(ControlsMap.OPERATOR_PORT);
+        DriverController = new CommandJoystick(ControlsMap.DRIVER_PORT);
+        OperatorController = new CommandJoystick(ControlsMap.OPERATOR_PORT);
 
         // Default commands
-        mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDrivetrain,
-                () -> mDriverController.getRawAxis(
+        Drivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(Drivetrain,
+                () -> DriverController.getRawAxis(
                         ControlsMap.RIGHT_STICK_Y),
-                () -> mDriverController.getRawAxis(
+                () -> DriverController.getRawAxis(
                         ControlsMap.RIGHT_STICK_X),
-                () -> mDriverController.getRawAxis(ControlsMap.LEFT_STICK_X),
-                mDrivetrain.mSwerveModules,
+                () -> DriverController.getRawAxis(ControlsMap.LEFT_STICK_X),
+                Drivetrain.mSwerveModules,
                 true));
 
-        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist,
-                () -> mOperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > Wrist.Map.kTriggerDeadband,
+        Wrist.setDefaultCommand(WristCommands.runIntake(Wrist,
+                () -> OperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > Wrist.Map.kTriggerDeadband,
                 () -> mOperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER) > Wrist.Map.kTriggerDeadband));
 
         // Drive commands
-        mDriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro(), mDrivetrain));
-        mDriverController.button(ControlsMap.Y).onTrue(DriveCommands.toggleShifter(mDrivetrain));
+        DriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> Drivetrain.resetGyro(), Drivetrain));
+        DriverController.button(ControlsMap.Y).onTrue(DriveCommands.toggleShifter(Drivetrain));
 
         // Shoulder commands
-        mOperatorController.button(ControlsMap.Y).onTrue(ShoulderCommands.setHighGoal(mShoulder));
-        mOperatorController.button(ControlsMap.B).onTrue(ShoulderCommands.setMiddleGoal(mShoulder));
-        mOperatorController.button(ControlsMap.A).onTrue(ShoulderCommands.setLowGoal(mShoulder));
-        mOperatorController.button(ControlsMap.X).onTrue(ShoulderCommands.setGround(mShoulder));
+        OperatorController.button(ControlsMap.Y).onTrue(ShoulderCommands.setHighGoal(Shoulder));
+        OperatorController.button(ControlsMap.B).onTrue(ShoulderCommands.setMiddleGoal(Shoulder));
+        OperatorController.button(ControlsMap.A).onTrue(ShoulderCommands.setLowGoal(Shoulder));
+        OperatorController.button(ControlsMap.X).onTrue(ShoulderCommands.setGround(Shoulder));
 
         // Forearm commands
-        mOperatorController.button(ControlsMap.RB).onTrue(ForearmCommands.extendForearm(mForearm));
-        mOperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.retractForearm(mForearm));
+        OperatorController.button(ControlsMap.RB).onTrue(ForearmCommands.extendForearm(Forearm));
+        OperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.retractForearm(Forearm));
     }
 
     public Command getAutonomousCommand(double driveSpeed) {
         var eventMap = new HashMap<String, Command>();
-        eventMap.putAll(WristCommands.getEvents(mWrist));
+        eventMap.putAll(WristCommands.getEvents(Wrist));
 
         return new SequentialCommandGroup(
                 DriveCommands.resetOdometry(mDrivetrain, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90))),
                 SketchyAuto.getAutonomousCommand(mShoulder, mWrist));
     }
 
+    public Command getAutonomousCommand() {
+        return null;
+    }
+
+    public void setLEDMode(LEDMode mode) {
+        Sidecar.setMode(mode);
+    }
+
+    public LEDMode getLEDMode() {
+        return Sidecar.getMode();
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
-        // TODO Auto-generated method stub
-
     }
 }

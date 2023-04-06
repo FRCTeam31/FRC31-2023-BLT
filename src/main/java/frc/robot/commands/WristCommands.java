@@ -35,14 +35,11 @@ public class WristCommands {
         }, wrist);
     }
 
-    /***
-     * Runs the intake depending on which trigger is pressed.
-     * 
-     * @param wrist
-     * @param leftTriggerPressed
-     * @param rightTriggerPressed
-     * @return
-     */
+    public static Command wristDefaultCommand(DoubleSupplier leftTrigger, DoubleSubscriber rightTrigger){
+        if(leftTrigger() - > Map.kTriggerDeadband){
+
+        }
+    }
 
     /***
      * Command for ejecting a Cube.

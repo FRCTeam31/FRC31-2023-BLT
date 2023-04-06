@@ -33,5 +33,6 @@
     "editor.formatOnPaste": true,
     "editor.detectIndentation": false,
     "editor.inlineSuggest.enabled": false,
+    "editor.inlayHints.enabled": "offUnlessPressed",
     "editor.inlayHints.enabled": "offUnlessPressed"
 }
