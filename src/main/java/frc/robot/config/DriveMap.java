@@ -76,8 +76,7 @@ public class DriveMap {
             kDriveWheelCircumference, kDriveGearRatio); // 16.2ft
 
     // per second in meters per second
-    public static final double kDriveMaxAngularSpeed = (DriveMap.kRobotWheelBaseCircumferenceMeters / 2)
-            / kDriveMaxSpeedMetersPerSecond;
+    public static final double kDriveMaxAngularSpeed = Math.PI;
     public static final double kHighGearCoefficient = 0.7;
     public static final double kLowGearCoefficient = 0.15;
 
