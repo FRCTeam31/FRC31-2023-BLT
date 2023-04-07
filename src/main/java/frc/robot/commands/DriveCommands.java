@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.config.DriveMap;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.SwerveModule;
 
@@ -23,6 +24,10 @@ public class DriveCommands {
             var strafeX = MathUtil.applyDeadband(xSupplier.getAsDouble(), 0.1);
             var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.1);
             var rotation = MathUtil.applyDeadband(rotationSupplier.getAsDouble(), 0.1);
+
+            strafeX *= DriveMap.kDriveMaxSpeedMetersPerSecond;
+            forwardY *= DriveMap.kDriveMaxSpeedMetersPerSecond;
+            rotation *= DriveMap.kDriveMaxAngularSpeed;
 
             drivetrain.drive(-strafeX, forwardY, rotation, fieldRelative);
         }, drivetrain);

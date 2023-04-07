@@ -118,13 +118,19 @@ public class Drivetrain extends SubsystemBase {
         mGyro.reset();
     }
 
-    public void drive(double strafe, double forward, double rotation, boolean fieldRelative) {
+    public void drive(double strafeXMetersPerSecond,
+            double forwardMetersPerSecond,
+            double rotationRadiansPerSecond,
+            boolean fieldRelative) {
         ChassisSpeeds desiredChassisSpeeds;
+
         if (fieldRelative) {
-            desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(strafe, forward, rotation,
+            desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(strafeXMetersPerSecond, forwardMetersPerSecond,
+                    rotationRadiansPerSecond,
                     mGyro.getRotation2d());
         } else {
-            desiredChassisSpeeds = new ChassisSpeeds(strafe, forward, rotation);
+            desiredChassisSpeeds = new ChassisSpeeds(strafeXMetersPerSecond, forwardMetersPerSecond,
+                    rotationRadiansPerSecond);
         }
 
         drive(desiredChassisSpeeds);
