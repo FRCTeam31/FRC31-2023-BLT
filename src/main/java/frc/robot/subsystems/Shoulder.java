@@ -6,10 +6,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shoulder extends SubsystemBase {
-
-    private DoubleSolenoid shortSolenoid;
-    private DoubleSolenoid longSolenoid;
-
     /***
      * Contains the constants for the Shoulder
      */
@@ -20,10 +16,14 @@ public class Shoulder extends SubsystemBase {
         public static final int longSolenoidReverseChannel = 3;
     }
 
+    private DoubleSolenoid shortSolenoid;
+    private DoubleSolenoid longSolenoid;
+
     /***
      * Shoulder Constructor
      */
     public Shoulder() {
+        setName("Shoulder");
         shortSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Map.shortSolenoidForwardChannel,
                 Map.shortSolenoidReverseChannel);
         longSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Map.longSolenoidForwardChannel,
@@ -67,7 +67,6 @@ public class Shoulder extends SubsystemBase {
     }
 
     public String detectCurrentArmPosition() {
-
         if (longSolenoid.get() == Value.kForward && shortSolenoid.get() == Value.kForward) {
             return "High Goal";
         } else if (longSolenoid.get() == Value.kReverse && shortSolenoid.get() == Value.kForward) {
@@ -76,6 +75,7 @@ public class Shoulder extends SubsystemBase {
             return "Middle Goal";
         }
     }
+
     // This is added becuase we were seeing loop overun errors coming from the base
     // method
 

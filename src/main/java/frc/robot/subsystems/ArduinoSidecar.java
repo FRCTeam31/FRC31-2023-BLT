@@ -8,22 +8,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArduinoSidecar extends SubsystemBase {
     public enum LEDMode {
-        OFF(0),
-        AUTO(1),
-        TELEOP(2),
-        SCAN_OUT(3),
-        SCAN_UP(4),
-        SCAN_DOWN(5);
-
-        private final int value;
-
-        private LEDMode(int value) {
-            this.value = (byte) value;
-        }
-
-        public int getValue() {
-            return value;
-        }
+        OFF,
+        AUTO_BLUE,
+        AUTO_RED,
+        TELEOP_BLUE,
+        TELEOP_RED,
+        SCAN_OUT,
+        DISABLED_SCAN_UP_BLUE,
+        DISABLED_SCAN_UP_RED,
+        SCAN_DOWN
     }
 
     private SerialPort _arduinoSerial;
@@ -70,8 +63,8 @@ public class ArduinoSidecar extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
         builder.addCloseable(_arduinoSerial);
-        builder.addDoubleProperty("LED Mode",
-                () -> _currentMode.value,
-                (newMode) -> setMode(LEDMode.values()[(int) newMode]));
+        builder.addStringProperty("Current LED Mode",
+                () -> _currentMode.toString(),
+                (newMode) -> setMode(LEDMode.valueOf(newMode)));
     }
 }

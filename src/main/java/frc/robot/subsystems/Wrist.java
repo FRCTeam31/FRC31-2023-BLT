@@ -3,16 +3,11 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import prime.movers.LazyCANSparkMax;
 
 public class Wrist extends SubsystemBase {
-    // public DigitalInput innerLimitSwitch;
-    public LazyCANSparkMax wrist1;
-    public LazyCANSparkMax wrist2;
-
-    /***
+    /**
      * Contains the constants for the wrist.
      */
     public static class WristMap {
@@ -23,40 +18,45 @@ public class Wrist extends SubsystemBase {
         public static final double kTriggerDeadband = 0.1;
         public static final double kEjectCubeTime = 1;
         public static final double kIntakeCubeTime = 1;
-        // public static final int kIntakeLimitSwitchChannel = 9;
     }
 
-    /***
+    public LazyCANSparkMax wristLeader;
+    public LazyCANSparkMax wristFollower;
+    private double _lastSpeed = -10;
+
+    /**
      * Wrist.
      */
     public Wrist() {
-        wrist1 = new LazyCANSparkMax(WristMap.kWrist1CanId, MotorType.kBrushless);
-        wrist2 = new LazyCANSparkMax(WristMap.kWrist2CanId, MotorType.kBrushless);
-        // innerLimitSwitch = new DigitalInput(WristMap.kIntakeLimitSwitchChannel);
+        setName("Wrist");
+        wristLeader = new LazyCANSparkMax(WristMap.kWrist1CanId, MotorType.kBrushless);
+        wristFollower = new LazyCANSparkMax(WristMap.kWrist2CanId, MotorType.kBrushless);
     }
 
+    /**
+     * Sets the duty cycle of the motors in raw axis magnitude [-1,1]
+     */
     public void runMotors(double speed) {
-        // if (speed < 0 && innerLimitSwitch.get()) {
-        // stopMotors();
-        // }
-
-        wrist1.set(speed);
-        wrist2.follow(wrist1);
+        _lastSpeed = speed;
+        wristLeader.set(speed);
+        wristFollower.follow(wristLeader);
     }
 
-    /***
+    /**
      * Stops the motors (crazy)
      */
     public void stopMotors() {
-        wrist1.stopMotor();
-        wrist2.stopMotor();
+        _lastSpeed = 0;
+        wristLeader.stopMotor();
+        wristFollower.stopMotor();
     }
 
-    /***
+    /**
      * Smart Dashboard so smart. and Dashboard.
      */
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
+        builder.addDoubleProperty("Output %", () -> _lastSpeed, null);
     }
 }

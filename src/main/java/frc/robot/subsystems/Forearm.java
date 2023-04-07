@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Forearm extends SubsystemBase {
-
     public DoubleSolenoid forearmSolenoid;
 
     /***
@@ -44,6 +43,5 @@ public class Forearm extends SubsystemBase {
         } else {
             return true;
         }
-
     }
 }

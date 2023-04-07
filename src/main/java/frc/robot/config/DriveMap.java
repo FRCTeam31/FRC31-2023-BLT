@@ -33,7 +33,7 @@ public class DriveMap {
     public static final String kDrivePidConstantsName = "SwerveModule drive PID Constants";
     public static PidConstants kDrivePidConstants = new PidConstants(0.016983, 1);
     public static final String kSteeringPidConstantsName = "SwerveModule steering PID Constants";
-    public static PidConstants kSteeringPidConstants = new PidConstants(0.5, 0, 0.007);
+    public static PidConstants kSteeringPidConstants = new PidConstants(0.01, 0, 1e-5);
     public static double kSteeringGearRatio = 12.8 / 1;
 
     // Pigeon
@@ -74,18 +74,9 @@ public class DriveMap {
     public static int falconTotalSensorUnits = 2048;
     public static final double kDriveMaxSpeedMetersPerSecond = CTREConverter.falconToMPS(22000,
             kDriveWheelCircumference, kDriveGearRatio); // 16.2ft
+    public static final double kDriveMaxAccelerationMetersPerSecondSquared = kDriveMaxSpeedMetersPerSecond * 0.6;
 
     // per second in meters per second
     public static final double kDriveMaxAngularSpeed = Math.PI;
-    public static final double kHighGearCoefficient = 0.7;
     public static final double kLowGearCoefficient = 0.15;
-
-    // Drive Auton PID values
-    public static final double kAutoTranslationPID_kP = 2.01;
-    public static final double kAutoTranslationPID_kI = 0;
-    public static final double kAutoTranslationPID_kD = 1;
-
-    public static final double kAutoRotationPID_kP = 1;
-    public static final double kAutoRotationPID_kI = 0;
-    public static final double kAutoRotationPID_kD = 0;
 }

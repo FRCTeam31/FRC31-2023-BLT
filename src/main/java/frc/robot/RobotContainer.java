@@ -35,6 +35,9 @@ public class RobotContainer implements Sendable {
     public RobotContainer() {
         try {
             Pdp = new PowerDistribution();
+            Pdp.resetTotalEnergy();
+            Pdp.clearStickyFaults();
+
             SmartDashboard.putData(Pdp);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize PowerDistribution subsystem",
@@ -44,6 +47,8 @@ public class RobotContainer implements Sendable {
 
         try {
             Drivetrain = new Drivetrain();
+            Drivetrain.register();
+
             SmartDashboard.putData(Drivetrain);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Drivetrain subsystem", true);
@@ -52,6 +57,8 @@ public class RobotContainer implements Sendable {
 
         try {
             Shoulder = new Shoulder();
+            Shoulder.register();
+
             SmartDashboard.putData(Shoulder);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Shoulder subsystem", true);
@@ -60,6 +67,8 @@ public class RobotContainer implements Sendable {
 
         try {
             Forearm = new Forearm();
+            Forearm.register();
+
             SmartDashboard.putData(Forearm);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Forearm subsystem", true);
@@ -68,6 +77,8 @@ public class RobotContainer implements Sendable {
 
         try {
             Wrist = new Wrist();
+            Wrist.register();
+
             SmartDashboard.putData(Wrist);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Wrist subsystem", true);
@@ -76,6 +87,8 @@ public class RobotContainer implements Sendable {
 
         try {
             Sidecar = new ArduinoSidecar();
+            Sidecar.register();
+
             SmartDashboard.putData(Sidecar);
         } catch (Exception e) {
             DriverStation.reportError("Failed to initalize Wrist subsystem", true);
@@ -122,10 +135,10 @@ public class RobotContainer implements Sendable {
 
     public Command getAutonomousCommand() {
         return new SequentialCommandGroup(
-                DriveCommands.SetWheelAnglesCommand(Drivetrain, Rotation2d.fromDegrees(0)),
+                DriveCommands.SetWheelAnglesCommand(Drivetrain, Rotation2d.fromDegrees(180)),
                 DriveCommands.resetOdometry(Drivetrain, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90))),
                 DriveCommands.resetGyroCommand(Drivetrain),
-                Autonomous.getAutonomousCommand(Drivetrain, Shoulder, Forearm, Wrist));
+                AutonomousCommands.getAutonomousCommand(Drivetrain, Shoulder, Forearm, Wrist));
     }
 
     public void setLEDMode(LEDMode mode) {

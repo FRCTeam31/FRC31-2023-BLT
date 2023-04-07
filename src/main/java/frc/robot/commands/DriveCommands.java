@@ -21,15 +21,15 @@ public class DriveCommands {
             DoubleSupplier rotationSupplier,
             SwerveModule[] swerveModules, boolean fieldRelative) {
         return Commands.run(() -> {
-            var strafeX = MathUtil.applyDeadband(xSupplier.getAsDouble(), 0.1);
-            var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.1);
+            var strafeX = MathUtil.applyDeadband(xSupplier.getAsDouble(), 0.15);
+            var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.15);
             var rotation = MathUtil.applyDeadband(rotationSupplier.getAsDouble(), 0.1);
 
             strafeX *= DriveMap.kDriveMaxSpeedMetersPerSecond;
             forwardY *= DriveMap.kDriveMaxSpeedMetersPerSecond;
             rotation *= DriveMap.kDriveMaxAngularSpeed;
 
-            drivetrain.drive(-strafeX, forwardY, rotation, fieldRelative);
+            drivetrain.driveFromCartesianSpeeds(-strafeX, forwardY, rotation, fieldRelative);
         }, drivetrain);
     }
 
