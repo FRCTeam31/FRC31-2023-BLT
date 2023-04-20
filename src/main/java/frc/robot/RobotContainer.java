@@ -1,238 +1,155 @@
 package frc.robot;
 
 import frc.robot.subsystems.*;
-import frc.robot.utilities.PathPlannerConverter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPoint;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import frc.robot.subsystems.ArduinoSidecar.LEDMode;
+import frc.robot.subsystems.Wrist.WristMap;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ForearmCommands;
-import frc.robot.commands.LightCommands;
-import frc.robot.commands.ShoulderCommands;
-import frc.robot.commands.WristCommands;
-import frc.robot.config.AutoMap;
+import frc.robot.commands.*;
 import frc.robot.config.ControlsMap;
-import frc.robot.config.DriveMap;
 
 public class RobotContainer implements Sendable {
-    public CommandJoystick mDriverController;
-    public CommandJoystick mOperatorController;
-    public SwerveModule mFrontLeftSwerve;
-    public SwerveModule mFrontRightSwerve;
-    public SwerveModule mRearLeftSwerve;
-    public SwerveModule mRearRightSwerve;
-    public Drivetrain mDrivetrain;
-    public Shoulder mShoulder;
-    public Wrist mWrist;
-    public Forearm mForearm;
-    public ArduinoSidecar mSidecar;
-    public UsbCamera mCamera;
+    public Drivetrain Drivetrain;
+    public Shoulder Shoulder;
+    public Compressor Compressor;
+    public Wrist Wrist;
+    public Forearm Forearm;
+    public ArduinoSidecar Sidecar;
+    public PowerDistribution Pdp;
+    public CommandJoystick DriverController;
+    public CommandJoystick OperatorController;
 
     public RobotContainer() {
-        mFrontLeftSwerve = new SwerveModule(
-                DriveMap.kFrontLeftDrivingMotorId,
-                DriveMap.kFrontLeftSteeringMotorId,
-                DriveMap.kFrontLeftEncoderId,
-                DriveMap.kFrontLeftEncoderOffset,
-                DriveMap.kFrontLeftInverted);
-        SmartDashboard.putData("Front Left Module", mFrontLeftSwerve);
+        try {
+            Pdp = new PowerDistribution();
+            Pdp.resetTotalEnergy();
+            Pdp.clearStickyFaults();
 
-        mFrontRightSwerve = new SwerveModule(
-                DriveMap.kFrontRightDrivingMotorId,
-                DriveMap.kFrontRightSteeringMotorId,
-                DriveMap.kFrontRightEncoderId,
-                DriveMap.kFrontRightEncoderOffset,
-                DriveMap.kFrontRightInverted);
-        SmartDashboard.putData("Front Right Module", mFrontRightSwerve);
+            SmartDashboard.putData(Pdp);
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initalize PowerDistribution subsystem",
+                    true);
+            return;
+        }
 
-        mRearLeftSwerve = new SwerveModule(
-                DriveMap.kRearLeftDrivingMotorId,
-                DriveMap.kRearLeftSteeringMotorId,
-                DriveMap.kRearLeftEncoderId,
-                DriveMap.kRearLeftEncoderOffset,
-                DriveMap.kRearLeftInverted);
-        SmartDashboard.putData("Rear Left Module", mRearLeftSwerve);
+        try {
+            Drivetrain = new Drivetrain();
+            Drivetrain.register();
 
-        mRearRightSwerve = new SwerveModule(
-                DriveMap.kRearRightDrivingMotorId,
-                DriveMap.kRearRightSteeringMotorId,
-                DriveMap.kRearRightEncoderId,
-                DriveMap.kRearRightEncoderOffset,
-                DriveMap.kRearRightInverted);
-        SmartDashboard.putData("Rear Right Module", mRearRightSwerve);
+            SmartDashboard.putData(Drivetrain);
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initalize Drivetrain subsystem", true);
+            return;
+        }
 
-        mDrivetrain = new Drivetrain(mFrontLeftSwerve, mFrontRightSwerve,
-                mRearLeftSwerve, mRearRightSwerve);
-        SmartDashboard.putData(mDrivetrain);
+        try {
+            Shoulder = new Shoulder();
+            Shoulder.register();
 
-        mShoulder = new Shoulder();
-        SmartDashboard.putData(mShoulder);
+            SmartDashboard.putData(Shoulder);
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initalize Shoulder subsystem", true);
+            return;
+        }
 
-        mForearm = new Forearm();
-        SmartDashboard.putData(mForearm);
+        try {
+            Forearm = new Forearm();
+            Forearm.register();
 
-        mWrist = new Wrist();
-        SmartDashboard.putData(mWrist);
+            SmartDashboard.putData(Forearm);
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initalize Forearm subsystem", true);
+            return;
+        }
 
-        SmartDashboard.putData(
-                AutoMap.kTranslatePidConstantsName,
-                PathPlannerConverter.fromPPPIDConstants(AutoMap.kTranslatePidConstants));
+        try {
+            Wrist = new Wrist();
+            Wrist.register();
 
-        SmartDashboard.putData(
-                AutoMap.kRotatePidConstantsName,
-                PathPlannerConverter.fromPPPIDConstants(AutoMap.kRotatePidConstants));
-        SmartDashboard.putData(DriveMap.kDrivePidConstantsName,
-                DriveMap.kDrivePidConstants);
-        SmartDashboard.putData(DriveMap.kSteeringPidConstantsName,
-                DriveMap.kSteeringPidConstants);
+            SmartDashboard.putData(Wrist);
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initalize Wrist subsystem", true);
+            return;
+        }
+
+        try {
+            Sidecar = new ArduinoSidecar();
+            Sidecar.register();
+
+            SmartDashboard.putData(Sidecar);
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to initalize Wrist subsystem", true);
+            return;
+        }
+
+        Compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+        Compressor.enableDigital();
     }
 
     public void configureBindings() {
-        mDriverController = new CommandJoystick(ControlsMap.DRIVER_PORT);
-        mOperatorController = new CommandJoystick(ControlsMap.OPERATOR_PORT);
-        SwerveModule[] modules = new SwerveModule[] {
-                mFrontLeftSwerve,
-                mFrontRightSwerve,
-                mRearLeftSwerve,
-                mRearRightSwerve
-        };
+        // Set up controllers
+        DriverController = new CommandJoystick(ControlsMap.DRIVER_PORT);
+        OperatorController = new CommandJoystick(ControlsMap.OPERATOR_PORT);
+
+        // Default commands
+        Drivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(Drivetrain,
+                () -> DriverController.getRawAxis(
+                        ControlsMap.RIGHT_STICK_Y),
+                () -> DriverController.getRawAxis(
+                        ControlsMap.RIGHT_STICK_X),
+                () -> DriverController.getRawAxis(ControlsMap.LEFT_STICK_X),
+                Drivetrain.mSwerveModules,
+                true));
+
+        Wrist.setDefaultCommand(WristCommands.runIntake(Wrist,
+                () -> OperatorController.getRawAxis(ControlsMap.LEFT_TRIGGER) > WristMap.kTriggerDeadband,
+                () -> OperatorController.getRawAxis(ControlsMap.RIGHT_TRIGGER)));
 
         // Drive commands
-        mDrivetrain.setDefaultCommand(DriveCommands.defaultDriveCommand(mDriverController,
-                mDrivetrain, modules, true));
-        mDriverController.button(3).onTrue(Commands.runOnce(() -> mDrivetrain.resetGyro()));
-
-        // mShoulder.setDefaultCommand(ShoulderCommands.controlWithJoystick(mShoulder,
-        // mOperatorController));
-
-        // Wrist bindings
-        // mController.button(1)
-        // .onTrue(WristCommands.runMotorSimpleCommand(mWrist))
-        // .onFalse(WristCommands.stopIntakeCommand(mWrist));
-        // mOperatorController.button(2)
-        // .onTrue(WristCommands.toggleActuatorCommand(mWrist));
+        DriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> Drivetrain.resetGyro(), Drivetrain));
+        DriverController.button(ControlsMap.Y).onTrue(DriveCommands.toggleShifter(Drivetrain));
 
         // Shoulder commands
-        mOperatorController.button(ControlsMap.Y)
-                .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
-                        Shoulder.Map.kTopRowAngle));
-        mOperatorController.button(ControlsMap.B)
-                .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
-                        Shoulder.Map.kMiddleRowAngle));
-        mOperatorController.button(ControlsMap.A)
-                .onTrue(ShoulderCommands.setAngleCommand(mShoulder,
-                        Shoulder.Map.kGroundLevelAngle));
+        OperatorController.button(ControlsMap.Y).onTrue(ShoulderCommands.setHighGoal(Shoulder));
+        OperatorController.button(ControlsMap.B).onTrue(ShoulderCommands.setMiddleGoal(Shoulder));
+        OperatorController.button(ControlsMap.A).onTrue(ShoulderCommands.setLowGoal(Shoulder));
+        OperatorController.button(ControlsMap.X).onTrue(ShoulderCommands.setGround(Shoulder));
 
-        // Wrist commands
-        mWrist.setDefaultCommand(WristCommands.runIntake(mWrist, mOperatorController));
-        mOperatorController.pov(ControlsMap.up)
-                .onTrue(WristCommands.setWristCommand(mWrist, true));
-
-        mOperatorController.pov(ControlsMap.down)
-                .onTrue(WristCommands.setWristCommand(mWrist, false));
+        // Forearm commands
+        OperatorController.button(ControlsMap.RB).onTrue(ForearmCommands.extendForearm(Forearm));
+        OperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.retractForearm(Forearm));
     }
 
-    // public SequentialCommandGroup getAutonomousCommand() {
-    // PathPlannerTrajectory drive1Meter = PathPlanner.generatePath(
-    // new PathConstraints(1, 0.1),
-    // new PathPoint(new Translation2d(0, 0), Rotation2d.fromDegrees(0),
-    // Rotation2d.fromDegrees(0)),
-    // new PathPoint(new Translation2d(0, 2), Rotation2d.fromDegrees(0),
-    // Rotation2d.fromDegrees(0)));
+    public Command getAutonomousCommand() {
+        return new SequentialCommandGroup(
+                DriveCommands.SetWheelAnglesCommand(Drivetrain, Rotation2d.fromDegrees(180)),
+                DriveCommands.resetOdometry(Drivetrain, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90))),
+                DriveCommands.resetGyroCommand(Drivetrain),
+                AutonomousCommands.getAutonomousCommand(Drivetrain, Shoulder, Forearm, Wrist));
+    }
 
-    // ArrayList<PathPlannerTrajectory> pathGroup = new
-    // ArrayList<PathPlannerTrajectory>();
-    // pathGroup.add(drive1Meter);
-    // HashMap<String, Command> eventMap = new HashMap<>();
+    public void setLEDMode(LEDMode mode) {
+        Sidecar.setMode(mode);
+    }
 
-    // SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-    // mDrivetrain::getPose,
-    // mDrivetrain::resetOdometry,
-    // mDrivetrain.mKinematics,
-    // new PIDConstants(AutoMap.kTranslatePidConstants.kP,
-    // AutoMap.kTranslatePidConstants.kI,
-    // AutoMap.kTranslatePidConstants.kD),
-    // new PIDConstants(AutoMap.kRotatePidConstants.kP,
-    // AutoMap.kRotatePidConstants.kI,
-    // AutoMap.kRotatePidConstants.kD),
-    // mDrivetrain::drive,
-    // eventMap);
-
-    // return new SequentialCommandGroup(
-    // Commands.runOnce(() ->
-    // mDrivetrain.resetOdometry(drive1Meter.getInitialHolonomicPose())),
-    // autoBuilder.fullAuto(pathGroup.get(0)));
-
-    // }
+    public LEDMode getLEDMode() {
+        return Sidecar.getMode();
+    }
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        if (AutoMap.kTranslatePidConstants != null) {
-            builder.addDoubleProperty(
-                    "Translate P",
-                    () -> AutoMap.kTranslatePidConstants.kP,
-                    (double newP) -> AutoMap.kTranslatePidConstants = new PIDConstants(newP,
-                            AutoMap.kTranslatePidConstants.kI,
-                            AutoMap.kTranslatePidConstants.kD));
-
-            builder.addDoubleProperty(
-                    "Translate I",
-                    () -> AutoMap.kTranslatePidConstants.kI,
-                    (double newI) -> AutoMap.kTranslatePidConstants = new PIDConstants(
-                            AutoMap.kTranslatePidConstants.kP, newI,
-                            AutoMap.kTranslatePidConstants.kD));
-
-            builder.addDoubleProperty(
-                    "Translate D",
-                    () -> AutoMap.kTranslatePidConstants.kD,
-                    (double newD) -> AutoMap.kTranslatePidConstants = new PIDConstants(
-                            AutoMap.kTranslatePidConstants.kP,
-                            AutoMap.kTranslatePidConstants.kI,
-                            newD));
-        }
-
-        if (AutoMap.kRotatePidConstants != null) {
-            builder.addDoubleProperty(
-                    "Rotate P",
-                    () -> AutoMap.kRotatePidConstants.kP,
-                    (double newP) -> AutoMap.kRotatePidConstants = new PIDConstants(newP,
-                            AutoMap.kRotatePidConstants.kI,
-                            AutoMap.kRotatePidConstants.kD));
-
-            builder.addDoubleProperty(
-                    "Rotate I",
-                    () -> AutoMap.kRotatePidConstants.kI,
-                    (double newI) -> AutoMap.kRotatePidConstants = new PIDConstants(
-                            AutoMap.kRotatePidConstants.kP, newI,
-                            AutoMap.kRotatePidConstants.kD));
-
-            builder.addDoubleProperty(
-                    "Rotate D",
-                    () -> AutoMap.kRotatePidConstants.kD,
-                    (double newD) -> AutoMap.kRotatePidConstants = new PIDConstants(
-                            AutoMap.kRotatePidConstants.kP,
-                            AutoMap.kRotatePidConstants.kI,
-                            newD));
-        }
-
     }
 }

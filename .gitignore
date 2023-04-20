@@ -20,10 +20,6 @@
 *.dylib
 *.dll
 
-# Fortran module files
-*.mod
-*.smod
-
 # Compiled Static libraries
 *.lai
 *.la
@@ -160,3 +156,7 @@ bin/
 
 # Simulation GUI and other tools window save file
 *-window.json
+
+# # Arduino build files
+sidecar/build/*
+*.wpilog

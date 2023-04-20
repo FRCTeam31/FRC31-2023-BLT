@@ -1,17 +1,20 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.ArduinoSidecar.LEDMode;
 
 public class Robot extends TimedRobot {
-    private RobotContainer mRobotContainer;
+    private RobotContainer _robotContainer;
+    private Command _autoCommand;
+    private UsbCamera cam;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -22,15 +25,33 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         DataLogManager.start();
         DriverStation.startDataLog(DataLogManager.getLog());
-        mRobotContainer = new RobotContainer();
-        mRobotContainer.configureBindings();
+
+        // Create the robot's objects and subsystems and map user controls
+        _robotContainer = new RobotContainer();
+        _robotContainer.configureBindings();
+        cam = CameraServer.startAutomaticCapture();
+        cam.setVideoMode(PixelFormat.kMJPEG, 640, 480, 30);
+
+        _robotContainer.setLEDMode(LEDMode.DISABLED_SCAN_UP_RED);
+    }
+
+    @Override
+    public void disabledInit() {
+        if (DriverStation.getAlliance() == Alliance.Blue)
+            _robotContainer.setLEDMode(LEDMode.DISABLED_SCAN_UP_BLUE);
+        else
+            _robotContainer.setLEDMode(LEDMode.DISABLED_SCAN_UP_RED);
     }
 
     @Override
     public void autonomousInit() {
-        // var mAutoCommand = mRobotContainer.getAutonomousCommand();
-        // DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain);
-        // mAutoCommand.schedule();
+        if (DriverStation.getAlliance() == Alliance.Blue)
+            _robotContainer.setLEDMode(LEDMode.AUTO_BLUE);
+        else
+            _robotContainer.setLEDMode(LEDMode.AUTO_RED);
+
+        _autoCommand = _robotContainer.getAutonomousCommand();
+        _autoCommand.schedule();
     }
 
     /**
@@ -50,12 +71,13 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        // DriveCommands.resetGyroComamand(mRobotContainer.mDrivetrain).schedule();
-    }
+        if (_autoCommand != null && !_autoCommand.isFinished())
+            _autoCommand.end(true);
 
-    /** This function is called periodically during operator control. */
-    @Override
-    public void teleopPeriodic() {
-
+        // _robotContainer.Drivetrain.resetGyro();
+        if (DriverStation.getAlliance() == Alliance.Blue)
+            _robotContainer.setLEDMode(LEDMode.TELEOP_BLUE);
+        else
+            _robotContainer.setLEDMode(LEDMode.TELEOP_RED);
     }
 }

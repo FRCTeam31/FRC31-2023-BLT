@@ -3,59 +3,60 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import prime.movers.LazyCANSparkMax;
-import prime.movers.LazySolenoid;
-import frc.robot.config.WristMap;
 
 public class Wrist extends SubsystemBase {
-    private LazyCANSparkMax wrist1;
-    private LazySolenoid mOutActuator;
-    private LazySolenoid mInActuator;
-    private Compressor compressor;
+    /**
+     * Contains the constants for the wrist.
+     */
+    public static class WristMap {
+        public static final int kWrist1CanId = 22;
+        public static final int kWrist2CanId = 24;
+        public static final double kIntakeSpeed = 0.6;
+        public static final double kEjectSpeed = 1;
+        public static final double kTriggerDeadband = 0.1;
+        public static final double kEjectCubeTime = 1;
+        public static final double kIntakeCubeTime = 1;
+    }
 
+    public LazyCANSparkMax wristLeader;
+    public LazyCANSparkMax wristFollower;
+    private double _lastSpeed = -10;
+
+    /**
+     * Wrist.
+     */
     public Wrist() {
-        wrist1 = new LazyCANSparkMax(WristMap.kWrist1Id, MotorType.kBrushless);
-        wrist1.restoreFactoryDefaults();
-        wrist1.setOpenLoopRampRate(0.5);
-
-        compressor = new Compressor(PneumaticsModuleType.CTREPCM);
-        compressor.enableDigital();
-        mOutActuator = new LazySolenoid(PneumaticsModuleType.CTREPCM, WristMap.kWristActuatorId);
-        mInActuator = new LazySolenoid(PneumaticsModuleType.CTREPCM, WristMap.kWristActuatorId + 1);
-        setWrist(false);
+        setName("Wrist");
+        wristLeader = new LazyCANSparkMax(WristMap.kWrist1CanId, MotorType.kBrushless);
+        wristFollower = new LazyCANSparkMax(WristMap.kWrist2CanId, MotorType.kBrushless);
     }
 
-    public void stopIntake() {
-        wrist1.stopMotor();
-
-    }
-
-    public void toggleWrist() {
-        mOutActuator.toggle();
-        mInActuator.toggle();
-    }
-
-    public void setWrist(boolean out) {
-        mOutActuator.set(out);
-        mInActuator.set(!out);
-    }
-
-    public boolean getWristOut() {
-        return mOutActuator.get();
-    }
-
+    /**
+     * Sets the duty cycle of the motors in raw axis magnitude [-1,1]
+     */
     public void runMotors(double speed) {
-        wrist1.set(speed);
+        _lastSpeed = speed;
+        wristLeader.set(speed);
+        wristFollower.follow(wristLeader);
     }
 
+    /**
+     * Stops the motors (crazy)
+     */
+    public void stopMotors() {
+        _lastSpeed = 0;
+        wristLeader.stopMotor();
+        wristFollower.stopMotor();
+    }
+
+    /**
+     * Smart Dashboard so smart. and Dashboard.
+     */
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        builder.addBooleanProperty("Actuated", this::getWristOut, this::setWrist);
-        builder.addBooleanProperty("Pressure switch", compressor::getPressureSwitchValue, null);
+        builder.addDoubleProperty("Output %", () -> _lastSpeed, null);
     }
-
 }

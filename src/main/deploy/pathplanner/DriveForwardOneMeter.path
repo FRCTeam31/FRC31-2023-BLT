@@ -2,51 +2,58 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 4.0,
-        "y": 3.0
+        "x": 1.8861988601170188,
+        "y": 4.443404676283037
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.0,
-        "y": 3.0
+        "x": 2.7662410360165093,
+        "y": 4.443404676283037
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "names": [
+          "setHighGoal",
+          "extendForearm",
+          "waitOneSecond",
+          "ejectCube"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 0.5
       }
     },
     {
       "anchorPoint": {
-        "x": 5.0,
-        "y": 3.0
+        "x": 2.89,
+        "y": 4.443404676283037
       },
       "prevControl": {
-        "x": 4.0,
-        "y": 3.0
+        "x": 1.645531534147421,
+        "y": 4.443404676283037
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
+        "names": [
+          "setGround"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
         "waitTime": 0
       }
     }
   ],
   "maxVelocity": 0.5,
-  "maxAcceleration": 0.05,
+  "maxAcceleration": 0.5,
   "isReversed": null,
   "markers": []
 }
