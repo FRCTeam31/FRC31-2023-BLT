@@ -17,13 +17,25 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.SwerveModule;
 
 public class DriveCommands {
+    public static Boolean isSnapToPIDControllerEnabled = false;
+
     public static Command defaultDriveCommand(Drivetrain drivetrain, DoubleSupplier ySupplier, DoubleSupplier xSupplier,
             DoubleSupplier rotationSupplier,
             SwerveModule[] swerveModules, boolean fieldRelative) {
         return Commands.run(() -> {
+
+            var calculatedRotationalCorrection = MathUtil.clamp(drivetrain.snapToRotationControllersGetOutput(), -1.2,
+                    1.2);
+
             var strafeX = MathUtil.applyDeadband(xSupplier.getAsDouble(), 0.15);
             var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.15);
             var rotation = MathUtil.applyDeadband(rotationSupplier.getAsDouble(), 0.1);
+
+            if (isSnapToPIDControllerEnabled == true) {
+
+                rotation += drivetrain.snapToRotationControllersGetOutput();
+
+            }
 
             strafeX *= DriveMap.kDriveMaxSpeedMetersPerSecond;
             forwardY *= DriveMap.kDriveMaxSpeedMetersPerSecond;
@@ -74,5 +86,13 @@ public class DriveCommands {
 
     public static Command SetWheelAnglesCommand(Drivetrain drivetrain, Rotation2d angle) {
         return Commands.runOnce(() -> drivetrain.setWheelAngles(angle));
+    }
+
+    public static Command testSnapToGyroCommand(Drivetrain drivetrain) {
+
+        return Commands.run(() -> {
+
+        });
+
     }
 }
