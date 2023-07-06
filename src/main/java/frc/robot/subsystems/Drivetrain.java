@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -32,6 +34,10 @@ public class Drivetrain extends SubsystemBase {
     // Odometry
     SwerveDriveOdometry mOdometry;
     Field2d mField;
+
+    // Snap to Gyro Angle PID
+
+    public PIDController _snapToRotationController = new PIDController(DriveMap.kSnapToGyroAngle_kP, 0, 0, 0.02);
 
     public Drivetrain() {
         setName("Drivetrain");
@@ -261,4 +267,34 @@ public class Drivetrain extends SubsystemBase {
         var robotPose = mOdometry.update(gyroAngle, getModulePositions());
         mField.setRobotPose(robotPose);
     }
+
+    /**
+     * Sets the setpoint of the PID controller to the desired angle
+     * 
+     * @param angle desired angle
+     */
+    public void snapToRotationControllerSetSetpoint(double angle) {
+        _snapToRotationController.setSetpoint(angle);
+
+    }
+
+    public double snapToRotationControllersGetOutput() {
+
+        return _snapToRotationController.calculate(Gyro.getRotation2d().getDegrees());
+
+    }
+
+    /**
+     * Enables the PID Controller
+     */
+    public void resetSnapToRotationController() {
+        _snapToRotationController.reset();
+    }
+
+    public Boolean disableSnapToRotationController() {
+
+        return false;
+
+    }
+
 }
