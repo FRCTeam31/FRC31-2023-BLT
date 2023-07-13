@@ -33,7 +33,10 @@ public class DriveCommands {
 
             if (isSnapToPIDControllerEnabled == true) {
 
-                rotation += drivetrain.snapToRotationControllersGetOutput();
+                rotation += calculatedRotationalCorrection;
+                if (drivetrain.isAtSnapToAngleSetpoint()) {
+                    isSnapToPIDControllerEnabled = false;
+                }
 
             }
 
@@ -88,11 +91,12 @@ public class DriveCommands {
         return Commands.runOnce(() -> drivetrain.setWheelAngles(angle));
     }
 
-    public static Command testSnapToGyroCommand(Drivetrain drivetrain) {
+    public static Command driveWithSnapToAngleCommand(Drivetrain drivetrain, double angle) {
+        return Commands.runOnce(() -> {
+            isSnapToPIDControllerEnabled = true;
+            drivetrain.snapToRotationControllerSetSetpoint(angle);
 
-        return Commands.run(() -> {
-
-        });
-
+        }, drivetrain);
     }
+
 }

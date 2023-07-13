@@ -36,12 +36,6 @@ public class DriveMap {
     public static PidConstants kSteeringPidConstants = new PidConstants(0.01, 0, 1e-5);
     public static double kSteeringGearRatio = 12.8 / 1;
 
-    // Snap To Gyro Angle PID Constants
-
-    public static final double kSnapToGyroAngle_kP = 0;
-    public static final double kSnapToGyroAngle_kI = 0;
-    public static final double kSnapToGyroAngle_kD = 0;
-
     // Pigeon
     public static final int kPigeonId = 10;
     public static final String kCANivoreBusName = "Team31CANivore";
@@ -85,4 +79,10 @@ public class DriveMap {
     // per second in meters per second
     public static final double kDriveMaxAngularSpeed = Math.PI;
     public static final double kLowGearCoefficient = 0.15;
+
+    // Snap To Gyro Angle PID Constants
+
+    public static final double kSnapToGyroAngle_kP = kDriveMaxAngularSpeed / 2 / 180;
+    public static final double kSnapToGyroAngle_kI = 0;
+    public static final double kSnapToGyroAngle_kD = 0;
 }

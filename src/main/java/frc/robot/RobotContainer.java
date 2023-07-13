@@ -131,6 +131,16 @@ public class RobotContainer implements Sendable {
         // Forearm commands
         OperatorController.button(ControlsMap.RB).onTrue(ForearmCommands.extendForearm(Forearm));
         OperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.retractForearm(Forearm));
+
+        // Snap To Commands
+
+        DriverController.pov(ControlsMap.up).onTrue(DriveCommands.driveWithSnapToAngleCommand(Drivetrain, 0));
+        DriverController.pov(ControlsMap.right).onTrue(DriveCommands.driveWithSnapToAngleCommand(Drivetrain, 90));
+
+        DriverController.pov(ControlsMap.down).onTrue(DriveCommands.driveWithSnapToAngleCommand(Drivetrain, 180));
+
+        DriverController.pov(ControlsMap.left).onTrue(DriveCommands.driveWithSnapToAngleCommand(Drivetrain, 270));
+
     }
 
     public Command getAutonomousCommand() {

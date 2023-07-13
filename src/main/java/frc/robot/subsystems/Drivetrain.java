@@ -47,6 +47,8 @@ public class Drivetrain extends SubsystemBase {
 
         mField = new Field2d();
         SmartDashboard.putData(getName() + "/Field", mField);
+        _snapToRotationController.enableContinuousInput(-180, 180);
+
     }
 
     /**
@@ -295,6 +297,18 @@ public class Drivetrain extends SubsystemBase {
 
         return false;
 
+    }
+
+    public Boolean enableSnapToRotationController() {
+        return true;
+    }
+
+    public boolean isAtSnapToAngleSetpoint() {
+        if (_snapToRotationController.atSetpoint()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
