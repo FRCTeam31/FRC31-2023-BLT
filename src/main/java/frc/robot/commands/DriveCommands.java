@@ -31,14 +31,14 @@ public class DriveCommands {
             var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.15);
             var rotation = MathUtil.applyDeadband(rotationSupplier.getAsDouble(), 0.1);
 
-            if (isSnapToPIDControllerEnabled == true) {
+            // if (isSnapToPIDControllerEnabled == true) {
 
-                rotation += calculatedRotationalCorrection;
-                if (drivetrain.isAtSnapToAngleSetpoint()) {
-                    isSnapToPIDControllerEnabled = false;
-                }
+            // rotation += calculatedRotationalCorrection;
+            // if (drivetrain.isAtSnapToAngleSetpoint()) {
+            // isSnapToPIDControllerEnabled = false;
+            // }
 
-            }
+            // }
 
             strafeX *= DriveMap.kDriveMaxSpeedMetersPerSecond;
             forwardY *= DriveMap.kDriveMaxSpeedMetersPerSecond;
@@ -95,6 +95,13 @@ public class DriveCommands {
         return Commands.runOnce(() -> {
             isSnapToPIDControllerEnabled = true;
             drivetrain.snapToRotationControllerSetSetpoint(angle);
+
+        }, drivetrain);
+    }
+
+    public static Command disableSnapToAngleCommand(Drivetrain drivetrain) {
+        return Commands.runOnce(() -> {
+            isSnapToPIDControllerEnabled = false;
 
         }, drivetrain);
     }
