@@ -24,8 +24,9 @@ public class DriveCommands {
             SwerveModule[] swerveModules, boolean fieldRelative) {
         return Commands.run(() -> {
 
-            var calculatedRotationalCorrection = MathUtil.clamp(drivetrain.snapToRotationControllersGetOutput(), -1.2,
-                    1.2);
+            // var calculatedRotationalCorrection =
+            // MathUtil.clamp(drivetrain.snapToRotationControllersGetOutput(), -1.2,
+            // 1.2);
 
             var strafeX = MathUtil.applyDeadband(xSupplier.getAsDouble(), 0.15);
             var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.15);
@@ -91,19 +92,20 @@ public class DriveCommands {
         return Commands.runOnce(() -> drivetrain.setWheelAngles(angle));
     }
 
-    public static Command driveWithSnapToAngleCommand(Drivetrain drivetrain, double angle) {
-        return Commands.runOnce(() -> {
-            isSnapToPIDControllerEnabled = true;
-            drivetrain.snapToRotationControllerSetSetpoint(angle);
+    // public static Command driveWithSnapToAngleCommand(Drivetrain drivetrain,
+    // double angle) {
+    // return Commands.runOnce(() -> {
+    // isSnapToPIDControllerEnabled = true;
+    // drivetrain.snapToRotationControllerSetSetpoint(angle);
 
-        }, drivetrain);
-    }
+    // }, drivetrain);
+    // }
 
-    public static Command disableSnapToAngleCommand(Drivetrain drivetrain) {
-        return Commands.runOnce(() -> {
-            isSnapToPIDControllerEnabled = false;
+    // public static Command disableSnapToAngleCommand(Drivetrain drivetrain) {
+    // return Commands.runOnce(() -> {
+    // isSnapToPIDControllerEnabled = false;
 
-        }, drivetrain);
-    }
+    // }, drivetrain);
+    // }
 
 }

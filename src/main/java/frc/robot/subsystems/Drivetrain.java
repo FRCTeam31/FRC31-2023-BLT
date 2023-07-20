@@ -37,7 +37,8 @@ public class Drivetrain extends SubsystemBase {
 
     // Snap to Gyro Angle PID
 
-    public PIDController _snapToRotationController = new PIDController(DriveMap.kSnapToGyroAngle_kP, 0, 0, 0.02);
+    // public PIDController _snapToRotationController = new
+    // PIDController(DriveMap.kSnapToGyroAngle_kP, 0, 0, 0.02);
 
     public Drivetrain() {
         setName("Drivetrain");
@@ -47,7 +48,7 @@ public class Drivetrain extends SubsystemBase {
 
         mField = new Field2d();
         SmartDashboard.putData(getName() + "/Field", mField);
-        _snapToRotationController.enableContinuousInput(-180, 180);
+        // _snapToRotationController.enableContinuousInput(-180, 180);
 
     }
 
@@ -270,45 +271,46 @@ public class Drivetrain extends SubsystemBase {
         mField.setRobotPose(robotPose);
     }
 
-    /**
-     * Sets the setpoint of the PID controller to the desired angle
-     * 
-     * @param angle desired angle
-     */
-    public void snapToRotationControllerSetSetpoint(double angle) {
-        _snapToRotationController.setSetpoint(angle);
+    // /**
+    // * Sets the setpoint of the PID controller to the desired angle
+    // *
+    // * @param angle desired angle
+    // */
+    // public void snapToRotationControllerSetSetpoint(double angle) {
+    // _snapToRotationController.setSetpoint(angle);
 
-    }
+    // }
 
-    public double snapToRotationControllersGetOutput() {
+    // public double snapToRotationControllersGetOutput() {
 
-        return _snapToRotationController.calculate(Gyro.getRotation2d().getDegrees());
+    // return
+    // _snapToRotationController.calculate(Gyro.getRotation2d().getDegrees());
 
-    }
+    // }
 
-    /**
-     * Enables the PID Controller
-     */
-    public void resetSnapToRotationController() {
-        _snapToRotationController.reset();
-    }
+    // /**
+    // * Enables the PID Controller
+    // */
+    // public void resetSnapToRotationController() {
+    // _snapToRotationController.reset();
+    // }
 
-    public Boolean disableSnapToRotationController() {
+    // public Boolean disableSnapToRotationController() {
 
-        return false;
+    // return false;
 
-    }
+    // }
 
-    public Boolean enableSnapToRotationController() {
-        return true;
-    }
+    // public Boolean enableSnapToRotationController() {
+    // return true;
+    // }
 
-    public boolean isAtSnapToAngleSetpoint() {
-        if (_snapToRotationController.atSetpoint()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    // public boolean isAtSnapToAngleSetpoint() {
+    // if (_snapToRotationController.atSetpoint()) {
+    // return true;
+    // } else {
+    // return false;
+    // }
+    // }
 
 }
