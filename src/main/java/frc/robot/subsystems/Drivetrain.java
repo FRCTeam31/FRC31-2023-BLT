@@ -25,6 +25,7 @@ public class Drivetrain extends SubsystemBase {
             DriveMap.kRearRightLocation,
             DriveMap.kFrontRightLocation);
     private boolean _inHighGear = true;
+    private double _lastSnapToCalculatedPIDOutput;
 
     // Swerve Modules, in CCW order from FL to FR
     SwerveModule mFrontLeftModule, mRearLeftModule, mRearRightModule, mFrontRightModule;
@@ -37,19 +38,21 @@ public class Drivetrain extends SubsystemBase {
 
     // Snap to Gyro Angle PID
 
-    // public PIDController _snapToRotationController = new
-    // PIDController(DriveMap.kSnapToGyroAngle_kP, 0, 0, 0.02);
+    public PIDController _snapToRotationController = new PIDController(DriveMap.kSnapToGyroAngle_kP, 0, 0, 0.02);
 
     public Drivetrain() {
         setName("Drivetrain");
         Gyro = new WPI_Pigeon2(DriveMap.kPigeonId, DriveMap.kCANivoreBusName);
 
+        // Create swerve modules and ODO
         createSwerveModulesAndOdometry();
 
+        // Configure field
         mField = new Field2d();
         SmartDashboard.putData(getName() + "/Field", mField);
-        // _snapToRotationController.enableContinuousInput(-180, 180);
 
+        // Configure snap-to PID
+        _snapToRotationController.enableContinuousInput(-180, 180);
     }
 
     /**
@@ -135,6 +138,9 @@ public class Drivetrain extends SubsystemBase {
             desiredChassisSpeeds = new ChassisSpeeds(strafeXMetersPerSecond, forwardMetersPerSecond,
                     rotationRadiansPerSecond);
         }
+
+        _lastSnapToCalculatedPIDOutput = _snapToRotationController.calculate(Gyro.getRotation2d().getRadians(),
+                desiredChassisSpeeds.omegaRadiansPerSecond);
 
         drive(desiredChassisSpeeds);
     }
@@ -269,48 +275,8 @@ public class Drivetrain extends SubsystemBase {
         var gyroAngle = Gyro.getRotation2d();
         var robotPose = mOdometry.update(gyroAngle, getModulePositions());
         mField.setRobotPose(robotPose);
+
+        SmartDashboard.putNumber("Drive/SnapTo/PID error", _snapToRotationController.getPositionError());
+        SmartDashboard.putNumber("Drive/SnapTo/PID last output", _lastSnapToCalculatedPIDOutput);
     }
-
-    // /**
-    // * Sets the setpoint of the PID controller to the desired angle
-    // *
-    // * @param angle desired angle
-    // */
-    // public void snapToRotationControllerSetSetpoint(double angle) {
-    // _snapToRotationController.setSetpoint(angle);
-
-    // }
-
-    // public double snapToRotationControllersGetOutput() {
-
-    // return
-    // _snapToRotationController.calculate(Gyro.getRotation2d().getDegrees());
-
-    // }
-
-    // /**
-    // * Enables the PID Controller
-    // */
-    // public void resetSnapToRotationController() {
-    // _snapToRotationController.reset();
-    // }
-
-    // public Boolean disableSnapToRotationController() {
-
-    // return false;
-
-    // }
-
-    // public Boolean enableSnapToRotationController() {
-    // return true;
-    // }
-
-    // public boolean isAtSnapToAngleSetpoint() {
-    // if (_snapToRotationController.atSetpoint()) {
-    // return true;
-    // } else {
-    // return false;
-    // }
-    // }
-
 }

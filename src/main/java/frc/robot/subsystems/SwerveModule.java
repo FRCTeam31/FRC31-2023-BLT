@@ -137,9 +137,8 @@ public class SwerveModule extends SubsystemBase {
         if (!inHighGear)
             speedMetersPerSecond *= DriveMap.kLowGearCoefficient;
 
-        // mDriveMotor.set(ControlMode.Velocity,
-        // CTREConverter.MPSToFalcon(speedMetersPerSecond,
-        // DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
+        mDriveMotor.set(ControlMode.Velocity, CTREConverter.MPSToFalcon(speedMetersPerSecond,
+                DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
     }
 
     /**
@@ -205,16 +204,6 @@ public class SwerveModule extends SubsystemBase {
     public double getEncoderAbsolutePosition() {
         return mEncoder.getAbsolutePosition();
     }
-
-    /**
-     * Uses the output of the PIDSubsystem's controller to set the output of the
-     * steering
-     */
-    // @Override
-    // protected void useOutput(double output, double setpoint) {
-    // _lastOutput = output;
-    // mSteeringMotor.set(ControlMode.PercentOutput, MathUtil.clamp(output, -1, 1));
-    // }
 
     /**
      * Gets the PIDSubsystem measurement term (absolute degrees)
