@@ -19,14 +19,18 @@ import frc.robot.config.DriveMap;
 import prime.utilities.CTREConverter;
 import prime.movers.LazyWPITalonFX;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class SwerveModule extends PIDSubsystem {
+public class SwerveModule extends SubsystemBase {
+    private int id;
+    private double _lastOutput;
     private LazyWPITalonFX mSteeringMotor;
     private LazyWPITalonFX mDriveMotor;
     private WPI_CANCoder mEncoder;
     private int mEncoderOffset;
     private SupplyCurrentLimitConfiguration mSupplyCurrentConfig = new SupplyCurrentLimitConfiguration(true, 50, 80,
             0.15);
+    private PIDController _steeringPidController;
 
     public SwerveModule(
             int driveMotorId,
@@ -34,8 +38,9 @@ public class SwerveModule extends PIDSubsystem {
             int encoderId,
             int encoderAbsoluteOffset,
             boolean driveInverted) {
-        super(new PIDController(DriveMap.kSteeringPidConstants.kP, DriveMap.kSteeringPidConstants.kI,
-                DriveMap.kSteeringPidConstants.kD_min));
+        _steeringPidController = new PIDController(DriveMap.kSteeringPidConstants.kP, DriveMap.kSteeringPidConstants.kI,
+                DriveMap.kSteeringPidConstants.kD_min, 0.020);
+        id = driveMotorId;
         mEncoderOffset = encoderAbsoluteOffset;
 
         // Set up the steering motor
@@ -51,9 +56,8 @@ public class SwerveModule extends PIDSubsystem {
         mEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
         // Create a PID controller to calculate steering motor output
-        getController().enableContinuousInput(-180, 180);
-        getController().setTolerance(1);
-        enable();
+        _steeringPidController.enableContinuousInput(-180, 180);
+        _steeringPidController.setTolerance(1);
     }
 
     private void setupSteeringMotor(int steeringId) {
@@ -91,11 +95,14 @@ public class SwerveModule extends PIDSubsystem {
      */
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Heading", getEncoderAbsolutePosition());
-        SmartDashboard.putNumber("Drive vel", getVelocityMetersPerSecond());
-        SmartDashboard.putNumber("Drive vel =>", mDriveMotor.getClosedLoopTarget(0));
-        SmartDashboard.putNumber("Drive output V", mDriveMotor.getMotorOutputVoltage());
-        SmartDashboard.putNumber("Drive output %", mDriveMotor.getMotorOutputPercent());
+        SmartDashboard.putNumber("Swerve/" + id + "/Heading", getOffsetAbsoluteRotation2d().getDegrees());
+        SmartDashboard.putNumber("Swerve/" + id + "/Drive vel", getVelocityMetersPerSecond());
+        // SmartDashboard.putNumber("Drive vel =>", mDriveMotor.getClosedLoopTarget(0));
+        SmartDashboard.putNumber("Swerve/" + id + "/Drive output V", mDriveMotor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Swerve/" + id + "/Drive output %", mDriveMotor.getMotorOutputPercent());
+        SmartDashboard.putNumber("Swerve/" + id + "/Steering output", mSteeringMotor.get());
+        SmartDashboard.putNumber("Swerve/" + id + "/PID error", _steeringPidController.getPositionError());
+        SmartDashboard.putNumber("Swerve/" + id + "/PID last output", _lastOutput);
     }
 
     /**
@@ -116,7 +123,8 @@ public class SwerveModule extends PIDSubsystem {
      * @param angle the new angle for the module to steer to
      */
     public void setDesiredAngle(Rotation2d angle) {
-        getController().setSetpoint(angle.getDegrees());
+        var newOutput = _steeringPidController.calculate(getMeasurement(), angle.getDegrees());
+        mSteeringMotor.set(ControlMode.PercentOutput, MathUtil.clamp(newOutput, -1, 1));
     }
 
     /**
@@ -129,8 +137,9 @@ public class SwerveModule extends PIDSubsystem {
         if (!inHighGear)
             speedMetersPerSecond *= DriveMap.kLowGearCoefficient;
 
-        mDriveMotor.set(ControlMode.Velocity, CTREConverter.MPSToFalcon(speedMetersPerSecond,
-                DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
+        // mDriveMotor.set(ControlMode.Velocity,
+        // CTREConverter.MPSToFalcon(speedMetersPerSecond,
+        // DriveMap.kDriveWheelCircumference, DriveMap.kDriveGearRatio));
     }
 
     /**
@@ -201,15 +210,15 @@ public class SwerveModule extends PIDSubsystem {
      * Uses the output of the PIDSubsystem's controller to set the output of the
      * steering
      */
-    @Override
-    protected void useOutput(double output, double setpoint) {
-        mSteeringMotor.set(ControlMode.PercentOutput, MathUtil.clamp(output, -1, 1));
-    }
+    // @Override
+    // protected void useOutput(double output, double setpoint) {
+    // _lastOutput = output;
+    // mSteeringMotor.set(ControlMode.PercentOutput, MathUtil.clamp(output, -1, 1));
+    // }
 
     /**
      * Gets the PIDSubsystem measurement term (absolute degrees)
      */
-    @Override
     protected double getMeasurement() {
         return getOffsetAbsoluteRotation2d().getDegrees();
     }
