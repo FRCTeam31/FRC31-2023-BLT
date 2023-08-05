@@ -9,6 +9,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -37,13 +38,14 @@ public class DriveCommands {
             // rotation += calculatedRotationalCorrection;
             // if (drivetrain.isAtSnapToAngleSetpoint()) {
             // isSnapToPIDControllerEnabled = false;
+
             // }
 
             // }
 
             strafeX *= DriveMap.kDriveMaxSpeedMetersPerSecond;
             forwardY *= DriveMap.kDriveMaxSpeedMetersPerSecond;
-            rotation *= DriveMap.kDriveMaxAngularSpeed;
+            rotation *= DriveMap.kDriveMaxAngularSpeed * 6;
 
             drivetrain.driveFromCartesianSpeeds(-strafeX, forwardY, rotation, fieldRelative);
         }, drivetrain);

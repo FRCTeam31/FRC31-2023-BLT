@@ -139,6 +139,8 @@ public class Drivetrain extends SubsystemBase {
                     rotationRadiansPerSecond);
         }
 
+        SmartDashboard.putNumber("Drive/Drivetrain/Rotation", rotationRadiansPerSecond);
+
         _lastSnapToCalculatedPIDOutput = _snapToRotationController.calculate(Gyro.getRotation2d().getRadians(),
                 desiredChassisSpeeds.omegaRadiansPerSecond);
 
