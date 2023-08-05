@@ -76,7 +76,7 @@ public class SwerveModule extends SubsystemBase {
         mDriveMotor.configFactoryDefault();
         mDriveMotor.clearStickyFaults();
         TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
-        driveMotorConfig.slot0.kP = 0.48;
+        driveMotorConfig.slot0.kP = 0.15;
         driveMotorConfig.slot0.kF = 0.01;
 
         driveMotorConfig.slot0.allowableClosedloopError = 250;
