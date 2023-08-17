@@ -154,7 +154,7 @@ public class Drivetrain extends SubsystemBase {
         // _snapToRotationController.calculate(Gyro.getRotation2d().getRadians(),
         // desiredChassisSpeeds.omegaRadiansPerSecond);
 
-        _lastSnapToCalculatedPIDOutput = _snapToRotationController.calculate(Gyro.getRotation2d().getRadians());
+        _lastSnapToCalculatedPIDOutput = -_snapToRotationController.calculate(Gyro.getRotation2d().getRadians());
         if (snapToGyroEnabled) {
             desiredChassisSpeeds.omegaRadiansPerSecond = _lastSnapToCalculatedPIDOutput;
         }
@@ -295,6 +295,8 @@ public class Drivetrain extends SubsystemBase {
 
     public void toggleSnapToGyroControl() {
         snapToGyroEnabled = !snapToGyroEnabled;
+        _snapToRotationController.setSetpoint(0);
+
     }
 
     /**
