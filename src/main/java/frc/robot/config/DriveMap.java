@@ -82,7 +82,7 @@ public class DriveMap {
 
     // Snap To Gyro Angle PID Constants
 
-    public static final double kSnapToGyroAngle_kP = kDriveMaxAngularSpeed / 2 / 180;
+    public static final double kSnapToGyroAngle_kP = kDriveMaxAngularSpeed / 2;
     public static final double kSnapToGyroAngle_kI = 0;
     public static final double kSnapToGyroAngle_kD = 0;
 }

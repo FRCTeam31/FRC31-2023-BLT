@@ -122,7 +122,7 @@ public class RobotContainer implements Sendable {
         DriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> Drivetrain.resetGyro(), Drivetrain));
         DriverController.button(ControlsMap.Y).onTrue(DriveCommands.toggleShifter(Drivetrain));
         // DriverController.button(ControlsMap.B).onTrue(DriveCommands.enableSnapToGyroControl(Drivetrain));
-        DriverController.button(ControlsMap.A).onTrue(DriveCommands.disableSnapToAngleCommand(Drivetrain));
+        DriverController.button(ControlsMap.A).onTrue(DriveCommands.toggleSnapToAngleCommand(Drivetrain));
 
         // Shoulder commands
         OperatorController.button(ControlsMap.Y).onTrue(ShoulderCommands.setHighGoal(Shoulder));

@@ -44,7 +44,11 @@ public class Drivetrain extends SubsystemBase {
 
     // Snap to Gyro Angle PID
 
-    public PIDController _snapToRotationController = new PIDController(DriveMap.kSnapToGyroAngle_kP, 0.5, 0, 0.02);
+    public PIDController _snapToRotationController = new PIDController(DriveMap.kSnapToGyroAngle_kP,
+            DriveMap.kSnapToGyroAngle_kI,
+            DriveMap.kSnapToGyroAngle_kD,
+            0.02);
+    public double _lastRotationRadians = 0;
 
     public Drivetrain() {
         setName("Drivetrain");
@@ -59,6 +63,7 @@ public class Drivetrain extends SubsystemBase {
 
         // Configure snap-to PID
         _snapToRotationController.enableContinuousInput(-180, 180);
+        _snapToRotationController.setSetpoint(0);
     }
 
     /**
@@ -137,10 +142,6 @@ public class Drivetrain extends SubsystemBase {
             boolean fieldRelative) {
         ChassisSpeeds desiredChassisSpeeds;
 
-        if (snapToGyroEnabled) {
-            rotationRadiansPerSecond = _lastSnapToCalculatedPIDOutput;
-        }
-
         if (fieldRelative) {
             desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(strafeXMetersPerSecond, forwardMetersPerSecond,
                     rotationRadiansPerSecond, Gyro.getRotation2d());
@@ -154,6 +155,10 @@ public class Drivetrain extends SubsystemBase {
         // desiredChassisSpeeds.omegaRadiansPerSecond);
 
         _lastSnapToCalculatedPIDOutput = _snapToRotationController.calculate(Gyro.getRotation2d().getRadians());
+        if (snapToGyroEnabled) {
+            desiredChassisSpeeds.omegaRadiansPerSecond = _lastSnapToCalculatedPIDOutput;
+        }
+        _lastRotationRadians = desiredChassisSpeeds.omegaRadiansPerSecond;
 
         drive(desiredChassisSpeeds);
     }
@@ -288,6 +293,10 @@ public class Drivetrain extends SubsystemBase {
         snapToGyroEnabled = false;
     }
 
+    public void toggleSnapToGyroControl() {
+        snapToGyroEnabled = !snapToGyroEnabled;
+    }
+
     /**
      * Updates odometry and any other periodic drivetrain events
      */
@@ -299,7 +308,7 @@ public class Drivetrain extends SubsystemBase {
         mField.setRobotPose(robotPose);
 
         SmartDashboard.putNumber("Drive/SnapTo/PID error", _snapToRotationController.getPositionError());
-        // SmartDashboard.putNumber("Drive/SnapTo/PID last output",
-        // _lastSnapToCalculatedPIDOutput);
+        SmartDashboard.putNumber("Drive/SnapTo/PID last output", _lastSnapToCalculatedPIDOutput);
+        SmartDashboard.putNumber("Drive/SnapTo/Rotation Radians", _lastRotationRadians);
     }
 }

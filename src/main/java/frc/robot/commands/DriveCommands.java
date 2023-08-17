@@ -30,7 +30,7 @@ public class DriveCommands {
 
             strafeX *= DriveMap.kDriveMaxSpeedMetersPerSecond;
             forwardY *= DriveMap.kDriveMaxSpeedMetersPerSecond;
-            rotation *= DriveMap.kDriveMaxAngularSpeed * 6;
+            rotation *= DriveMap.kDriveMaxAngularSpeed;
 
             drivetrain.driveFromCartesianSpeeds(-strafeX, forwardY, rotation, fieldRelative);
         }, drivetrain);
@@ -86,9 +86,9 @@ public class DriveCommands {
         }, drivetrain);
     }
 
-    public static Command disableSnapToAngleCommand(Drivetrain drivetrain) {
+    public static Command toggleSnapToAngleCommand(Drivetrain drivetrain) {
         return Commands.runOnce(() -> {
-            drivetrain.disableSnapToGyroControl();
+            drivetrain.toggleSnapToGyroControl();
         }, drivetrain);
     }
 
