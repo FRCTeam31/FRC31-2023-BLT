@@ -4,6 +4,7 @@ import org.ietf.jgss.GSSContext;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,7 +28,6 @@ public class Drivetrain extends SubsystemBase {
             DriveMap.kRearRightLocation,
             DriveMap.kFrontRightLocation);
     private boolean _inHighGear = true;
-    // private double _lastSnapToCalculatedPIDOutput;
 
     public double _lastSnapToCalculatedPIDOutput;
 
@@ -48,6 +48,7 @@ public class Drivetrain extends SubsystemBase {
             DriveMap.kSnapToGyroAngle_kI,
             DriveMap.kSnapToGyroAngle_kD,
             0.02);
+
     public double _lastRotationRadians = 0;
 
     public Drivetrain() {
@@ -62,7 +63,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putData(getName() + "/Field", mField);
 
         // Configure snap-to PID
-        _snapToRotationController.enableContinuousInput(-180, 180);
+        _snapToRotationController.enableContinuousInput(-Math.PI, Math.PI);
         _snapToRotationController.setSetpoint(0);
     }
 
@@ -154,7 +155,9 @@ public class Drivetrain extends SubsystemBase {
         // _snapToRotationController.calculate(Gyro.getRotation2d().getRadians(),
         // desiredChassisSpeeds.omegaRadiansPerSecond);
 
-        _lastSnapToCalculatedPIDOutput = -_snapToRotationController.calculate(Gyro.getRotation2d().getRadians());
+        _lastSnapToCalculatedPIDOutput = _snapToRotationController.calculate(MathUtil.angleModulus(
+                Gyro.getRotation2d().getRadians()));
+
         if (snapToGyroEnabled) {
             desiredChassisSpeeds.omegaRadiansPerSecond = _lastSnapToCalculatedPIDOutput;
         }
@@ -312,5 +315,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Drive/SnapTo/PID error", _snapToRotationController.getPositionError());
         SmartDashboard.putNumber("Drive/SnapTo/PID last output", _lastSnapToCalculatedPIDOutput);
         SmartDashboard.putNumber("Drive/SnapTo/Rotation Radians", _lastRotationRadians);
+        SmartDashboard.putNumber("Drive/SnapTo/ setpoint", _snapToRotationController.getSetpoint());
+        SmartDashboard.putBoolean("Drive/SnapTo/ enabled?", snapToGyroEnabled);
     }
 }
