@@ -155,12 +155,12 @@ public class Drivetrain extends SubsystemBase {
         // _snapToRotationController.calculate(Gyro.getRotation2d().getRadians(),
         // desiredChassisSpeeds.omegaRadiansPerSecond);
 
-        _lastSnapToCalculatedPIDOutput = _snapToRotationController.calculate(MathUtil.angleModulus(
-                Gyro.getRotation2d().getRadians()));
-
         if (snapToGyroEnabled) {
+            _lastSnapToCalculatedPIDOutput = _snapToRotationController.calculate(MathUtil.angleModulus(
+                    Gyro.getRotation2d().getRadians()));
             desiredChassisSpeeds.omegaRadiansPerSecond = _lastSnapToCalculatedPIDOutput;
         }
+
         _lastRotationRadians = desiredChassisSpeeds.omegaRadiansPerSecond;
 
         drive(desiredChassisSpeeds);
@@ -312,10 +312,13 @@ public class Drivetrain extends SubsystemBase {
         var robotPose = mOdometry.update(gyroAngle, getModulePositions());
         mField.setRobotPose(robotPose);
 
-        SmartDashboard.putNumber("Drive/SnapTo/PID error", _snapToRotationController.getPositionError());
+        SmartDashboard.putNumber("Drive/SnapTo/PID error",
+                Math.toDegrees(_snapToRotationController.getPositionError()));
         SmartDashboard.putNumber("Drive/SnapTo/PID last output", _lastSnapToCalculatedPIDOutput);
         SmartDashboard.putNumber("Drive/SnapTo/Rotation Radians", _lastRotationRadians);
-        SmartDashboard.putNumber("Drive/SnapTo/ setpoint", _snapToRotationController.getSetpoint());
+        SmartDashboard.putNumber("Drive/SnapTo/ setpoint", Math.toDegrees(_snapToRotationController.getSetpoint()));
         SmartDashboard.putBoolean("Drive/SnapTo/ enabled?", snapToGyroEnabled);
+        SmartDashboard.putNumber("Drive/SnapTo/Current GYro angle", Math.toDegrees(MathUtil.angleModulus(
+                Gyro.getRotation2d().getRadians())));
     }
 }

@@ -145,7 +145,7 @@ public class RobotContainer implements Sendable {
                 Math.toRadians(180)));
 
         DriverController.pov(ControlsMap.left).onTrue(DriveCommands.driveWithSnapToAngleCommand(Drivetrain,
-                Math.toRadians(270)));
+                Math.toRadians(-90)));
 
     }
 
