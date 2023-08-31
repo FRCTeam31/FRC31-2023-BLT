@@ -158,7 +158,7 @@ public class Drivetrain extends SubsystemBase {
         if (snapToGyroEnabled) {
             _lastSnapToCalculatedPIDOutput = _snapToRotationController.calculate(MathUtil.angleModulus(
                     Gyro.getRotation2d().getRadians()));
-            desiredChassisSpeeds.omegaRadiansPerSecond = _lastSnapToCalculatedPIDOutput;
+            desiredChassisSpeeds.omegaRadiansPerSecond = -1 * _lastSnapToCalculatedPIDOutput;
         }
 
         _lastRotationRadians = desiredChassisSpeeds.omegaRadiansPerSecond;
