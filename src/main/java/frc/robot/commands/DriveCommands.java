@@ -8,10 +8,12 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.config.DriveMap;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.SwerveModule;
 
@@ -20,21 +22,24 @@ public class DriveCommands {
             DoubleSupplier rotationSupplier,
             SwerveModule[] swerveModules, boolean fieldRelative) {
         return Commands.run(() -> {
-            var strafeX = MathUtil.applyDeadband(xSupplier.getAsDouble(), 0.1);
-            var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.1);
+            var strafeX = MathUtil.applyDeadband(xSupplier.getAsDouble(), 0.15);
+            var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.15);
             var rotation = MathUtil.applyDeadband(rotationSupplier.getAsDouble(), 0.1);
 
-            drivetrain.drive(-strafeX, forwardY, -rotation, fieldRelative);
+            strafeX *= DriveMap.kDriveMaxSpeedMetersPerSecond;
+            forwardY *= DriveMap.kDriveMaxSpeedMetersPerSecond;
+            rotation *= DriveMap.kDriveMaxAngularSpeed;
+
+            drivetrain.driveFromCartesianSpeeds(-strafeX, forwardY, rotation, fieldRelative);
         }, drivetrain);
     }
 
-    public static Command resetGyroComamand(Drivetrain driveTrain) {
+    public static Command resetGyroCommand(Drivetrain driveTrain) {
         return Commands.runOnce(() -> driveTrain.resetGyro(), driveTrain);
     }
 
-    public static Command resetOdometry(Object mDrivetrain) {
-        return Commands.runOnce(() -> ((Drivetrain) mDrivetrain).resetOdometry(new Pose2d()),
-                (Subsystem[]) mDrivetrain);
+    public static Command resetOdometry(Drivetrain driveTrain, Pose2d pose) {
+        return Commands.runOnce(() -> driveTrain.resetOdometry(pose), driveTrain);
     }
 
     public static Command toggleShifter(Drivetrain drive) {
@@ -62,5 +67,13 @@ public class DriveCommands {
                                             // them 0 will only use feedforwards.
                         drivetrain::drive,
                         drivetrain));
+    }
+
+    // public static Command homeSteeringForwardCommand(){
+    // retu
+    // }
+
+    public static Command SetWheelAnglesCommand(Drivetrain drivetrain, Rotation2d angle) {
+        return Commands.runOnce(() -> drivetrain.setWheelAngles(angle));
     }
 }
