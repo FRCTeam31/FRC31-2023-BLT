@@ -163,13 +163,7 @@ public class SwerveModule extends SubsystemBase {
         // Optimize the state to avoid turning wheels further than 90 degrees
         var encoderRotation = getOffsetAbsoluteRotation2d();
         desiredState = SwerveModuleState.optimize(desiredState, encoderRotation);
-
-        // Set the drive speed. Closed-loop in Teleop, open-loop all else
-        if (DriverStation.isTeleop())
-            setDesiredSpeed(desiredState.speedMetersPerSecond, inHighGear);
-        else
-            setDesiredSpeedOpenLoop(desiredState.speedMetersPerSecond);
-
+        setDesiredSpeed(desiredState.speedMetersPerSecond, inHighGear);
         setDesiredAngle(desiredState.angle);
     }
 

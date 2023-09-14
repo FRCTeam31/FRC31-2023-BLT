@@ -47,17 +47,31 @@ public class AutonomousCommands {
                 DriveMap.kDriveMaxSpeedMetersPerSecond, 2);
         ArrayList<PathPlannerTrajectory> fullAutoArrayList = new ArrayList<>(fullAuto);
 
-        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-                drivetrain::getPose,
+        // SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+        // drivetrain::getPose,
+        // drivetrain::resetOdometry,
+        // // Tune with instructions at:
+        // //
+        // //
+        // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/trajectories/holonomic.html#constructing-a-holonomic-drive-controller
+        // new PIDConstants(0, 0, 0),
+        // new PIDConstants(0, 0, 0),
+        // drivetrain::drive,
+        // getFullRobotEventMap(shoulder, forearm, wrist),
+        // drivetrain);
+
+        // return autoBuilder.fullAuto(fullAutoArrayList);
+
+        SwerveAutoBuilder autoBuilder2 = new SwerveAutoBuilder(drivetrain::getPose,
                 drivetrain::resetOdometry,
-                // Tune with instructions at:
-                // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/trajectories/holonomic.html#constructing-a-holonomic-drive-controller
+                drivetrain.Kinematics,
                 new PIDConstants(0, 0, 0),
                 new PIDConstants(0, 0, 0),
                 drivetrain::drive,
                 getFullRobotEventMap(shoulder, forearm, wrist),
+                true,
                 drivetrain);
 
-        return autoBuilder.fullAuto(fullAutoArrayList);
+        return autoBuilder2.fullAuto(fullAutoArrayList);
     }
 }
