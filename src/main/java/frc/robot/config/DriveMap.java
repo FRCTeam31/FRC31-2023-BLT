@@ -33,7 +33,7 @@ public class DriveMap {
     public static final String kDrivePidConstantsName = "SwerveModule drive PID Constants";
     public static PidConstants kDrivePidConstants = new PidConstants(0.016983, 1);
     public static final String kSteeringPidConstantsName = "SwerveModule steering PID Constants";
-    public static PidConstants kSteeringPidConstants = new PidConstants(0.01, 0, 1e-5);
+    public static PidConstants kSteeringPidConstants = new PidConstants(0.01, 0, 1.1e-5);
     public static double kSteeringGearRatio = 12.8 / 1;
 
     // Pigeon
@@ -79,4 +79,11 @@ public class DriveMap {
     // per second in meters per second
     public static final double kDriveMaxAngularSpeed = Math.PI;
     public static final double kLowGearCoefficient = 0.15;
+
+    // Snap To Gyro Angle PID Constants
+
+    // public static final double kSnapToGyroAngle_kP = kDriveMaxAngularSpeed / 4;
+    public static final double kSnapToGyroAngle_kP = 10;
+    public static final double kSnapToGyroAngle_kI = 0.1;
+    public static final double kSnapToGyroAngle_kD = 0;
 }

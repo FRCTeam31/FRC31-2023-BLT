@@ -9,6 +9,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -17,10 +18,12 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.SwerveModule;
 
 public class DriveCommands {
+
     public static Command defaultDriveCommand(Drivetrain drivetrain, DoubleSupplier ySupplier, DoubleSupplier xSupplier,
             DoubleSupplier rotationSupplier,
             SwerveModule[] swerveModules, boolean fieldRelative) {
         return Commands.run(() -> {
+
             var strafeX = MathUtil.applyDeadband(xSupplier.getAsDouble(), 0.15);
             var forwardY = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.15);
             var rotation = MathUtil.applyDeadband(rotationSupplier.getAsDouble(), 0.1);
@@ -75,4 +78,25 @@ public class DriveCommands {
     public static Command SetWheelAnglesCommand(Drivetrain drivetrain, Rotation2d angle) {
         return Commands.runOnce(() -> drivetrain.setWheelAngles(angle));
     }
+
+    public static Command enableSnapToGyroControl(Drivetrain drivetrain) {
+        return Commands.runOnce(() -> {
+            drivetrain.enableSnapToGyroControl();
+
+        }, drivetrain);
+    }
+
+    public static Command toggleSnapToAngleCommand(Drivetrain drivetrain) {
+        return Commands.runOnce(() -> {
+            drivetrain.toggleSnapToGyroControl();
+        }, drivetrain);
+    }
+
+    public static Command driveWithSnapToAngleCommand(Drivetrain drivetrain, double angle) {
+        return Commands.runOnce(() -> {
+            drivetrain.enableSnapToGyroControl();
+            drivetrain._snapToRotationController.setSetpoint(angle);
+        }, drivetrain);
+    }
+
 }

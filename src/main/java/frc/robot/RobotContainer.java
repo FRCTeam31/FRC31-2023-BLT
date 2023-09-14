@@ -121,6 +121,8 @@ public class RobotContainer implements Sendable {
         // Drive commands
         DriverController.button(ControlsMap.X).onTrue(Commands.runOnce(() -> Drivetrain.resetGyro(), Drivetrain));
         DriverController.button(ControlsMap.Y).onTrue(DriveCommands.toggleShifter(Drivetrain));
+        // DriverController.button(ControlsMap.B).onTrue(DriveCommands.enableSnapToGyroControl(Drivetrain));
+        DriverController.button(ControlsMap.A).onTrue(DriveCommands.toggleSnapToAngleCommand(Drivetrain));
 
         // Shoulder commands
         OperatorController.button(ControlsMap.Y).onTrue(ShoulderCommands.setHighGoal(Shoulder));
@@ -131,6 +133,20 @@ public class RobotContainer implements Sendable {
         // Forearm commands
         OperatorController.button(ControlsMap.RB).onTrue(ForearmCommands.extendForearm(Forearm));
         OperatorController.button(ControlsMap.LB).onTrue(ForearmCommands.retractForearm(Forearm));
+
+        // Snap To Commands
+
+        DriverController.pov(ControlsMap.up).onTrue(DriveCommands.driveWithSnapToAngleCommand(Drivetrain,
+                Math.toRadians(0)));
+        DriverController.pov(ControlsMap.right).onTrue(DriveCommands.driveWithSnapToAngleCommand(Drivetrain,
+                Math.toRadians(90)));
+
+        DriverController.pov(ControlsMap.down).onTrue(DriveCommands.driveWithSnapToAngleCommand(Drivetrain,
+                Math.toRadians(180)));
+
+        DriverController.pov(ControlsMap.left).onTrue(DriveCommands.driveWithSnapToAngleCommand(Drivetrain,
+                Math.toRadians(-90)));
+
     }
 
     public Command getAutonomousCommand() {

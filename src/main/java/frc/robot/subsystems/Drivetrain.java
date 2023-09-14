@@ -1,6 +1,11 @@
 package frc.robot.subsystems;
 
+import org.ietf.jgss.GSSContext;
+
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -24,23 +29,42 @@ public class Drivetrain extends SubsystemBase {
             DriveMap.kFrontRightLocation);
     private boolean _inHighGear = true;
 
+    public double _lastSnapToCalculatedPIDOutput;
+
     // Swerve Modules, in CCW order from FL to FR
     SwerveModule mFrontLeftModule, mRearLeftModule, mRearRightModule, mFrontRightModule;
     public SwerveModule[] mSwerveModules;
     public SwerveModulePosition[] mSwerveModulePositions = new SwerveModulePosition[4];
 
+    public boolean snapToGyroEnabled = false;
+
     // Odometry
     SwerveDriveOdometry mOdometry;
     Field2d mField;
+
+    // Snap to Gyro Angle PID
+
+    public PIDController _snapToRotationController = new PIDController(DriveMap.kSnapToGyroAngle_kP,
+            DriveMap.kSnapToGyroAngle_kI,
+            DriveMap.kSnapToGyroAngle_kD,
+            0.02);
+
+    public double _lastRotationRadians = 0;
 
     public Drivetrain() {
         setName("Drivetrain");
         Gyro = new WPI_Pigeon2(DriveMap.kPigeonId, DriveMap.kCANivoreBusName);
 
+        // Create swerve modules and ODO
         createSwerveModulesAndOdometry();
 
+        // Configure field
         mField = new Field2d();
         SmartDashboard.putData(getName() + "/Field", mField);
+
+        // Configure snap-to PID
+        _snapToRotationController.enableContinuousInput(-Math.PI, Math.PI);
+        _snapToRotationController.setSetpoint(0);
     }
 
     /**
@@ -126,6 +150,18 @@ public class Drivetrain extends SubsystemBase {
             desiredChassisSpeeds = new ChassisSpeeds(strafeXMetersPerSecond, forwardMetersPerSecond,
                     rotationRadiansPerSecond);
         }
+
+        // _lastSnapToCalculatedPIDOutput =
+        // _snapToRotationController.calculate(Gyro.getRotation2d().getRadians(),
+        // desiredChassisSpeeds.omegaRadiansPerSecond);
+
+        if (snapToGyroEnabled) {
+            _lastSnapToCalculatedPIDOutput = _snapToRotationController.calculate(MathUtil.angleModulus(
+                    Gyro.getRotation2d().getRadians()));
+            desiredChassisSpeeds.omegaRadiansPerSecond = -1 * _lastSnapToCalculatedPIDOutput;
+        }
+
+        _lastRotationRadians = desiredChassisSpeeds.omegaRadiansPerSecond;
 
         drive(desiredChassisSpeeds);
     }
@@ -251,6 +287,21 @@ public class Drivetrain extends SubsystemBase {
         };
     }
 
+    public void enableSnapToGyroControl() {
+        snapToGyroEnabled = true;
+
+    }
+
+    public void disableSnapToGyroControl() {
+        snapToGyroEnabled = false;
+    }
+
+    public void toggleSnapToGyroControl() {
+        snapToGyroEnabled = !snapToGyroEnabled;
+        _snapToRotationController.setSetpoint(0);
+
+    }
+
     /**
      * Updates odometry and any other periodic drivetrain events
      */
@@ -260,5 +311,14 @@ public class Drivetrain extends SubsystemBase {
         var gyroAngle = Gyro.getRotation2d();
         var robotPose = mOdometry.update(gyroAngle, getModulePositions());
         mField.setRobotPose(robotPose);
+
+        SmartDashboard.putNumber("Drive/SnapTo/PID error",
+                Math.toDegrees(_snapToRotationController.getPositionError()));
+        SmartDashboard.putNumber("Drive/SnapTo/PID last output", _lastSnapToCalculatedPIDOutput);
+        SmartDashboard.putNumber("Drive/SnapTo/Rotation Radians", _lastRotationRadians);
+        SmartDashboard.putNumber("Drive/SnapTo/ setpoint", Math.toDegrees(_snapToRotationController.getSetpoint()));
+        SmartDashboard.putBoolean("Drive/SnapTo/ enabled?", snapToGyroEnabled);
+        SmartDashboard.putNumber("Drive/SnapTo/Current GYro angle", Math.toDegrees(MathUtil.angleModulus(
+                Gyro.getRotation2d().getRadians())));
     }
 }

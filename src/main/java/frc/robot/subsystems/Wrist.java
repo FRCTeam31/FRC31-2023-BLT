@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import prime.movers.LazyCANSparkMax;
+import prime.movers.LazyWPITalonSRX;
 
 public class Wrist extends SubsystemBase {
     /**
@@ -21,7 +23,7 @@ public class Wrist extends SubsystemBase {
     }
 
     public LazyCANSparkMax wristLeader;
-    public LazyCANSparkMax wristFollower;
+    public LazyWPITalonSRX wristFollower;
     private double _lastSpeed = -10;
 
     /**
@@ -30,7 +32,7 @@ public class Wrist extends SubsystemBase {
     public Wrist() {
         setName("Wrist");
         wristLeader = new LazyCANSparkMax(WristMap.kWrist1CanId, MotorType.kBrushless);
-        wristFollower = new LazyCANSparkMax(WristMap.kWrist2CanId, MotorType.kBrushless);
+        wristFollower = new LazyWPITalonSRX(WristMap.kWrist2CanId);
     }
 
     /**
@@ -39,7 +41,7 @@ public class Wrist extends SubsystemBase {
     public void runMotors(double speed) {
         _lastSpeed = speed;
         wristLeader.set(speed);
-        wristFollower.follow(wristLeader);
+        wristFollower.set(ControlMode.PercentOutput, speed);
     }
 
     /**
