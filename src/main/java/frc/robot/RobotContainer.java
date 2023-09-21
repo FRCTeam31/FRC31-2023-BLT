@@ -151,8 +151,8 @@ public class RobotContainer implements Sendable {
 
     public Command getAutonomousCommand() {
         return new SequentialCommandGroup(
-                DriveCommands.SetWheelAnglesCommand(Drivetrain, Rotation2d.fromDegrees(180)),
-                DriveCommands.resetOdometry(Drivetrain, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90))),
+                // DriveCommands.SetWheelAnglesCommand(Drivetrain, Rotation2d.fromDegrees(180)),
+                DriveCommands.resetOdometry(Drivetrain, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0))),
                 DriveCommands.resetGyroCommand(Drivetrain),
                 AutonomousCommands.getAutonomousCommand(Drivetrain, Shoulder, Forearm, Wrist));
     }

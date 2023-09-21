@@ -142,18 +142,6 @@ public class SwerveModule extends SubsystemBase {
     }
 
     /**
-     * Sets the desired speed of the module in open-loop percentage control
-     * 
-     * @param speedMetersPerSecond The desired speed in meters per second, which is
-     *                             divided by the maximum speed to get a percentage
-     */
-    public void setDesiredSpeedOpenLoop(double speedMetersPerSecond) {
-        var percentOutput = speedMetersPerSecond / DriveMap.kDriveMaxSpeedMetersPerSecond;
-
-        mDriveMotor.set(ControlMode.PercentOutput, MathUtil.clamp(percentOutput, -1, 1));
-    }
-
-    /**
      * Sets the desired state of the module.
      * 
      * @param desiredState The state of the module that we'd like to be at in this

@@ -252,18 +252,6 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /**
-     * Sets the modules to a open-loop speed
-     * 
-     * @param speedMetersPerSecond
-     */
-    public void setWheelSpeeds(double speedMetersPerSecond) {
-        mFrontLeftModule.setDesiredSpeedOpenLoop(speedMetersPerSecond);
-        mRearLeftModule.setDesiredSpeedOpenLoop(speedMetersPerSecond);
-        mRearRightModule.setDesiredSpeedOpenLoop(speedMetersPerSecond);
-        mFrontRightModule.setDesiredSpeedOpenLoop(speedMetersPerSecond);
-    }
-
-    /**
      * Sets the modules to a closed-loop velocity in MPS
      */
     public void setWheelVelocities(double speedMetersPerSecond) {
